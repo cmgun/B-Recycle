@@ -1,9 +1,23 @@
+buildscript {
+    repositories {
+        maven { url "https://maven.aliyun.com/repository/public/"}
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.webank:solc-gradle-plugin:1.0.2-SNAPSHOT'
+    }
+}
+
 plugins {
     id 'java'
 }
 
 group 'org.example'
 version '1.0-SNAPSHOT'
+
+apply plugin: 'solc-gradle-plugin'
 
 repositories {
     maven {
@@ -25,4 +39,9 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+solc {
+    pkg = 'com.brecycle.contract'
+    contracts = '../contract'
 }
