@@ -1,32 +1,51 @@
-cryptoMaterial:
-  certPath: "conf"
-#  caCert: "conf/ca.crt"
-#  sslCert: "conf/sdk.crt"
-#  sslKey: "conf/sdk.key"
-#  enSslCert: "conf/gm/gmensdk.crt"
-#  enSslKey: "conf/gm/gmensdk.key"
+server:
+  port: 8090
 
-network:
-  peers:
-    - "127.0.0.1:20201"
-    - "127.0.0.1:20200"
+spring:
+  application:
+    name: b-recycle
+#  cloud:
+#    config:
+#      discovery:
+#        service-id: eureka-config
+#        enabled: false
+#      fail-fast: true
+#      profile: ${spring.profiles.active}
 
-amop:
+fisco:
+  cryptoMaterial:
+    certPath: "conf"
+    caCert: "conf/ca.crt"
+    sslCert: "conf/sdk.crt"
+    sslKey: "conf/sdk.key"
+#   enSslCert: "conf/gm/gmensdk.crt"
+#   enSslKey: "conf/gm/gmensdk.key"
+
+  network:
+    peers:
+    - "192.168.111.128:20201"
+    - "192.168.111.128:20200"
+
+# 信使功能
+  amop:
 #  - publicKeys: [ "conf/amop/consumer_public_key_1.pem" ]
 #    topicName: "PrivateTopic1"
 #  - password: "123456"
 #    privateKey: "conf/amop/consumer_private_key.p12"
 #    topicName: "PrivateTopic2"
 
-account:
-  keyStoreDir: "account"
+# 账户相关
+  account:
+    keyStoreDir: "account"
   #  accountFilePath: "conf"
-  accountFileFormat: "pem"
+  # pem为明文存储
+    accountFileFormat: "pem"
 #  accountAddress: "0x"
+# p12格式存储所需的口令
 #  password: ""
 
-
-threadPool:
-#  channelProcessorThreadSize: "16"
-#  receiptProcessorThreadSize: "16"
-#  maxBlockingQueueSize: "102400"
+# 线程池配置
+  threadPool:
+    channelProcessorThreadSize: "16"
+    receiptProcessorThreadSize: "16"
+    maxBlockingQueueSize: "102400"
