@@ -1,5 +1,6 @@
 package com.brecycle;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @author cmgun
  */
+@MapperScan("com.brecycle.mapper")
 @SpringBootApplication
 public class BRecycleApplication {
 

@@ -11,6 +11,33 @@ spring:
 #        enabled: false
 #      fail-fast: true
 #      profile: ${spring.profiles.active}
+  datasource:
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/brecycle?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+
+# mybatis-plus配置
+mybatis-plus:
+  global-config:
+    db-config:
+      # 下划线转驼峰命名
+      column-underline: true
+  # mapper xml扫描地址
+  mapper-locations: classpath*:mapper/*.xml
 
 fisco:
   cryptoMaterial:
