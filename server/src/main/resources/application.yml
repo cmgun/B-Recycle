@@ -76,3 +76,7 @@ fisco:
     channelProcessorThreadSize: "16"
     receiptProcessorThreadSize: "16"
     maxBlockingQueueSize: "102400"
+
+# 合约地址，先由WeBASE部署后在修改该处
+contract-addr:
+  helloworld: "0xc53b11e5a30a5dccff4322203dcccf3b5532a538"

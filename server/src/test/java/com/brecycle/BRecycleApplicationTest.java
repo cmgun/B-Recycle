@@ -36,10 +36,12 @@ public class BRecycleApplicationTest {
         CryptoKeyPair cryptoKeyPair = client.getCryptoSuite().getCryptoKeyPair();
 
         // 部署合约
+//        HelloWorld contract = HelloWorld.deploy(client, cryptoKeyPair);
+//        String contractAddress = contract.getContractAddress();
+//        log.info("contractAddress: {}", contractAddress);
+//        log.info("blockHeight: {}", client.getBlockLimit());
+        // TODO 通过合约地址调用合约
         HelloWorld contract = HelloWorld.deploy(client, cryptoKeyPair);
-        String contractAddress = contract.getContractAddress();
-        log.info("contractAddress: {}", contractAddress);
-        log.info("blockHeight: {}", client.getBlockLimit());
 
         // 调用合约测试
         String result1 = contract.get();
