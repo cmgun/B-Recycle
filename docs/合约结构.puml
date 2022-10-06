@@ -2,37 +2,48 @@
 'https://plantuml.com/class-diagram
 
 '电池溯源模块
+package 电池模块 <<Rectangle>> {
 class Battery {
-电池信息
+电池id
+批次号
+充放电次数
+其他电池信息
+当前所有者
 溯源记录
 + 查询溯源记录()
 + 电池状态变更()
++ 增加电池充放电次数()
 }
 note left of Battery
 电池合约
-1. 电池状态变更需要根据不同状态
-   进行权限判断
+电池状态变更需要根据不同状态
+进行权限判断
 end note
 
 class BatteryFactory {
-电池列表
-电池当前所有者
+'电池列表
+账户地址与电池关系映射
 
 + 新增电池()
 + 根据id查找电池()
 + 根据id修改电池状态()
 + 根据批次号查找电池()
 + 根据批次号修改电池状态()
++ 根据id增加电池充放电次数()
 + 查询当前地址拥有的电池()
 }
 note left of BatteryFactory
 电池工厂合约
 end note
 
+
 Battery --> BatteryFactory
+
+}
 
 
 '机构准入模块
+package 企业准入模块 <<Rectangle>> {
 class Enterprise {
 address
 企业名称
@@ -41,7 +52,10 @@ address
 邮箱
 法定代表人
 地址
+状态（正常、注销）
 备注
+
++ 企业状态变更()
 }
 note left of Enterprise
 企业信息
@@ -51,6 +65,7 @@ class EntAccess {
 已准入的企业列表
 机构类型与企业id映射
 企业id与机构类型映射
+企业id-准入状态映射
 
 + 企业准入()
 + 企业信息变更()
@@ -59,9 +74,53 @@ class EntAccess {
 }
 note left of EntAccess
 企业准入合约
-1. 企业信息变更需要特定权限
+企业信息变更需要特定权限
 end note
 
 Enterprise --> EntAccess
+
+}
+
+'积分模块
+package 积分模块 <<Rectangle>> {
+class Point {
+账户
+可用积分
+冻结积分
+账户状态（正常，冻结）
+积分变更记录
+
++ 增加积分()
++ 扣减积分()
++ 查看积分()
++ 查看积分记录()
++ 积分转移()
+}
+note left of Point
+账户积分合约
+end note
+
+class PointTrade {
+卖方账户
+买方账户
+交易金额
+交易状态
+发起时间
+交易时间
+备注
+
++ 交易发起()
++ 交易认领()
++ 交易执行()
++ 交易终止()
+}
+note left of PointTrade
+积分交易合约
+end note
+
+Point --> PointTrade
+}
+
+
 
 @enduml
