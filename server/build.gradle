@@ -34,6 +34,7 @@ dependencies {
     implementation "org.projectlombok:lombok:1.18.8"
     implementation "org.fisco-bcos.java-sdk:fisco-bcos-java-sdk:2.9.0"
     implementation "com.webank:weid-java-sdk:1.8.3"
+    implementation 'com.webank.weevent:weevent-client:1.6.0'
     implementation "mysql:mysql-connector-java:8.0.17"
     implementation "com.baomidou:mybatis-plus-boot-starter:3.4.2"
     implementation 'com.alibaba:druid-spring-boot-starter:1.2.8'
