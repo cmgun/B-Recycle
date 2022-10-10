@@ -29,6 +29,29 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  redis:
+    database: 0
+    host: 127.0.0.1
+    lettuce:
+      pool:
+        max-active: 8   #最大连接数据库连接数,设 0 为没有限制
+        max-idle: 8     #最大等待连接中的数量,设 0 为没有限制
+        max-wait: -1ms  #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
+        min-idle: 0     #最小等待连接中的数量,设 0 为没有限制
+      shutdown-timeout: 100ms
+    password: ''
+    port: 6379
+
+jwt:
+  authoritiesKey: auth
+  # 密匙KEY
+  secret: KeXu6IgYf7xaPe4jpw
+  # HeaderKEY
+  tokenHeader: token
+  # jwt过期时间 单位秒 1天后过期=86400 7天后过期=604800
+  expiration: 1800
+  # 放入redis过期时间 单位秒 1天后过期=86400 7天后过期=604800
+  redisExpiration: 1800
 
 # mybatis-plus配置
 mybatis-plus:

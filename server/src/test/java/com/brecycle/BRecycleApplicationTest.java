@@ -29,7 +29,7 @@ public class BRecycleApplicationTest {
 
         // 获取区块号
         BlockNumber blockNumber = client.getBlockNumber();
-        log.info("blockNumber: {}", blockNumber);
+         log.info("blockNumber: {}", blockNumber);
         log.info("blockHeight: {}", client.getBlockLimit());
 
         // 这里可扩展为指定用某个账户的key，目前是随机生成的账户
