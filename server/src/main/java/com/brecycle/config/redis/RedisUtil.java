@@ -29,6 +29,16 @@ public class RedisUtil {
     }
 
     /**
+     * 自增
+     * @param key
+     * @return
+     */
+    public Long incr(String key) {
+        ValueOperations<Object, Object> operation = redisTemplate.opsForValue();
+        return operation.increment(key);
+    }
+
+    /**
      * 缓存基本的对象，Integer、String、实体类等
      *
      * @param key   缓存的键值

@@ -1,5 +1,6 @@
 package com.brecycle.entity.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,7 +12,6 @@ import java.io.Serializable;
  * @author cmgun
  */
 @Data
-@Builder
 public class UserLoginParam implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -1,5 +1,6 @@
 package com.brecycle.entity.dto;
 
+import com.brecycle.entity.Resource;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,5 +20,5 @@ public class UserInfo implements Serializable {
 
     private List<String> role;
 
-    private List<String> permissions;
+    private List<Resource> resources;
 }

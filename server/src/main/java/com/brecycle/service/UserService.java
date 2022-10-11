@@ -14,6 +14,6 @@ public interface UserService {
      * @param password
      * @return
      */
-    UserInfo login(String userName, String password);
+    UserInfo login(String userName, String password) throws Exception;
 
 }
