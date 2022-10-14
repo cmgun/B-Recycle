@@ -1,0 +1,8 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+用户 -> Vue : 111
+
+
+
+@enduml
