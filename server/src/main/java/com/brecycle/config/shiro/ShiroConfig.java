@@ -49,7 +49,8 @@ public class ShiroConfig {
         filterRuleMap.put("/v2/**", "anon");
         filterRuleMap.put("/webjars/**", "anon");
         // user模块全部放行
-        filterRuleMap.put("/user/**", "anon");
+        filterRuleMap.put("/user/login", "anon");
+        filterRuleMap.put("/user/logout", "anon");
         filterRuleMap.put("/**", "token");
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return factoryBean;

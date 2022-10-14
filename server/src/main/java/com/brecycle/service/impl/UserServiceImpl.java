@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -62,9 +63,6 @@ public class UserServiceImpl implements UserService {
             }
             throw new LoginException("登录失败，账户或密码不正确");
         }
-        // 查找角色和菜单资源
-        List<Role> roleList = roleMapper.selectByUserId(user.getId());
-        List<Resource> resourceList = resourceMapper.selectByRoleIds(roleList.stream().map(Role::getId).collect(Collectors.toList()));
 
         // 设置jwt token
         long currentTimeMillis = System.currentTimeMillis();
@@ -72,6 +70,22 @@ public class UserServiceImpl implements UserService {
         redisUtil.setCacheObject(RedisConstant.CACHE_PREFIX + RedisConstant.USER_TOKEN_KEY + user.getName()
                 , currentTimeMillis, JWTConfig.expiration + JWTConfig.redisExpiration, TimeUnit.SECONDS);
 
+        return UserInfo.builder()
+                .userName(user.getName())
+                .token(token)
+//                .role(roleList.stream().map(Role::getKey).collect(Collectors.toList()))
+//                .resources(resourceList)
+                .build();
+    }
+
+    @Override
+    public UserInfo getInfo(HttpServletRequest request) {
+        String token = request.getHeader(JWTConfig.tokenHeader);
+        String userName = JwtTokenUtil.getUsername(token);
+        User user = userMapper.selectByUserName(userName);
+        // 查找角色和菜单资源
+        List<Role> roleList = roleMapper.selectByUserId(user.getId());
+        List<Resource> resourceList = resourceMapper.selectByRoleIds(roleList.stream().map(Role::getId).collect(Collectors.toList()));
         return UserInfo.builder()
                 .userName(user.getName())
                 .token(token)

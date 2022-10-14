@@ -55,12 +55,14 @@ service.interceptors.response.use(
       return res
     }
     const { flag, msg, isNeedUpdateToken, updateToken, code } = res.data
+    console.log(code)
     //更新token保持登录状态
     if (isNeedUpdateToken) {
       setToken(updateToken)
     }
     const successCode = '0,200,20000'
     if (successCode.includes(code)) {
+      console.log("req success")
       return res.data
     } else {
       if (code === 403) {
@@ -85,6 +87,7 @@ service.interceptors.response.use(
       //返回错误信息
       //如果未catch 走unhandledrejection进行收集
       //注：如果没有return 则，会放回到请求方法中.then ,返回的res为 undefined
+      console.log("req error")
       return Promise.reject(res.data)
     }
   },

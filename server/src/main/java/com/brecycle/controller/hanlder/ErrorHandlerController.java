@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 统一异常处理
@@ -27,11 +28,12 @@ public class ErrorHandlerController {
      */
     @ExceptionHandler(LoginException.class)
     @ResponseBody
-    public Response loginExceptionHandler(HttpServletRequest request, LoginException exception) {
+    public Response loginExceptionHandler(HttpServletRequest request, HttpServletResponse response, LoginException exception) {
+//        response.setStatus(Response.UNAUTHORIZED.intValue());
         log.warn("LoginException，url:{}", request.getRequestURI(), exception);
         return Response.builder()
                 .code(Response.UNAUTHORIZED)
-                .message(exception.getMessage())
+                .msg(exception.getMessage())
                 .build();
     }
 
@@ -44,11 +46,12 @@ public class ErrorHandlerController {
      */
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public Response exceptionHandler(HttpServletRequest request, Exception exception) {
+    public Response exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) {
         log.warn("ExceptionHandler，url:{}", request.getRequestURI(), exception);
+//        response.setStatus(Response.ERROR.intValue());
         return Response.builder()
                 .code(Response.ERROR)
-                .message("系统内部异常")
+                .msg("系统内部异常")
                 .build();
     }
 }

@@ -10,7 +10,7 @@
           <span class="svg-container">
             <svg-icon icon-class="user" />
           </span>
-          <el-input v-model="formInline.username" placeholder="用户名(admin)" />
+          <el-input v-model="formInline.username" placeholder="用户名" />
           <!--占位-->
           <div class="show-pwd" />
         </div>
@@ -49,6 +49,8 @@ import settings from '@/settings'
 import { ElMessage } from 'element-plus'
 import { ObjTy } from '~/common'
 import { useUserStore } from '@/store/user'
+import { Md5 } from 'ts-md5'
+
 //element valid
 const formRules = useElement().formRules
 //form
@@ -104,14 +106,23 @@ let handleLogin = () => {
 const router = useRouter()
 let loginReq = () => {
   loading.value = true
+
+  let params = {
+    userName: formInline.username,
+    password: formInline.password
+  }
+  params.password = Md5.hashStr(params.password)
+  
   const userStore = useUserStore()
   userStore
-    .login(formInline)
+    .login(params)
     .then(() => {
+      console.log("login success")
       ElMessage({ message: '登录成功', type: 'success' })
       router.push({ path: state.redirect || '/', query: state.otherQuery })
     })
     .catch((res) => {
+      console.log("login error")
       tipMessage.value = res.msg
       useCommon()
         .sleep(30)

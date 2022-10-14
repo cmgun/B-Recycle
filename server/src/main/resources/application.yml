@@ -47,7 +47,7 @@ jwt:
   # 密匙KEY
   secret: KeXu6IgYf7xaPe4jpw
   # HeaderKEY
-  tokenHeader: token
+  tokenHeader: AUTHORIZE_TOKEN
   # jwt过期时间 单位秒 1天后过期=86400 7天后过期=604800
   expiration: 86400
   # 放入redis过期时间 单位秒 1天后过期=86400 7天后过期=604800

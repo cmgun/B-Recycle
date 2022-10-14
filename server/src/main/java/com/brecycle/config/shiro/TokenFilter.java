@@ -146,7 +146,7 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
         response.reset();
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json; charset=utf-8");
-        Response error = Response.builder().code(Response.UNAUTHORIZED).message("无请求权限").build();
+        Response error = Response.builder().code(Response.UNAUTHORIZED).msg("无请求权限").build();
         try (PrintWriter out = response.getWriter()) {
             out.append(JSONUtils.toJSONString(error));
         } catch (IOException e) {

@@ -3,18 +3,18 @@ import { ObjTy } from '~/common'
 
 export function loginReq(data: ObjTy) {
   return request({
-    url: '/integration-front/user/loginValid',
+    url: '/user/login',
     data,
     method: 'post',
     bfLoading: false,
-    isParams: true,
+    isParams: false,
     isAlertErrorMsg: false
   })
 }
 
 export function getInfoReq() {
   return request({
-    url: '/integration-front/user/getUserInfo',
+    url: '/user/getInfo',
     bfLoading: false,
     method: 'post',
     isAlertErrorMsg: false

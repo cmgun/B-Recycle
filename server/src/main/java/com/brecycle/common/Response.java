@@ -50,13 +50,13 @@ public class Response<T> {
      * 信息
      */
     @ApiModelProperty(value = "描述信息", dataType = "String", required = true)
-    private String message;
+    private String msg;
 
     /**
      * 业务数据
      */
     @ApiModelProperty(value = "业务数据")
-    private T payload;
+    private T data;
 
     /**
      * 成功
@@ -67,7 +67,7 @@ public class Response<T> {
     public static Response success(String message) {
         return Response.builder()
                 .code(OK)
-                .message(message)
+                .msg(message)
                 .build();
     }
 
@@ -80,8 +80,8 @@ public class Response<T> {
     public static <T> Response<T> success(String message, T payload) {
         return Response.<T>builder()
                 .code(OK)
-                .message(message)
-                .payload(payload)
+                .msg(message)
+                .data(payload)
                 .build();
     }
 
@@ -94,7 +94,7 @@ public class Response<T> {
     public static Response businessError(String message) {
         return Response.builder()
                 .code(BUSINESS_ERROR)
-                .message(message)
+                .msg(message)
                 .build();
     }
 }

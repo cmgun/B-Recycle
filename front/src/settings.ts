@@ -20,7 +20,7 @@ interface SettingTy {
 }
 
 const setting: SettingTy = {
-  title: 'Vue3 Admin Ts',
+  title: 'B-Recycle电池回收交易平台',
   /**
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar

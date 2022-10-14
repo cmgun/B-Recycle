@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -37,5 +38,10 @@ public class UserController {
         return Response.success("登录成功", userInfo);
     }
 
-
+    @ApiOperation("用户信息")
+    @PostMapping("/getInfo")
+    Response<UserInfo> getInfo(HttpServletRequest request) throws Exception {
+        UserInfo userInfo = userService.getInfo(request);
+        return Response.success("查询成功", userInfo);
+    }
 }

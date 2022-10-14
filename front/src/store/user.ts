@@ -40,9 +40,10 @@ export const useUserStore = defineStore('user', {
       return new Promise((resolve, reject) => {
         loginReq(data)
           .then((res: ObjTy) => {
-            if (res.code === 20000) {
+            if (res.code === 200) {
               //commit('SET_Token', res.data?.jwtToken)
-              setToken(res.data?.jwtToken)
+              console.log(res.data.token)
+              setToken(res.data?.token)
               resolve(null)
             } else {
               reject(res)
