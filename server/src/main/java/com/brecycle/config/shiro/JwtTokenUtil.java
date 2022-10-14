@@ -23,6 +23,7 @@ public class JwtTokenUtil implements Serializable {
 
     private static final long serialVersionUID = -5625635588908941275L;
 
+
     public static String generateToken(String username, Long current) {
         if (null == current) {
             current = System.currentTimeMillis();

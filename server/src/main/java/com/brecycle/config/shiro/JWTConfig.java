@@ -34,23 +34,23 @@ public class JWTConfig {
      */
     public static Integer redisExpiration;
 
-    public static void setAuthoritiesKey(String authoritiesKey) {
+    public void setAuthoritiesKey(String authoritiesKey) {
         JWTConfig.authoritiesKey = authoritiesKey;
     }
 
-    public static void setSecret(String secret) {
+    public void setSecret(String secret) {
         JWTConfig.secret = secret;
     }
 
-    public static void setTokenHeader(String tokenHeader) {
+    public void setTokenHeader(String tokenHeader) {
         JWTConfig.tokenHeader = tokenHeader;
     }
 
-    public static void setExpiration(Integer expiration) {
+    public void setExpiration(Integer expiration) {
         JWTConfig.expiration = expiration;
     }
 
-    public static void setRedisExpiration(Integer redisExpiration) {
+    public void setRedisExpiration(Integer redisExpiration) {
         JWTConfig.redisExpiration = redisExpiration;
     }
 }

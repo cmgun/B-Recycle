@@ -1,6 +1,7 @@
 package com.brecycle.controller;
 
 import com.brecycle.common.Response;
+import com.brecycle.config.shiro.JWTConfig;
 import com.brecycle.entity.dto.UserInfo;
 import com.brecycle.entity.dto.UserLoginParam;
 import com.brecycle.service.UserService;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 用户模块
@@ -28,8 +31,11 @@ public class UserController {
 
     @ApiOperation("用户登录")
     @PostMapping("/login")
-    Response<UserInfo> login(@RequestBody @ApiParam(value = "参数", required = true) UserLoginParam param) throws Exception {
+    Response<UserInfo> login(@RequestBody @ApiParam(value = "参数", required = true) UserLoginParam param, HttpServletResponse response) throws Exception {
         UserInfo userInfo = userService.login(param.getUserName(), param.getPassword());
+        response.setHeader(JWTConfig.tokenHeader, userInfo.getToken());
         return Response.success("登录成功", userInfo);
     }
+
+
 }

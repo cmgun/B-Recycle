@@ -2,6 +2,8 @@ package com.brecycle.service.impl;
 
 import com.brecycle.config.redis.RedisConstant;
 import com.brecycle.config.redis.RedisUtil;
+import com.brecycle.config.shiro.JWTConfig;
+import com.brecycle.config.shiro.JwtTokenUtil;
 import com.brecycle.entity.Resource;
 import com.brecycle.entity.Role;
 import com.brecycle.entity.User;
@@ -64,9 +66,15 @@ public class UserServiceImpl implements UserService {
         List<Role> roleList = roleMapper.selectByUserId(user.getId());
         List<Resource> resourceList = resourceMapper.selectByRoleIds(roleList.stream().map(Role::getId).collect(Collectors.toList()));
 
-        // TODO 设置jwt token
+        // 设置jwt token
+        long currentTimeMillis = System.currentTimeMillis();
+        String token = JwtTokenUtil.generateToken(user.getName(), currentTimeMillis);
+        redisUtil.setCacheObject(RedisConstant.CACHE_PREFIX + RedisConstant.USER_TOKEN_KEY + user.getName()
+                , currentTimeMillis, JWTConfig.expiration + JWTConfig.redisExpiration, TimeUnit.SECONDS);
+
         return UserInfo.builder()
                 .userName(user.getName())
+                .token(token)
                 .role(roleList.stream().map(Role::getKey).collect(Collectors.toList()))
                 .resources(resourceList)
                 .build();

@@ -49,9 +49,9 @@ jwt:
   # HeaderKEY
   tokenHeader: token
   # jwt过期时间 单位秒 1天后过期=86400 7天后过期=604800
-  expiration: 1800
+  expiration: 86400
   # 放入redis过期时间 单位秒 1天后过期=86400 7天后过期=604800
-  redisExpiration: 1800
+  redisExpiration: 86400
 
 # mybatis-plus配置
 mybatis-plus:

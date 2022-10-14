@@ -18,6 +18,8 @@ public class UserInfo implements Serializable {
 
     private String userName;
 
+    private String token;
+
     private List<String> role;
 
     private List<Resource> resources;
