@@ -84,7 +84,7 @@ fisco:
 #    privateKey: "conf/amop/consumer_private_key.p12"
 #    topicName: "PrivateTopic2"
 
-# 账户相关
+# 默认生成的账户配置
   account:
     keyStoreDir: "account"
   #  accountFilePath: "conf"

@@ -55,7 +55,7 @@ import { Md5 } from 'ts-md5'
 const formRules = useElement().formRules
 //form
 let formInline = reactive({
-  username: 'admin',
+  username: 'test',
   password: '123456'
 })
 let state: ObjTy = reactive({

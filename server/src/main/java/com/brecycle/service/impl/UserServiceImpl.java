@@ -14,6 +14,8 @@ import com.brecycle.mapper.UserMapper;
 import com.brecycle.service.UserService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -89,8 +91,20 @@ public class UserServiceImpl implements UserService {
         return UserInfo.builder()
                 .userName(user.getName())
                 .token(token)
-                .role(roleList.stream().map(Role::getKey).collect(Collectors.toList()))
+                .roles(roleList.stream().map(Role::getKey).collect(Collectors.toList()))
                 .resources(resourceList)
                 .build();
+    }
+
+    @Override
+    public void logout(String userName) {
+        redisUtil.deleteObject(RedisConstant.CACHE_PREFIX + RedisConstant.USER_TOKEN_KEY + userName);
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+    }
+
+    @Override
+    public void customerRegist() {
+
     }
 }

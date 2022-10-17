@@ -34,14 +34,26 @@ public class User {
     private String password;
 
     /**
-     * 公钥
+     * 密钥对
      */
     @TableField
-    private String publicKey;
+    private String keyFile;
 
     /**
      * weId
      */
     @TableField
     private String weId;
+
+    /**
+     * 账户状态：0-初始化，1-正常，2-审批中，3-禁用
+     */
+    @TableField
+    private String status;
+
+    /**
+     * 账户地址
+     */
+    @TableField
+    private String addr;
 }

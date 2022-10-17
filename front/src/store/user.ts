@@ -25,11 +25,13 @@ export const useUserStore = defineStore('user', {
   },
 
   actions: {
+    // 修改变量
     M_username(username: string) {
       this.$patch((state) => {
         state.username = username
       })
     },
+    // 修改变量
     M_roles(roles: Array<string>) {
       this.$patch((state) => {
         state.roles = roles
@@ -42,6 +44,7 @@ export const useUserStore = defineStore('user', {
           .then((res: ObjTy) => {
             if (res.code === 200) {
               //commit('SET_Token', res.data?.jwtToken)
+              // test
               console.log(res.data.token)
               setToken(res.data?.token)
               resolve(null)
@@ -64,15 +67,17 @@ export const useUserStore = defineStore('user', {
               return reject('Verification failed, please Login again.')
             }
             //此处模拟数据
-            const rolesArr: any = localStorage.getItem('roles')
-            if (rolesArr) {
-              data.roles = JSON.parse(rolesArr)
-            } else {
-              data.roles = ['admin']
-              localStorage.setItem('roles', JSON.stringify(data.roles))
-            }
-            const { roles, username } = data
-            this.M_username(username)
+            // localStorage 长期存储，关闭浏览器后仍然保留
+            // const rolesArr: any = localStorage.getItem('roles')
+            // if (rolesArr) {
+            //   data.roles = JSON.parse(rolesArr)
+            // } else {
+            //   data.roles = ['admin']
+            //   localStorage.setItem('roles', JSON.stringify(data.roles))
+            // }
+            
+            const { roles, userName } = data
+            this.M_username(userName)
             this.M_roles(roles)
             resolve(data)
           })

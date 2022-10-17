@@ -1,0 +1,51 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title 用户注册（消费者/企业注册）
+
+用户 -> Vue : 输入账户信息、密码、身份信息
+note left
+企业注册需要添加一些企业信息
+end note
+Vue -> Controller : /user/register
+note left
+md5密码加密
+end note
+Controller -> UserService : register
+UserService -> MySQL : 检查账户、身份信息是否重复
+note left
+企业注册时，账户状态为审批中
+end note
+UserService <-- MySQL : 返回结果
+alt 账户信息重复
+    Controller <-- UserService : 账户信息重复
+else 注册用户为企业
+    Controller <-- UserService : 注册成功，等待准入审批
+    Vue <-- Controller : 返回结果
+    用户 <-- Vue : 返回登录页
+end alt
+
+UserService -> JAVA_SDK : 创建非国密账户
+note left
+p12格式存储
+密码为用户设置的账户密码
+end note
+
+UserService <-- JAVA_SDK : 返回账户的密钥对
+UserService -> UserService : 取出临时账户文件里生成的证书文件
+note left
+该临时文件下的文件定时删除
+end note
+
+UserService -> WeIdentity : 根据密钥对生成weid
+UserService <-- WeIdentity : 返回weid
+
+UserService -> MySQL : 数据持久化
+note left
+账户信息、地址信息、密钥对
+end note
+UserService <-- MySQL : 处理成功
+Controller <-- UserService : 返回结果
+Vue <-- Controller : 返回结果
+用户 <-- Vue : 返回登录页
+
+@enduml

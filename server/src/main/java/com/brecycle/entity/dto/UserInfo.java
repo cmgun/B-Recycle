@@ -20,7 +20,7 @@ public class UserInfo implements Serializable {
 
     private String token;
 
-    private List<String> role;
+    private List<String> roles;
 
     private List<Resource> resources;
 }

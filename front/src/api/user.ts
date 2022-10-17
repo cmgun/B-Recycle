@@ -23,7 +23,7 @@ export function getInfoReq() {
 
 export function logoutReq() {
   return request({
-    url: '/integration-front/user/loginOut',
+    url: '/user/logout',
     method: 'post'
   })
 }

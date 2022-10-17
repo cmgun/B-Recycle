@@ -2,6 +2,7 @@ package com.brecycle.controller;
 
 import com.brecycle.common.Response;
 import com.brecycle.config.shiro.JWTConfig;
+import com.brecycle.config.shiro.JwtTokenUtil;
 import com.brecycle.entity.dto.UserInfo;
 import com.brecycle.entity.dto.UserLoginParam;
 import com.brecycle.service.UserService;
@@ -43,5 +44,31 @@ public class UserController {
     Response<UserInfo> getInfo(HttpServletRequest request) throws Exception {
         UserInfo userInfo = userService.getInfo(request);
         return Response.success("查询成功", userInfo);
+    }
+
+    @ApiOperation("用户信息")
+    @PostMapping("/logout")
+    Response<UserInfo> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 理论来说jwt不需要登出，但还是消除下缓存的信息
+        String token = request.getHeader(JWTConfig.tokenHeader);
+        String userName = JwtTokenUtil.getUsername(token);
+        userService.logout(userName);
+        return Response.success("登出成功");
+    }
+
+    // FIXME 消费者注册
+    @ApiOperation("消费者注册")
+    @PostMapping("/customerRegist")
+    Response<UserInfo> customerRegist(HttpServletRequest request) throws Exception {
+        UserInfo userInfo = userService.getInfo(request);
+        return Response.success("注册成功", userInfo);
+    }
+
+    // FIXME 企业注册
+    @ApiOperation("企业注册")
+    @PostMapping("/entRegist")
+    Response<UserInfo> entRegist(HttpServletRequest request) throws Exception {
+        UserInfo userInfo = userService.getInfo(request);
+        return Response.success("注册成功", userInfo);
     }
 }

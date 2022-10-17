@@ -278,6 +278,7 @@ export const constantRoutes: RouterTy = [
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
+// TODO: 权限路由位置，根据userInfo获取到的role
 export const asyncRoutes: RouterTy = [
   {
     path: '/permission',
@@ -339,7 +340,34 @@ export const asyncRoutes: RouterTy = [
   },
   // 404 page must be placed at the end !!!
   // using pathMatch install of "*" in vue-router 4.0
-  { path: '/:pathMatch(.*)', redirect: '/404', hidden: true }
+  { path: '/:pathMatch(.*)', redirect: '/404', hidden: true },
+   // 业务菜单开始
+   {
+    path: '/enterprise-access',
+    component: Layout,
+    name: '机构准入',
+    meta: { title: '机构准入', icon: 'tree', roles: ['car', 'productor', 'rent', 'recycle', 'stored', 'safe', 'material', 'admin', 'supervision'] },
+    children: [
+      {
+        path: 'access',
+        name: '准入审批',
+        component: () => import('@/views/enterprise-access/Access.vue'),
+        meta: { title: '准入审批', roles: ['admin', 'supervision'] }
+      },
+      {
+        path: 'access-result',
+        name: '准入结果查询',
+        component: () => import('@/views/enterprise-access/AccessResult.vue'),
+        meta: { title: '准入结果查询', roles: ['car', 'productor', 'rent', 'recycle', 'stored', 'safe', 'material']  }
+      },
+      {
+        path: 'enterprise-list',
+        name: '企业列表',
+        component: () => import('@/views/enterprise-access/EntList.vue'),
+        meta: { title: '企业列表', roles: ['admin', 'supervision'] }
+      }
+    ]
+  }
 ]
 
 const router: Router = createRouter({

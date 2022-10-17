@@ -1,5 +1,6 @@
 @startuml
 'https://plantuml.com/sequence-diagram
+title 用户登录
 
 用户 -> Vue : 输入账户、密码
 Vue -> Controller : /user/login

@@ -23,4 +23,11 @@ public interface UserService {
      * @return
      */
     UserInfo getInfo(HttpServletRequest request);
+
+    /**
+     * 登出
+     */
+    void logout(String userName);
+
+    void customerRegist();
 }
