@@ -1,175 +1,189 @@
 <!--suppress ALL -->
 <template>
-  <div class="login-container columnCC">
-    <el-form ref="refloginForm" class="login-form" :model="formInline" :rules="formRules">
-      <div class="title-container">
-        <h3 class="title text-center">消费者注册</h3>
-      </div>
-      <el-form-item prop="username" :rules="formRules.isNotNull">
-        <div class="rowSC">
-          <span class="svg-container">
-            <svg-icon icon-class="user" />
-          </span>
-          <el-input v-model="formInline.username" placeholder="用户名" />
-          <!--占位-->
-          <div class="show-pwd" />
-        </div>
-      </el-form-item>
-      <!--<el-form-item prop="password" :rules="formRules.passwordValid">-->
-      <el-form-item prop="password" :rules="formRules.isNotNull">
-        <div class="rowSC flex-1">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="refPassword"
-            v-model="formInline.password"
-            :type="passwordType"
-            name="password"
-            placeholder="password(123456)"
-            @keyup.enter="handleLogin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </div>
-      </el-form-item>
-      <div class="tip-message">{{ tipMessage }}</div>
+  <div>
+    <!-- 使用了container来布局 -->
+    <div class="common-layout"> 
+      <el-container>
+        <el-header></el-header>
+        <el-container>
+          <el-aside width="600px"></el-aside>
+          <el-main>
+            <!-- X 未实现功能：账号（不允许中文）、密码 = = 再次输入密码、名字（不允许空格）、手机号11位、身份证号18位-->
+            <!-- 布局看起来不够好看 -->
+            <el-form ref="ruleFormRef" :model="ruleForm" label-position="top" status-icon :rules="rules"
+              class="demo-ruleForm" style="max-width: 460px">
+              <el-form-item label="账号" prop="AccountNumber">
+                <el-input v-model="ruleForm.AccountNumber" />
+              </el-form-item>
 
-      <el-button :loading="loading" type="primary" class="login-btn" size="default" @click.prevent="handleLogin">
-        注册
-      </el-button>
-      <div></div>
-      <el-button :loading="loading" type="info" class="login-btn" size="default" @click.prevent="backLogin">
-        返回
-      </el-button>
-    </el-form>
+              <el-form-item label="密码" prop="pass">
+                <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
+              </el-form-item>
+              <el-form-item label="再次输入密码" prop="checkPass">
+                <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" />
+              </el-form-item>
+
+              <el-form-item label="身份证号" prop="IDnumber">
+                <el-input v-model.number="ruleForm.IDnumber" />
+              </el-form-item>
+              <el-form-item label="电话号码" prop="PhoneNumber">
+                <el-input v-model.number="ruleForm.PhoneNumber" />
+              </el-form-item>
+
+              <el-form-item>
+                <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
+                <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+                <el-button @click.prevent="backLogin">返回</el-button>
+              </el-form-item>
+            </el-form>
+          </el-main>
+        </el-container>
+      </el-container>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import settings from '@/settings'
-
 import { ElMessage } from 'element-plus'
-import { ObjTy } from '~/common'
-import { useUserStore } from '@/store/user'
-import { Md5 } from 'ts-md5'
+import { reactive, ref } from 'vue'
+import type { FormInstance } from 'element-plus'
 
-//element valid
-const formRules = useElement().formRules
-//form
-let formInline = reactive({
-  username: 'test',
-  password: '123456'
-})
-let state: ObjTy = reactive({
-  otherQuery: {},
-  redirect: undefined
-})
 
-/* listen router change  */
-const route = useRoute()
-let getOtherQuery = (query: any) => {
-  return Object.keys(query).reduce((acc: any, cur: any) => {
-    if (cur !== 'redirect') {
-      acc[cur] = query[cur]
-    }
-    return acc
-  }, {})
-}
-
-watch(
-  () => route.query,
-  (query) => {
-    if (query) {
-      state.redirect = query.redirect
-      state.otherQuery = getOtherQuery(query)
-    }
-  },
-  { immediate: true }
-)
-
-/*
- *  login relative
- * */
-let loading = ref(false)
-let tipMessage = ref('')
-
-const refloginForm: any = ref(null)
-let handleLogin = () => {
-  refloginForm.value.validate((valid: any) => {
-    if (valid) {
-      loginReq()
-    } else {
-      return false
-    }
-  })
+// handleregister 处理注册的方法：提交数据给后端【可参考登录处理方法】，返回一个弹框：注册信息已提交
+const handleregister = (valid) => {
+  //注册信息提交弹窗 
+  if (valid)
+    ElMessage({
+      message: '注册信息已成功提交。',
+      type: 'success',
+    })
+  else {
+    ElMessage.error('注册信息无法提交，请检查后重新提交。')
+  }
 }
 
 //use the auto import from vite.config.js of AutoImport
 const router = useRouter()
-let loginReq = () => {
-  loading.value = true
 
-  let params = {
-    userName: formInline.username,
-    password: formInline.password
-  }
-  params.password = Md5.hashStr(params.password)
-  
-  const userStore = useUserStore()
-  userStore
-    .login(params)
-    .then(() => {
-      console.log("login success")
-      ElMessage({ message: '登录成功', type: 'success' })
-      router.push({ path: state.redirect || '/', query: state.otherQuery })
-    })
-    .catch((res) => {
-      console.log("login error")
-      tipMessage.value = res.msg
-      useCommon()
-        .sleep(30)
-        .then(() => {
-          loading.value = false
-        })
-    })
-}
-/*
- *  password show or hidden
- * */
-let passwordType = ref('password')
-const refPassword: any = ref(null)
-let showPwd = () => {
-  if (passwordType.value === 'password') {
-    passwordType.value = ''
-  } else {
-    passwordType.value = 'password'
-  }
-  nextTick(() => {
-    refPassword.value.focus()
-  })
-}
-
-// 注册页跳转
+//返回 
 let backLogin = () => {
   router.push(`/login`)
 }
+
+
+// ↓ ↓ ======表单涉及的代码=======
+const ruleFormRef = ref<FormInstance>()
+
+const checkIDnumber = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error('请输入正确的身份证号码'))
+  }
+  setTimeout(() => {
+    if (!Number.isInteger(value)) {
+      callback(new Error('请输入数字'))
+    }
+  }, 1000)
+}
+
+const checkAccountNumber = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error('请输入英文和数字的组合'))
+  }
+}
+
+const checkPhoneNumber = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error('请输入正确的电话号码'))
+  }
+  setTimeout(() => {
+    if (!Number.isInteger(value)) {
+      callback(new Error('请输入数字'))
+    }
+    // else {
+    //   if (value < 18) {
+    //     callback(new Error('未成年人禁止注册'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
+  }, 1000)
+}
+
+const validatePass = (rule: any, value: any, callback: any) => {
+  if (value === '') {
+    callback(new Error('请输入密码'))
+  } else {
+    if (ruleForm.checkPass !== '') {
+      if (!ruleFormRef.value) return
+      ruleFormRef.value.validateField('checkPass', () => null)
+    }
+    callback()
+  }
+}
+
+const validatePass2 = (rule: any, value: any, callback: any) => {
+  if (value === '') {
+    callback(new Error('请再次输入密码'))
+  } else if (value !== ruleForm.pass) {
+    callback(new Error("两次输入的密码不一样!"))
+  } else {
+    callback()
+  }
+}
+
+const ruleForm = reactive({
+  AccountNumber: '',
+  pass: '',
+  checkPass: '',
+  PhoneNumber: '',
+  IDnumber: '',
+})
+
+const rules = reactive({
+  AccountNumber: [{ validator: checkAccountNumber, trigger: 'blur' }],
+  pass: [{ validator: validatePass, trigger: 'blur' }],
+  checkPass: [{ validator: validatePass2, trigger: 'blur' }],
+  PhoneNumber: [{ validator: checkPhoneNumber, trigger: 'blur' }],
+  IDnumber: [{ validator: checkIDnumber, trigger: 'blur' }]
+})
+
+const submitForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.validate((valid) => {
+    if (valid) {
+      console.log('submit!');
+      handleregister(valid);
+    } else {
+      console.log('error submit!');
+      handleregister(valid);
+      return false
+    }
+
+  })
+}
+// 重置内容
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
+// ↑ ↑ ======表单涉及的代码=======
 </script>
 
 <style lang="scss" scoped>
 $bg: #2d3a4b;
 $dark_gray: #889aa4;
 $light_gray: #eee;
+
 .login-container {
   height: 100vh;
   width: 100%;
   background-color: #2d3a4b;
+
   .login-form {
     margin-bottom: 20vh;
     width: 360px;
   }
+
   .title-container {
     .title {
       font-size: 22px;
@@ -202,6 +216,7 @@ $light_gray: #eee;
   margin-bottom: 30px;
   float: none;
 }
+
 .show-pwd {
   width: 50px;
   font-size: 16px;
@@ -211,10 +226,11 @@ $light_gray: #eee;
 }
 
 .left {
-    float: left;
+  float: left;
 }
+
 .right {
-    float: right;
+  float: right;
 }
 </style>
 
@@ -225,12 +241,14 @@ $light_gray: #eee;
     background-color: transparent;
     box-shadow: none;
   }
+
   .el-form-item {
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
   }
+
   .el-input input {
     background: transparent;
     border: 0px;
@@ -241,6 +259,7 @@ $light_gray: #eee;
     height: 42px; //此处调整item的高度
     caret-color: #fff;
   }
+
   //hiden the input border
   .el-input__inner {
     box-shadow: none !important;
