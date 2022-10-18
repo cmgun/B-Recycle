@@ -47,7 +47,11 @@ public enum RoleEnums {
     /**
      * 原料商
      */
-    MATERIAL("material", 10);
+    MATERIAL("material", 10),
+    /**
+     * 回收商-审批中
+     */
+    RECYCLE_AUDIT("recycle_audit", 11);
 
 
     /**

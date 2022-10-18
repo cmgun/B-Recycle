@@ -1,6 +1,7 @@
 @startuml
 'https://plantuml.com/sequence-diagram
 title 用户注册（消费者/企业注册）
+actor 用户
 
 用户 -> Vue : 输入账户信息、密码、身份信息
 note left
@@ -11,10 +12,8 @@ note left
 md5密码加密
 end note
 Controller -> UserService : register
+database MySQL
 UserService -> MySQL : 检查账户、身份信息是否重复
-note left
-企业注册时，账户状态为审批中
-end note
 UserService <-- MySQL : 返回结果
 alt 账户信息重复
     Controller <-- UserService : 账户信息重复

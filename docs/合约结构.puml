@@ -51,7 +51,7 @@ Battery --> BatteryFactory
 
 '机构准入模块
 package 企业准入模块 <<Rectangle>> {
-class Enterprise {
+class EntAccess {
 address
 企业名称
 统一社会信用代码
@@ -61,30 +61,29 @@ address
 地址
 状态（正常、注销）
 备注
+准入审批方address
 
-+ 企业状态变更()
++ 查询企业准入信息()
+# 状态变更()
 }
-note left of Enterprise
-企业信息
-end note
 
-class EntAccess {
-已准入的企业列表
-机构类型与企业id映射
-企业id与机构类型映射
-企业id-准入状态映射
-
-+ 企业准入()
-+ 企业信息变更()
-+ 根据企业id查找对应机构类型()
-+ 根据机构类型查找对应企业()
-}
-note left of EntAccess
-企业准入合约
-企业信息变更需要特定权限
-end note
-
-Enterprise --> EntAccess
+'class EntAccess {
+'已准入的企业列表
+'机构类型与企业id映射
+'企业id与机构类型映射
+'企业id-准入状态映射
+'
+'+ 企业准入()
+'+ 企业信息变更()
+'+ 根据企业id查找对应机构类型()
+'+ 根据机构类型查找对应企业()
+'}
+'note left of EntAccess
+'企业准入合约
+'企业信息变更需要特定权限
+'end note
+'
+'Enterprise --> EntAccess
 
 }
 

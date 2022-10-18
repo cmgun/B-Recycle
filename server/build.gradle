@@ -32,6 +32,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:${spring_boot_version}"
     implementation "org.springframework.boot:spring-boot-starter-jdbc:${spring_boot_version}"
     implementation "org.springframework.boot:spring-boot-starter-data-redis:${spring_boot_version}"
+    implementation "org.springframework.boot:spring-boot-starter-data-mongodb:${spring_boot_version}"
     implementation "org.apache.commons:commons-pool2:2.5.0"
     implementation 'javax.validation:validation-api:1.1.0.Final'
     implementation 'org.apache.shiro:shiro-spring-boot-starter:1.9.0'

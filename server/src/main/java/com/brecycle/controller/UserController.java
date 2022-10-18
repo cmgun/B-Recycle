@@ -68,8 +68,7 @@ public class UserController {
     @ApiOperation("企业注册")
     @PostMapping("/entRegist")
     Response<UserInfo> entRegist(@RequestBody @ApiParam(value = "参数", required = true) EntRegistParam param) throws Exception {
-        // FIXME 文件传输
         userService.entRegist(param);
-        return Response.success("注册成功，等待平台审批");
+        return Response.success("注册成功");
     }
 }

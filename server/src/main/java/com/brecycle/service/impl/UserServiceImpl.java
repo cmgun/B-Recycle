@@ -7,20 +7,15 @@ import com.brecycle.config.redis.RedisUtil;
 import com.brecycle.config.shiro.JWTConfig;
 import com.brecycle.config.shiro.JwtTokenUtil;
 import com.brecycle.controller.hanlder.BusinessException;
-import com.brecycle.entity.Resource;
-import com.brecycle.entity.Role;
-import com.brecycle.entity.User;
-import com.brecycle.entity.UserRole;
+import com.brecycle.entity.*;
 import com.brecycle.entity.dto.CustomerRegistParam;
 import com.brecycle.entity.dto.EntRegistParam;
 import com.brecycle.entity.dto.UserInfo;
+import com.brecycle.enums.AccessStatus;
 import com.brecycle.enums.RoleEnums;
 import com.brecycle.enums.UserStatus;
 import com.brecycle.enums.UserType;
-import com.brecycle.mapper.ResourceMapper;
-import com.brecycle.mapper.RoleMapper;
-import com.brecycle.mapper.UserMapper;
-import com.brecycle.mapper.UserRoleMapper;
+import com.brecycle.mapper.*;
 import com.brecycle.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +52,8 @@ public class UserServiceImpl implements UserService {
     private ResourceMapper resourceMapper;
     @Autowired
     private UserRoleMapper userRoleMapper;
+    @Autowired
+    private EntInfoMapper entInfoMapper;
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
@@ -191,7 +188,7 @@ public class UserServiceImpl implements UserService {
         User entity = new User();
         entity.setUserName(param.getUserName());
         entity.setPassword(param.getPassword());
-        entity.setStatus(UserStatus.AUDIT.getValue());
+        entity.setStatus(UserStatus.NORMAL.getValue());
         entity.setName(param.getName());
         entity.setMobile(param.getPhone());
         entity.setIdno(param.getIdno());
@@ -204,7 +201,15 @@ public class UserServiceImpl implements UserService {
         // 关联角色
         UserRole userRole = new UserRole();
         userRole.setUserId(entity.getId());
-        userRole.setRoleId(Long.valueOf(param.getType()));
+        // 回收商特有的审批中角色，控制资源
+        userRole.setRoleId(Integer.valueOf(param.getType()).equals(RoleEnums.RECYCLE.getKey())
+                ? Long.valueOf(RoleEnums.RECYCLE_AUDIT.getKey()) : Long.valueOf(param.getType()));
         userRoleMapper.insert(userRole);
+        // 关联企业信息
+        EntInfo entInfo = new EntInfo();
+        entInfo.setUserId(entity.getId());
+        entInfo.setAccessStatus(Integer.valueOf(param.getType()).equals(RoleEnums.RECYCLE.getKey())
+                ? AccessStatus.WAIT_APPLY.getValue() : AccessStatus.DEFAULT.getValue());
+        entInfoMapper.insert(entInfo);
     }
 }

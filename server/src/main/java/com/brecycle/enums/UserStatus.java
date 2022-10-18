@@ -17,13 +17,9 @@ public enum UserStatus {
      */
     NORMAL("1"),
     /**
-     * 审批中
-     */
-    AUDIT("2"),
-    /**
      * 禁用
      */
-    FREEZE("3");
+    FREEZE("2");
 
     /**
      * value
