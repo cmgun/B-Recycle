@@ -81,6 +81,8 @@ const checkIDnumber = (rule: any, value: any, callback: any) => {
   setTimeout(() => {
     if (!Number.isInteger(value)) {
       callback(new Error('请输入数字'))
+    }else{
+      callback()
     }
   }, 1000)
 }
@@ -88,6 +90,8 @@ const checkIDnumber = (rule: any, value: any, callback: any) => {
 const checkAccountNumber = (rule: any, value: any, callback: any) => {
   if (!value) {
     return callback(new Error('请输入英文和数字的组合'))
+  }else{
+    callback()
   }
 }
 
@@ -99,13 +103,9 @@ const checkPhoneNumber = (rule: any, value: any, callback: any) => {
     if (!Number.isInteger(value)) {
       callback(new Error('请输入数字'))
     }
-    // else {
-    //   if (value < 18) {
-    //     callback(new Error('未成年人禁止注册'))
-    //   } else {
-    //     callback()
-    //   }
-    // }
+    else {
+        callback()
+    }
   }, 1000)
 }
 
