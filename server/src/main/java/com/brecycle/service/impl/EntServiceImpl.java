@@ -1,13 +1,19 @@
 package com.brecycle.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.brecycle.controller.hanlder.BusinessException;
 import com.brecycle.entity.EntInfo;
 import com.brecycle.entity.MongoFile;
 import com.brecycle.entity.User;
 import com.brecycle.entity.UserFile;
+import com.brecycle.entity.dto.EntListDTO;
+import com.brecycle.entity.dto.EntListParam;
+import com.brecycle.entity.dto.PageResult;
 import com.brecycle.enums.AccessStatus;
 import com.brecycle.mapper.EntInfoMapper;
 import com.brecycle.mapper.UserFileMapper;
@@ -17,6 +23,8 @@ import com.brecycle.service.MongoFileRepository;
 import com.brecycle.service.UserService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -80,7 +88,26 @@ public class EntServiceImpl implements EntService {
         entInfoMapper.update(entInfo, new LambdaUpdateWrapper<EntInfo>().eq(EntInfo::getUserId, user.getId()));
     }
 
-    public MongoFile uploadFile(MultipartFile file, String userId) throws Exception {
+    @Override
+    public PageResult<EntListDTO> getEntList(EntListParam param) {
+        IPage page = new Page<>(param.getPageNo(), param.getPageSize());
+        IPage<EntListDTO> data = userMapper.selectEntListByPage(page, param);
+        for (EntListDTO item : data.getRecords()) {
+            List<UserFile> files = userFileMapper.selectList(new LambdaQueryWrapper<UserFile>().eq(UserFile::getUserId, item.getId()));
+            if (CollectionUtils.isNotEmpty(files)) {
+                item.setFileId(files.stream().map(UserFile::getFileId).collect(Collectors.toList()));
+            }
+        }
+        PageResult<EntListDTO> result = new PageResult<>();
+        result.setTotal(data.getTotal());
+        result.setPageNo(data.getCurrent());
+        result.setPageCount(data.getPages());
+        result.setPageSize(data.getSize());
+        result.setData(data.getRecords());
+        return result;
+    }
+
+    private MongoFile uploadFile(MultipartFile file, String userId) throws Exception {
         if (file.getSize() > 16777216) {
             return this.saveGridFsFile(file, userId);
         } else {
@@ -121,7 +148,7 @@ public class EntServiceImpl implements EntService {
      * @return
      * @throws Exception
      */
-    public MongoFile saveBinaryFile(MultipartFile file, String userName) throws Exception {
+    private MongoFile saveBinaryFile(MultipartFile file, String userName) throws Exception {
         String suffix = getFileSuffix(file);
         String fileName = userName + "_" + file.getOriginalFilename();
         String md5 = DigestUtils.md5DigestAsHex(file.getInputStream());

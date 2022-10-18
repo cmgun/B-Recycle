@@ -3,6 +3,9 @@ package com.brecycle.controller;
 import com.brecycle.common.Response;
 import com.brecycle.config.shiro.JWTConfig;
 import com.brecycle.config.shiro.JwtTokenUtil;
+import com.brecycle.entity.dto.EntListDTO;
+import com.brecycle.entity.dto.EntListParam;
+import com.brecycle.entity.dto.PageResult;
 import com.brecycle.service.EntService;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.*;
@@ -12,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * 机构准入
@@ -38,5 +40,16 @@ public class EntController {
         entService.apply(Lists.newArrayList(file), userName);
         return Response.success("操作成功");
     }
+
+    @ApiOperation("查询企业列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "AUTHORIZE_TOKEN", value = "AUTHORIZE_TOKEN", dataType = "String", required = true)
+    })
+    @PostMapping("/list")
+    Response list(@RequestBody @ApiParam(value = "参数", required = true) EntListParam param) {
+        PageResult<EntListDTO> result = entService.getEntList(param);
+        return Response.success("查询成功", result);
+    }
+
 
 }
