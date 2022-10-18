@@ -34,7 +34,8 @@ UserService <-- JAVA_SDK : 返回账户的密钥对
 
 UserService -> MySQL : 数据持久化
 note left
-账户信息、地址信息、密钥对
+账户信息
+关联文件/角色
 end note
 UserService <-- MySQL : 处理成功
 Controller <-- UserService : 返回结果

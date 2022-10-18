@@ -1,6 +1,7 @@
 package com.brecycle.service;
 
 import com.brecycle.entity.dto.CustomerRegistParam;
+import com.brecycle.entity.dto.EntRegistParam;
 import com.brecycle.entity.dto.UserInfo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,5 +31,15 @@ public interface UserService {
      */
     void logout(String userName);
 
+    /**
+     * 消费者注册
+     * @param param
+     */
     void customerRegist(CustomerRegistParam param);
+
+    /**
+     * 企业注册
+     * @param param
+     */
+    void entRegist(EntRegistParam param);
 }

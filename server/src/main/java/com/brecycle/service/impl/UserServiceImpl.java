@@ -10,12 +10,17 @@ import com.brecycle.controller.hanlder.BusinessException;
 import com.brecycle.entity.Resource;
 import com.brecycle.entity.Role;
 import com.brecycle.entity.User;
+import com.brecycle.entity.UserRole;
 import com.brecycle.entity.dto.CustomerRegistParam;
+import com.brecycle.entity.dto.EntRegistParam;
 import com.brecycle.entity.dto.UserInfo;
+import com.brecycle.enums.RoleEnums;
 import com.brecycle.enums.UserStatus;
+import com.brecycle.enums.UserType;
 import com.brecycle.mapper.ResourceMapper;
 import com.brecycle.mapper.RoleMapper;
 import com.brecycle.mapper.UserMapper;
+import com.brecycle.mapper.UserRoleMapper;
 import com.brecycle.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +55,8 @@ public class UserServiceImpl implements UserService {
     private RoleMapper roleMapper;
     @Autowired
     private ResourceMapper resourceMapper;
+    @Autowired
+    private UserRoleMapper userRoleMapper;
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
@@ -139,9 +146,6 @@ public class UserServiceImpl implements UserService {
         String accountAddress = cryptoKeyPair.getAddress();
         String privateKey = cryptoKeyPair.getHexPrivateKey();
 
-        // 创建weid
-//        String weid = createWeIdAndSetAttr(cryptoKeyPair.getHexPublicKey(), cryptoKeyPair.getHexPrivateKey());
-
         User entity = new User();
         entity.setUserName(param.getUserName());
         entity.setPassword(param.getPassword());
@@ -151,37 +155,56 @@ public class UserServiceImpl implements UserService {
         entity.setIdno(param.getIdno());
         entity.setAddr(accountAddress);
         entity.setPrivateKey(privateKey);
-//        entity.setWeId(weid);
-
+        entity.setUserType(UserType.CUSTOMER.getValue());
         userMapper.insert(entity);
-
-        // 账户信息保存
-//        cryptoKeyPair.storeKeyPairWithP12(fiscoBcos.getAccountTmpFilePath(), param.getPassword());
-        // 账户文件删除
+        // 关联角色
+        UserRole userRole = new UserRole();
+        userRole.setUserId(entity.getId());
+        userRole.setRoleId(Long.valueOf(RoleEnums.CUSTOMER.getKey()));
+        userRoleMapper.insert(userRole);
     }
 
-    /**
-     * 创建weid
-     * @param publicKey
-     * @param privateKey
-     * @return
-     */
-//    private String createWeIdAndSetAttr(String publicKey, String privateKey) {
-//        log.info("begin create weId and set attribute without parameter");
-//        WeIdService weIdService = new WeIdServiceImpl();
-//
-//        // 1, create weId using the incoming public and private keys
-//        CreateWeIdArgs createWeIdArgs = new CreateWeIdArgs();
-//        createWeIdArgs.setPublicKey(publicKey);
-//        createWeIdArgs.setWeIdPrivateKey(new WeIdPrivateKey());
-//        createWeIdArgs.getWeIdPrivateKey().setPrivateKey(privateKey);
-//        ResponseData<String> createResult = weIdService.createWeId(createWeIdArgs);
-//        log.info("createWeIdAndSetAttr response:{}", createResult);
-//        if (createResult.getErrorCode().intValue() != ErrorCode.SUCCESS.getCode()) {
-//            CreateWeIdDataResult body = JSONObject.parseObject(createResult.getResult(), CreateWeIdDataResult.class);
-//            return body.getWeId();
-//        }
-//
-//        throw new BusinessException("创建weid失败");
-//    }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void entRegist(EntRegistParam param) {
+        // 查询是否已有重复账户
+        User existsUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getUserName, param.getUserName()));
+        if (existsUser != null) {
+            throw new BusinessException("账户重复");
+        }
+        existsUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getIdno, param.getIdno()));
+        if (existsUser != null) {
+            throw new BusinessException("企业信息重复");
+        }
+
+        // 创建非国密账户
+        // 创建非国密类型的CryptoSuite
+        CryptoSuite cryptoSuite = new CryptoSuite(CryptoType.ECDSA_TYPE);
+        // 随机生成非国密公私钥对
+        CryptoKeyPair cryptoKeyPair = cryptoSuite.createKeyPair();
+        // 获取账户地址
+        String accountAddress = cryptoKeyPair.getAddress();
+        String privateKey = cryptoKeyPair.getHexPrivateKey();
+
+        User entity = new User();
+        entity.setUserName(param.getUserName());
+        entity.setPassword(param.getPassword());
+        entity.setStatus(UserStatus.AUDIT.getValue());
+        entity.setName(param.getName());
+        entity.setMobile(param.getPhone());
+        entity.setIdno(param.getIdno());
+        entity.setAddr(accountAddress);
+        entity.setPrivateKey(privateKey);
+        entity.setUserType(UserType.ENTERPRISE.getValue());
+        entity.setAddress(param.getAddress());
+
+        userMapper.insert(entity);
+        // 关联角色
+        UserRole userRole = new UserRole();
+        userRole.setUserId(entity.getId());
+        userRole.setRoleId(Long.valueOf(param.getType()));
+        userRoleMapper.insert(userRole);
+    }
 }
