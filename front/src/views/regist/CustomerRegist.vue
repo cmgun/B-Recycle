@@ -3,7 +3,7 @@
   <div class="login-container columnCC">
     <el-form ref="refloginForm" class="login-form" :model="formInline" :rules="formRules">
       <div class="title-container">
-        <h3 class="title text-center">{{ settings.title }}</h3>
+        <h3 class="title text-center">消费者注册</h3>
       </div>
       <el-form-item prop="username" :rules="formRules.isNotNull">
         <div class="rowSC">
@@ -36,13 +36,14 @@
         </div>
       </el-form-item>
       <div class="tip-message">{{ tipMessage }}</div>
+
       <el-button :loading="loading" type="primary" class="login-btn" size="default" @click.prevent="handleLogin">
-        登录
+        注册
       </el-button>
-      <div>
-        <el-link type="primary" target="_blank" class="left" @click.prevent="customerRegist">消费者注册</el-link>
-        <el-link type="primary" target="_blank" class="right" @click.prevent="entRegist">企业注册</el-link>
-      </div>
+      <div></div>
+      <el-button :loading="loading" type="info" class="login-btn" size="default" @click.prevent="backLogin">
+        返回
+      </el-button>
     </el-form>
   </div>
 </template>
@@ -152,11 +153,8 @@ let showPwd = () => {
 }
 
 // 注册页跳转
-let customerRegist = () => {
-  router.push('/customerRegist')
-}
-let entRegist = () => {
-  router.push('/entRegist')
+let backLogin = () => {
+  router.push(`/login`)
 }
 </script>
 
@@ -202,6 +200,7 @@ $light_gray: #eee;
 .login-btn {
   width: 100%;
   margin-bottom: 30px;
+  float: none;
 }
 .show-pwd {
   width: 50px;

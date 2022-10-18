@@ -25,7 +25,7 @@ public class User {
      * 用户名
      */
     @TableField
-    private String name;
+    private String userName;
 
     /**
      * 密码
@@ -34,10 +34,10 @@ public class User {
     private String password;
 
     /**
-     * 密钥对
+     * 私钥
      */
     @TableField
-    private String keyFile;
+    private String privateKey;
 
     /**
      * weId
@@ -56,4 +56,22 @@ public class User {
      */
     @TableField
     private String addr;
+
+    /**
+     * 身份证
+     */
+    @TableField
+    private String idno;
+
+    /**
+     * 手机号
+     */
+    @TableField
+    private String mobile;
+
+    /**
+     * 姓名
+     */
+    @TableField
+    private String name;
 }

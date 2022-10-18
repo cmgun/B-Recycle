@@ -19,6 +19,18 @@ export const constantRoutes: RouterTy = [
     component: () => import('@/views/login/Login.vue'),
     hidden: true
   },
+  // 消费者注册
+  {
+    path: '/customerRegist',
+    component: () => import('@/views/regist/CustomerRegist.vue'),
+    hidden: true
+  },
+  // 企业注册
+  {
+    path: '/entRegist',
+    component: () => import('@/views/regist/EntRegist.vue'),
+    hidden: true
+  },
   {
     path: '/404',
     component: () => import('@/views/error-page/404.vue'),

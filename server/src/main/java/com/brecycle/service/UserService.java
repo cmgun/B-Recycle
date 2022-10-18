@@ -1,5 +1,6 @@
 package com.brecycle.service;
 
+import com.brecycle.entity.dto.CustomerRegistParam;
 import com.brecycle.entity.dto.UserInfo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,5 +30,5 @@ public interface UserService {
      */
     void logout(String userName);
 
-    void customerRegist();
+    void customerRegist(CustomerRegistParam param);
 }

@@ -3,6 +3,7 @@ package com.brecycle.controller;
 import com.brecycle.common.Response;
 import com.brecycle.config.shiro.JWTConfig;
 import com.brecycle.config.shiro.JwtTokenUtil;
+import com.brecycle.entity.dto.CustomerRegistParam;
 import com.brecycle.entity.dto.UserInfo;
 import com.brecycle.entity.dto.UserLoginParam;
 import com.brecycle.service.UserService;
@@ -59,9 +60,9 @@ public class UserController {
     // FIXME 消费者注册
     @ApiOperation("消费者注册")
     @PostMapping("/customerRegist")
-    Response<UserInfo> customerRegist(HttpServletRequest request) throws Exception {
-        UserInfo userInfo = userService.getInfo(request);
-        return Response.success("注册成功", userInfo);
+    Response<UserInfo> customerRegist(@RequestBody @ApiParam(value = "参数", required = true) CustomerRegistParam param) throws Exception {
+        userService.customerRegist(param);
+        return Response.success("注册成功");
     }
 
     // FIXME 企业注册

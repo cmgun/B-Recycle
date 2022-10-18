@@ -18,8 +18,6 @@ end note
 UserService <-- MySQL : 返回结果
 alt 账户信息重复
     Controller <-- UserService : 账户信息重复
-else 注册用户为企业
-    Controller <-- UserService : 注册成功，等待准入审批
     Vue <-- Controller : 返回结果
     用户 <-- Vue : 返回登录页
 end alt
@@ -31,13 +29,8 @@ p12格式存储
 end note
 
 UserService <-- JAVA_SDK : 返回账户的密钥对
-UserService -> UserService : 取出临时账户文件里生成的证书文件
-note left
-该临时文件下的文件定时删除
-end note
-
-UserService -> WeIdentity : 根据密钥对生成weid
-UserService <-- WeIdentity : 返回weid
+'UserService -> WeIdentity : 根据密钥对生成weid
+'UserService <-- WeIdentity : 返回weid
 
 UserService -> MySQL : 数据持久化
 note left

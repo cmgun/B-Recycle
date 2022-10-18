@@ -5,6 +5,6 @@
 
     <select id="selectByUserName" resultType="com.brecycle.entity.User">
         select * from user
-        where name = #{name}
+        where name = #{name} and status = 1
     </select>
 </mapper>

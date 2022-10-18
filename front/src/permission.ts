@@ -9,7 +9,7 @@ import { RouterRowTy } from '~/router'
 import { useUserStore } from '@/store/user'
 import { usePermissionStore } from '@/store/permission'
 
-const whiteList = ['/login', '/404', '/401'] // no redirect whitelist
+const whiteList = ['/login', '/404', '/401', '/customerRegist', '/entRegist'] // no redirect whitelist
 router.beforeEach(async (to: any, from, next: any) => {
   // start progress bar
   if (settings.isNeedNprogress) NProgress.start()
