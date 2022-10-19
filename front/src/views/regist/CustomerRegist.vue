@@ -173,11 +173,13 @@ const rules = reactive({
   ID: [{ validator: checkID, trigger: 'blur' }]
 })
 
+// 提交表单的处理方法，注册信息接口
 const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate((valid) => {
     if (valid) {
       console.log('submit!');
+      // 提交后的信息弹窗方法
       handleregister(valid);
     } else {
       console.log('error submit!');
