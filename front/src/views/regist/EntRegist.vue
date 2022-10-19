@@ -5,12 +5,13 @@
     <div class="common-layout">
       <el-container>
         <el-header height="100xp">
-          <h2 class="text-center ">
+          <br />
+          <h2 class="text-center">
             企业注册信息表
           </h2>
         </el-header>
         <el-container>
-          <el-aside width="600px"></el-aside>
+          <el-aside width="720px"></el-aside>
           <el-main>
             <!-- X 未实现功能：账号（不允许中文）、密码 = = 再次输入密码、名字（不允许空格）、手机号11位、身份证号18位-->
             <!-- 布局看起来不够好看 -->
@@ -43,8 +44,19 @@
               <el-form-item label="地址" prop="Address">
                 <el-input v-model="ruleForm.Address" type="text" clearable />
               </el-form-item>
-
-
+              <!-- 选择器 -->
+              <el-form-item label="企业类型" prop="CompanyType">
+                <el-select v-model="ruleForm.CompanyType" placeholder="请选择企业类型" >
+                  <el-option label="车企" value="CQ" />
+                  <el-option label="电池生产企业" value="DCSCS" />
+                  <el-option label="电池租赁商" value="DCZLS" />
+                  <el-option label="电池回收商" value="DCHSS" />
+                  <el-option label="储能企业" value="CNQY" />
+                  <el-option label="电池原材料生产企业" value="DCYCLSCQY" />
+                </el-select>
+              </el-form-item>
+              <!-- 空一行！ -->
+              <br />
               <el-form-item>
                 <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
                 <el-button @click="resetForm(ruleFormRef)">重置</el-button>
@@ -63,8 +75,8 @@ import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
 
-
 // handleregister 处理注册的方法：提交数据给后端【可参考登录处理方法】，返回一个弹框：注册信息已提交
+
 const handleregister = (valid) => {
   //注册信息提交弹窗 
   if (valid)
@@ -170,6 +182,7 @@ const ruleForm = reactive({
   companyID: '',
   Address: '',
   PhoneNumber: '',
+  CompanyType: '',
 })
 
 const rules = reactive({
@@ -180,6 +193,14 @@ const rules = reactive({
   companyID: [{ validator: companyID, trigger: 'blur' }],
   TrustNumber: [{ validator: TrustNumber, trigger: 'blur' }],
   Address: [{ validator: Address, trigger: 'blur' }],
+  CompanyType: [
+    {
+      // 决定了是否必须填
+      required: true, 
+      message: '请选择企业类型',
+      trigger: 'change',
+    },
+  ],
 })
 
 const submitForm = (formEl: FormInstance | undefined) => {

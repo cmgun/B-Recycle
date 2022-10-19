@@ -5,12 +5,13 @@
     <div class="common-layout">
       <el-container>
         <el-header height="100xp">
-          <h2 class="text-center ">
-            消费者注册信息表
+          <br />
+          <h2 class="text-center " >
+            消费者信息注册表
           </h2>
         </el-header>
         <el-container>
-          <el-aside width="600px"></el-aside>
+          <el-aside width="720px"></el-aside>
           <el-main>
             <!-- X 未实现功能：账号（不允许中文）、密码 = = 再次输入密码、名字（不允许空格）、手机号11位、身份证号18位-->
             <!-- 布局看起来不够好看 -->
@@ -38,7 +39,7 @@
               <el-form-item label="电话号码" prop="PhoneNumber">
                 <el-input v-model.number="ruleForm.PhoneNumber" clearable />
               </el-form-item>
-
+              <br />
               <el-form-item>
                 <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
                 <el-button @click="resetForm(ruleFormRef)">重置</el-button>
