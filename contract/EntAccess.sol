@@ -6,26 +6,36 @@ pragma experimental ABIEncoderV2;
  @author cmgun
 */
 contract EntAccess {
-    // 企业
-    address _enterprise;
-    // 电池id
-    string _id;
-    // 批次号
-    string _batchNo;
-    // 电池状态 0-初始化,1-待安全审查,2-正常,3-待回收,4-回收中,5-梯次利用,6-拆解
-    int16 _status;
-    // 电池信息
-    string _info;
+    // 企业账号地址
+    address _enterpriseAddr;
+    // 企业名称
+    string _name;
+    // 统一社会信用代码
+    string _idno;
+    // 电话
+    string _mobile;
+    // 联系地址地址
+    string _addr;
+    // 准入备注
+    string _remark;
+    // 准入审批方
+    address _approvalAddr;
+    // 准入时间
+    uint _accessTime;
 
+    constructor(address entAddr, string name, string idno, string mobile, string addr, string remark) public {
+        _enterpriseAddr = entAddr;
+        _name = name;
+        _idno = idno;
+        _mobile = mobile;
+        _addr = addr;
+        _remark = remark;
+        _approvalAddr = msg.sender;
+        _accessTime = now;
+    }
 
-    // 安全机构审查
-    event newStatus(address addr, int16 status, uint timestamp, string remark);
-
-    constructor(string id, string batchNo, string info) public {
-        _id = id;
-        _batchNo = batchNo;
-        _info = info;
-        _traceData.push(TraceData({addr:msg.sender, status:0, timestamp:now, remark:"create"}));
-        emit newStatus(msg.sender, 0, now, "create");
+    // 获取准入信息
+    function getAccessInfo() public view returns(address, string, string, address, uint) {
+        return (_enterpriseAddr, _name, _remark, _approvalAddr, _accessTime);
     }
 }

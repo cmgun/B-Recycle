@@ -1,8 +1,6 @@
 package com.brecycle.service;
 
-import com.brecycle.entity.dto.EntListDTO;
-import com.brecycle.entity.dto.EntListParam;
-import com.brecycle.entity.dto.PageResult;
+import com.brecycle.entity.dto.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,4 +21,18 @@ public interface EntService {
      * @return
      */
     PageResult<EntListDTO> getEntList(EntListParam param);
+
+    /**
+     * 审批通过
+     * @param param 企业参数
+     * @param currentUserName 当前用户
+     */
+    void accessPass(EntAccessPassParam param, String currentUserName) throws Exception;
+
+    /**
+     * 获取准入结果
+     * @param userName
+     * @return
+     */
+    AccessInfoDTO getAccessInfo(String userName) throws Exception ;
 }

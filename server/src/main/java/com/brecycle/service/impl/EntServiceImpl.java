@@ -1,31 +1,32 @@
 package com.brecycle.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.brecycle.config.FiscoBcos;
+import com.brecycle.contract.EntAccess;
 import com.brecycle.controller.hanlder.BusinessException;
-import com.brecycle.entity.EntInfo;
-import com.brecycle.entity.MongoFile;
-import com.brecycle.entity.User;
-import com.brecycle.entity.UserFile;
-import com.brecycle.entity.dto.EntListDTO;
-import com.brecycle.entity.dto.EntListParam;
-import com.brecycle.entity.dto.PageResult;
+import com.brecycle.entity.*;
+import com.brecycle.entity.dto.*;
 import com.brecycle.enums.AccessStatus;
+import com.brecycle.enums.RoleEnums;
 import com.brecycle.mapper.EntInfoMapper;
 import com.brecycle.mapper.UserFileMapper;
 import com.brecycle.mapper.UserMapper;
+import com.brecycle.mapper.UserRoleMapper;
 import com.brecycle.service.EntService;
 import com.brecycle.service.MongoFileRepository;
-import com.brecycle.service.UserService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bson.types.Binary;
+import org.fisco.bcos.sdk.BcosSDK;
+import org.fisco.bcos.sdk.abi.datatypes.generated.tuples.generated.Tuple5;
+import org.fisco.bcos.sdk.client.Client;
+import org.fisco.bcos.sdk.crypto.CryptoSuite;
+import org.fisco.bcos.sdk.crypto.keypair.CryptoKeyPair;
+import org.fisco.bcos.sdk.model.CryptoType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
@@ -34,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -59,6 +60,11 @@ public class EntServiceImpl implements EntService {
     UserFileMapper userFileMapper;
     @Autowired
     EntInfoMapper entInfoMapper;
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+    @Autowired
+    private FiscoBcos fiscoBcos;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -104,6 +110,61 @@ public class EntServiceImpl implements EntService {
         result.setPageCount(data.getPages());
         result.setPageSize(data.getSize());
         result.setData(data.getRecords());
+        return result;
+    }
+
+    @Override
+    public void accessPass(EntAccessPassParam param, String currentUserName) throws Exception {
+        BcosSDK bcosSDK = fiscoBcos.getBcosSDK();
+        Client client = bcosSDK.getClient(1);
+        // 获取当前登录用户的账户信息
+        User user = userMapper.selectByUserName(currentUserName);
+        CryptoSuite cryptoSuite = new CryptoSuite(CryptoType.ECDSA_TYPE);
+        CryptoKeyPair currentKeyPair = cryptoSuite.getKeyPairFactory().createKeyPair(user.getPrivateKey());
+        // 查询准入企业信息
+        User accessEnt = userMapper.selectById(param.getId());
+        // 创建准入合约
+        EntAccess entAccess = EntAccess.deploy(client, currentKeyPair, accessEnt.getAddr()
+                , accessEnt.getName(), accessEnt.getIdno(), accessEnt.getMobile()
+                , accessEnt.getAddress(), param.getRemark());
+        log.info("准入合约部署成功，合约地址:{}", entAccess.getContractAddress());
+        // 保存合约地址
+        EntInfo entInfo = new EntInfo();
+        entInfo.setAccessContractAddr(entAccess.getContractAddress());
+        entInfo.setAccessStatus(AccessStatus.PASS.getValue());
+        entInfoMapper.update(entInfo, new LambdaUpdateWrapper<EntInfo>().eq(EntInfo::getUserId, accessEnt.getId()));
+        // 更新角色信息
+        UserRole userRole = new UserRole();
+        userRole.setRoleId(Long.valueOf(RoleEnums.RECYCLE.getKey()));
+        userRoleMapper.update(userRole, new LambdaUpdateWrapper<UserRole>()
+                .eq(UserRole::getUserId, accessEnt.getId())
+                .eq(UserRole::getRoleId, RoleEnums.AUDIT.getKey()));
+    }
+
+    @Override
+    public AccessInfoDTO getAccessInfo(String userName) throws Exception {
+        User user = userMapper.selectByUserName(userName);
+        EntInfo entInfo = entInfoMapper.selectOne(new LambdaUpdateWrapper<EntInfo>().eq(EntInfo::getUserId, user.getId()));
+        AccessInfoDTO result = new AccessInfoDTO();
+        result.setAccessStatus(entInfo.getAccessStatus());
+        result.setEntName(user.getName());
+        if (result.getAccessStatus().equals(AccessStatus.PASS.getValue())) {
+            result.setAccessContractAddr(entInfo.getAccessContractAddr());
+            BcosSDK bcosSDK = fiscoBcos.getBcosSDK();
+            Client client = bcosSDK.getClient(1);
+            CryptoSuite cryptoSuite = new CryptoSuite(CryptoType.ECDSA_TYPE);
+            CryptoKeyPair currentKeyPair = cryptoSuite.getKeyPairFactory().createKeyPair(user.getPrivateKey());
+            // 查询合约信息
+            EntAccess entAccess = EntAccess.load(result.getAccessContractAddr(), client, currentKeyPair);
+            Tuple5<String, String, String, String, BigInteger> info = entAccess.getAccessInfo();
+            // _enterpriseAddr, _name, _remark, _approvalAddr, _accessTime
+            // 审批机构地址
+            result.setApprovalEntAddr(info.getValue4());
+            result.setRemark(info.getValue3());
+            // 填充审批机构信息
+            User approval = userMapper.selectOne(new LambdaUpdateWrapper<User>().eq(User::getAddr, result.getApprovalEntAddr()));
+            result.setApprovalEntName(approval.getName());
+        }
         return result;
     }
 

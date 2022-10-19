@@ -25,7 +25,7 @@ public enum AccessStatus {
      */
     REJECT("3"),
     /**
-     * 审批拒绝
+     * 审批通过
      */
     PASS("4");
 

@@ -3,9 +3,7 @@ package com.brecycle.controller;
 import com.brecycle.common.Response;
 import com.brecycle.config.shiro.JWTConfig;
 import com.brecycle.config.shiro.JwtTokenUtil;
-import com.brecycle.entity.dto.EntListDTO;
-import com.brecycle.entity.dto.EntListParam;
-import com.brecycle.entity.dto.PageResult;
+import com.brecycle.entity.dto.*;
 import com.brecycle.service.EntService;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.*;
@@ -51,5 +49,26 @@ public class EntController {
         return Response.success("查询成功", result);
     }
 
-
+    @ApiOperation("审批通过")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "AUTHORIZE_TOKEN", value = "AUTHORIZE_TOKEN", dataType = "String", required = true)
+    })
+    @PostMapping("/access/pass")
+    Response pass(@RequestBody @ApiParam(value = "参数", required = true) EntAccessPassParam param, HttpServletRequest request) throws Exception {
+        String token = request.getHeader(JWTConfig.tokenHeader);
+        String userName = JwtTokenUtil.getUsername(token);
+        entService.accessPass(param, userName);
+        return Response.success("操作成功");
+    }
+    @ApiOperation("查询当前企业准入审批结果")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "AUTHORIZE_TOKEN", value = "AUTHORIZE_TOKEN", dataType = "String", required = true)
+    })
+    @PostMapping("/access/curInfo")
+    Response getCurrentAccessInfo(HttpServletRequest request) throws Exception {
+        String token = request.getHeader(JWTConfig.tokenHeader);
+        String userName = JwtTokenUtil.getUsername(token);
+        AccessInfoDTO result = entService.getAccessInfo(userName);
+        return Response.success("查询成功", result);
+    }
 }

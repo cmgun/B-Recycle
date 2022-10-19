@@ -203,7 +203,7 @@ public class UserServiceImpl implements UserService {
         userRole.setUserId(entity.getId());
         // 回收商特有的审批中角色，控制资源
         userRole.setRoleId(Integer.valueOf(param.getType()).equals(RoleEnums.RECYCLE.getKey())
-                ? Long.valueOf(RoleEnums.RECYCLE_AUDIT.getKey()) : Long.valueOf(param.getType()));
+                ? Long.valueOf(RoleEnums.AUDIT.getKey()) : Long.valueOf(param.getType()));
         userRoleMapper.insert(userRole);
         // 关联企业信息
         EntInfo entInfo = new EntInfo();

@@ -49,9 +49,9 @@ public enum RoleEnums {
      */
     MATERIAL("material", 10),
     /**
-     * 回收商-审批中
+     * 企业审批中角色
      */
-    RECYCLE_AUDIT("recycle_audit", 11);
+    AUDIT("audit", 11);
 
 
     /**
