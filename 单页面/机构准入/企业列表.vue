@@ -1,6 +1,8 @@
 <!-- tag!!! 是企业名字的标签信息 -->
 <!-- json文件返回的信息与prop字段对应 -->
 <!-- 分页需要后端信息返回关键字才好写成动态的，所以这里都写成静态的了 -->
+<!-- 和v-model 字段息息相关！看errorlog页面中的searchForm即可 -->
+
 <template>
     <!-- el-scrollbar是滚动条 -->
     <el-scrollbar>
@@ -36,6 +38,7 @@
     </el-scrollbar>
     <!----------------------------------------- 分页 --------------------------------------------->
     <!-- 此处需要用axiosReq请求信息，可以参考errorlog.vue 中分页的用法 -->
+     <!-----关注 Errorlog 中 v-model的使用 ----------------->
     <el-affix position="bottom" :offset="20">
         <div class="columnCC mt2 ">
             <el-pagination v-model:currentPage="pageNum" v-model:page-size="pageSize" :page-sizes="[10, 20, 30, 40]"
