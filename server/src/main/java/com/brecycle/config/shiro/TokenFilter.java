@@ -1,6 +1,6 @@
 package com.brecycle.config.shiro;
 
-import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSON;
 import com.brecycle.common.Response;
 import com.brecycle.config.redis.RedisConstant;
 import com.brecycle.config.redis.RedisUtil;
@@ -49,7 +49,7 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
         }
         //1.如果请求头不存在 Token，则可能是执行登陆操作或者是游客状态访问，无需检查 com.token，直接返回 true
         //2.如果请求头不存在 Token，并且返回false，说明走我们的过滤器时必须带token
-        return true;
+        return false;
     }
 
     /**
@@ -147,8 +147,9 @@ public class TokenFilter extends BasicHttpAuthenticationFilter {
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json; charset=utf-8");
         Response error = Response.builder().code(Response.UNAUTHORIZED).msg("无请求权限").build();
+
         try (PrintWriter out = response.getWriter()) {
-            out.append(JSONUtils.toJSONString(error));
+            out.print(JSON.toJSONString(error));
         } catch (IOException e) {
             log.error("sendChallenge error,can not resolve httpServletResponse");
         }

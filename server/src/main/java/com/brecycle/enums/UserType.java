@@ -3,30 +3,26 @@ package com.brecycle.enums;
 import lombok.Getter;
 
 /**
- * 用户状态枚举类
+ * 用户类型枚举类
  */
 @Getter
-public enum UserStatus {
+public enum UserType {
 
     /**
-     * 初始化
+     * 消费者
      */
-    DEFAULT("0"),
+    CUSTOMER("1"),
     /**
-     * 正常
+     * 企业
      */
-    NORMAL("1"),
-    /**
-     * 禁用
-     */
-    FREEZE("2");
+    ENTERPRISE("2");
 
     /**
      * value
      */
     private final String value;
 
-    UserStatus(String value) {
+    UserType(String value) {
         this.value = value;
     }
 }

@@ -74,4 +74,16 @@ public class User {
      */
     @TableField
     private String name;
+
+    /**
+     * 用户类型
+     */
+    @TableField
+    private String userType;
+
+    /**
+     * 联系地址
+     */
+    @TableField
+    private String address;
 }

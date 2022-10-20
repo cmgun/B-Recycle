@@ -11,6 +11,9 @@ spring:
 #        enabled: false
 #      fail-fast: true
 #      profile: ${spring.profiles.active}
+  servlet:
+    multipart:
+      max-file-size: 100MB
   datasource:
     username: root
     password: root
@@ -41,6 +44,11 @@ spring:
       shutdown-timeout: 100ms
     password: ''
     port: 6379
+  data:
+    mongodb:
+      host: 127.0.0.1
+      port: 27017
+      database: brecycle
 
 jwt:
   authoritiesKey: auth
