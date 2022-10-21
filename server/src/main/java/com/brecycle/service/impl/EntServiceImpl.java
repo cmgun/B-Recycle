@@ -18,6 +18,9 @@ import com.brecycle.mapper.UserRoleMapper;
 import com.brecycle.service.EntService;
 import com.brecycle.service.MongoFileRepository;
 import com.google.common.collect.Lists;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSDownloadStream;
+import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.bson.types.Binary;
@@ -29,16 +32,21 @@ import org.fisco.bcos.sdk.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.model.CryptoType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -54,6 +62,8 @@ public class EntServiceImpl implements EntService {
     GridFsTemplate gridFsTemplate;
     @Autowired
     MongoTemplate mongoTemplate;
+    @Autowired
+    GridFSBucket gridFSBucket;
     @Autowired
     UserMapper userMapper;
     @Autowired
@@ -114,7 +124,9 @@ public class EntServiceImpl implements EntService {
     }
 
     @Override
-    public void accessPass(EntAccessPassParam param, String currentUserName) throws Exception {
+    @Transactional(rollbackFor = Exception.class)
+    public void accessPass(EntAccessAuditParam param, String currentUserName) throws Exception {
+        // SDK配置
         BcosSDK bcosSDK = fiscoBcos.getBcosSDK();
         Client client = bcosSDK.getClient(1);
         // 获取当前登录用户的账户信息
@@ -132,6 +144,7 @@ public class EntServiceImpl implements EntService {
         EntInfo entInfo = new EntInfo();
         entInfo.setAccessContractAddr(entAccess.getContractAddress());
         entInfo.setAccessStatus(AccessStatus.PASS.getValue());
+        entInfo.setRemark(param.getRemark());
         entInfoMapper.update(entInfo, new LambdaUpdateWrapper<EntInfo>().eq(EntInfo::getUserId, accessEnt.getId()));
         // 更新角色信息
         UserRole userRole = new UserRole();
@@ -139,6 +152,17 @@ public class EntServiceImpl implements EntService {
         userRoleMapper.update(userRole, new LambdaUpdateWrapper<UserRole>()
                 .eq(UserRole::getUserId, accessEnt.getId())
                 .eq(UserRole::getRoleId, RoleEnums.AUDIT.getKey()));
+    }
+
+    @Override
+    public void accessReject(EntAccessAuditParam param, String currentUserName) {
+        // 获取对应企业的用户信息
+        User accessEnt = userMapper.selectById(param.getId());
+        EntInfo entInfo = new EntInfo();
+        entInfo.setAccessStatus(AccessStatus.REJECT.getValue());
+        entInfo.setRemark(param.getRemark());
+        // 更新准入状态和备注
+        entInfoMapper.update(entInfo, new LambdaUpdateWrapper<EntInfo>().eq(EntInfo::getUserId, accessEnt.getId()));
     }
 
     @Override
@@ -164,8 +188,50 @@ public class EntServiceImpl implements EntService {
             // 填充审批机构信息
             User approval = userMapper.selectOne(new LambdaUpdateWrapper<User>().eq(User::getAddr, result.getApprovalEntAddr()));
             result.setApprovalEntName(approval.getName());
+        } else if (result.getAccessStatus().equals(AccessStatus.REJECT.getValue())) {
+            // 审批拒绝的备注从表里取，因为没有创建合约
+            result.setRemark(entInfo.getRemark());
         }
         return result;
+    }
+
+    @Override
+    public MongoFile downloadFile(String fileId) {
+        // 获取Binary文件
+        Optional<MongoFile> file = mongoFileRepository.findById(fileId);
+        if (file.isPresent()) {
+            MongoFile mongoFile = file.get();
+            if(Objects.isNull(mongoFile.getContent())){
+                file = this.getGridFsFileById(fileId);
+            }
+        }
+        return file.get();
+    }
+
+    private Optional<MongoFile> getGridFsFileById(String id){
+        MongoFile mongoFile = mongoTemplate.findById(id , MongoFile.class );
+        if(Objects.nonNull(mongoFile)){
+            Query gridQuery = new Query().addCriteria(Criteria.where("filename").is(mongoFile.getGridFsId()));
+            try {
+                // 根据id查询文件
+                GridFSFile fsFile = gridFsTemplate.findOne(gridQuery);
+                // 打开流下载对象
+                GridFSDownloadStream in = gridFSBucket.openDownloadStream(fsFile.getObjectId());
+                if(in.getGridFSFile().getLength() > 0){
+                    // 获取流对象
+                    GridFsResource resource = new GridFsResource(fsFile, in);
+                    // 获取数据
+                    mongoFile.setContent(new Binary(resource.getInputStream().readAllBytes()));
+                    return Optional.of(mongoFile);
+                }else {
+                    return Optional.empty();
+                }
+            }catch (IOException e){
+                log.error("获取MongoDB大文件失败", e);
+            }
+        }
+
+        return Optional.empty();
     }
 
     private MongoFile uploadFile(MultipartFile file, String userId) throws Exception {

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 角色
+ * 企业信息
  *
  * @author cmgun
  */
@@ -38,4 +38,10 @@ public class EntInfo {
      */
     @TableField
     private String accessStatus;
+
+    /**
+     * 备注
+     */
+    @TableField
+    private String remark;
 }

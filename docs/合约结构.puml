@@ -17,35 +17,11 @@ class Battery {
 当前所有者
 溯源记录
 + 查询溯源记录()
-+ 电池状态变更()
-+ 增加电池充放电次数()
++ 安全认证()
+# 电池流转()
+# 电池拆解()
++ 查询电池状态()
 }
-note left of Battery
-电池合约
-电池状态变更需要根据不同状态
-进行权限判断
-end note
-
-class BatteryFactory {
-'电池列表
-账户地址与电池关系映射
-各状态的电池总量
-
-+ 新增电池()
-+ 根据id查找电池()
-+ 根据id修改电池状态()
-+ 根据批次号查找电池()
-+ 根据批次号修改电池状态()
-+ 根据id增加电池充放电次数()
-+ 查询当前地址拥有的电池()
-}
-note left of BatteryFactory
-电池工厂合约
-end note
-
-
-Battery --> BatteryFactory
-
 }
 
 

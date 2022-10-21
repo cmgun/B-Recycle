@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author cmgun
  */
 @Data
-public class EntAccessPassParam implements Serializable {
+public class EntAccessAuditParam implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
