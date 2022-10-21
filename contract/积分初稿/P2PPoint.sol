@@ -4,7 +4,7 @@ pragma solidity ^0.4.25;
 interface tokenRecipient{function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public;}
 
 contract P2PPoint{
-
+    mapping (address => uint256) public balanceOf;
 
     event LogSend( address indexed from, address indexed to, uint256 value);
 
