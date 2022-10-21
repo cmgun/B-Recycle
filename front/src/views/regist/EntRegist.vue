@@ -1,252 +1,231 @@
 <!--suppress ALL -->
 <template>
-  <div class="login-container columnCC">
-    <el-form ref="refloginForm" class="login-form" :model="formInline" :rules="formRules">
-      <div class="title-container">
-        <h3 class="title text-center">企业注册</h3>
-      </div>
-      <el-form-item prop="username" :rules="formRules.isNotNull">
-        <div class="rowSC">
-          <span class="svg-container">
-            <svg-icon icon-class="user" />
-          </span>
-          <el-input v-model="formInline.username" placeholder="用户名" />
-          <!--占位-->
-          <div class="show-pwd" />
-        </div>
-      </el-form-item>
-      <!--<el-form-item prop="password" :rules="formRules.passwordValid">-->
-      <el-form-item prop="password" :rules="formRules.isNotNull">
-        <div class="rowSC flex-1">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="refPassword"
-            v-model="formInline.password"
-            :type="passwordType"
-            name="password"
-            placeholder="password(123456)"
-            @keyup.enter="handleLogin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </div>
-      </el-form-item>
-      <div class="tip-message">{{ tipMessage }}</div>
-      <el-button :loading="loading" type="primary" class="login-btn" size="default" @click.prevent="handleLogin">
-        注册
-      </el-button>
-      <div></div>
-      <el-button :loading="loading" type="info" class="login-btn" size="default" @click.prevent="backLogin">
-        返回
-      </el-button>
-    </el-form>
+  <div>
+    <!-- 使用了container来布局 -->
+    <div class="common-layout">
+      <el-container>
+        <el-header height="100xp">
+          <br />
+          <h2 class="text-center">
+            企业注册信息表
+          </h2>
+        </el-header>
+        <el-container>
+          <el-aside width="720px"></el-aside>
+          <el-main>
+            <!-- X 未实现功能：账号（不允许中文）、密码 = = 再次输入密码、名字（不允许空格）、手机号11位、身份证号18位-->
+            <!-- 布局看起来不够好看 -->
+            <el-form ref="ruleFormRef" :model="ruleForm" label-position="top" status-icon :rules="rules"
+              class="demo-ruleForm" style="max-width: 460px">
+
+              <el-form-item label="账号" prop="AccountNumber">
+                <el-input v-model="ruleForm.AccountNumber" clearable />
+              </el-form-item>
+
+              <el-form-item label="密码" prop="pass">
+                <el-input v-model="ruleForm.pass" type="password" autocomplete="off" clearable />
+              </el-form-item>
+              <el-form-item label="再次输入密码" prop="checkPass">
+                <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" clearable />
+              </el-form-item>
+
+              <el-form-item label="企业名称" prop="companyID">
+                <el-input v-model="ruleForm.companyID" type="text" clearable />
+              </el-form-item>
+
+              <el-form-item label="统一社会信用代码" prop="TrustNumber">
+                <el-input v-model.number="ruleForm.TrustNumber" clearable />
+              </el-form-item>
+
+              <el-form-item label="电话" prop="PhoneNumber">
+                <el-input v-model.number="ruleForm.PhoneNumber" clearable />
+              </el-form-item>
+
+              <el-form-item label="地址" prop="Address">
+                <el-input v-model="ruleForm.Address" type="text" clearable />
+              </el-form-item>
+              <!-- 选择器 -->
+              <el-form-item label="企业类型" prop="CompanyType">
+                <el-select v-model="ruleForm.CompanyType" placeholder="请选择企业类型" >
+                  <el-option label="车企" value="CQ" />
+                  <el-option label="电池生产企业" value="DCSCS" />
+                  <el-option label="电池租赁商" value="DCZLS" />
+                  <el-option label="电池回收商" value="DCHSS" />
+                  <el-option label="储能企业" value="CNQY" />
+                  <el-option label="电池原材料生产企业" value="DCYCLSCQY" />
+                </el-select>
+              </el-form-item>
+              <!-- 空一行！ -->
+              <br />
+              <el-form-item>
+                <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
+                <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+                <el-button @click.prevent="backLogin">返回</el-button>
+              </el-form-item>
+            </el-form>
+          </el-main>
+        </el-container>
+      </el-container>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import settings from '@/settings'
-
 import { ElMessage } from 'element-plus'
-import { ObjTy } from '~/common'
-import { useUserStore } from '@/store/user'
-import { Md5 } from 'ts-md5'
+import { reactive, ref } from 'vue'
+import type { FormInstance } from 'element-plus'
 
-//element valid
-const formRules = useElement().formRules
-//form
-let formInline = reactive({
-  username: 'test',
-  password: '123456'
-})
-let state: ObjTy = reactive({
-  otherQuery: {},
-  redirect: undefined
-})
+// handleregister 处理注册的方法：提交数据给后端【可参考登录处理方法】，返回一个弹框：注册信息已提交
 
-/* listen router change  */
-const route = useRoute()
-let getOtherQuery = (query: any) => {
-  return Object.keys(query).reduce((acc: any, cur: any) => {
-    if (cur !== 'redirect') {
-      acc[cur] = query[cur]
-    }
-    return acc
-  }, {})
-}
-
-watch(
-  () => route.query,
-  (query) => {
-    if (query) {
-      state.redirect = query.redirect
-      state.otherQuery = getOtherQuery(query)
-    }
-  },
-  { immediate: true }
-)
-
-/*
- *  login relative
- * */
-let loading = ref(false)
-let tipMessage = ref('')
-
-const refloginForm: any = ref(null)
-let handleLogin = () => {
-  refloginForm.value.validate((valid: any) => {
-    if (valid) {
-      loginReq()
-    } else {
-      return false
-    }
-  })
+const handleregister = (valid) => {
+  //注册信息提交弹窗 
+  if (valid)
+    ElMessage({
+      message: '注册信息已成功提交。',
+      type: 'success',
+    })
+  else {
+    ElMessage.error('注册信息无法提交，请检查后重新提交。')
+  }
 }
 
 //use the auto import from vite.config.js of AutoImport
 const router = useRouter()
-let loginReq = () => {
-  loading.value = true
 
-  let params = {
-    userName: formInline.username,
-    password: formInline.password
-  }
-  params.password = Md5.hashStr(params.password)
-  
-  const userStore = useUserStore()
-  userStore
-    .login(params)
-    .then(() => {
-      console.log("login success")
-      ElMessage({ message: '登录成功', type: 'success' })
-      router.push({ path: state.redirect || '/', query: state.otherQuery })
-    })
-    .catch((res) => {
-      console.log("login error")
-      tipMessage.value = res.msg
-      useCommon()
-        .sleep(30)
-        .then(() => {
-          loading.value = false
-        })
-    })
-}
-/*
- *  password show or hidden
- * */
-let passwordType = ref('password')
-const refPassword: any = ref(null)
-let showPwd = () => {
-  if (passwordType.value === 'password') {
-    passwordType.value = ''
-  } else {
-    passwordType.value = 'password'
-  }
-  nextTick(() => {
-    refPassword.value.focus()
-  })
-}
-
-// 注册页跳转
-let customerRegist = () => {
-  router.push(`/login?redirect=/`)
-  // router.push({ path: state.redirect || '/', query: state.otherQuery })
-}
-// 注册页跳转
+//返回 
 let backLogin = () => {
   router.push(`/login`)
 }
+
+
+// ↓ ↓ ======表单涉及的代码=======
+const ruleFormRef = ref<FormInstance>()
+
+// 用户名
+const checkAccountNumber = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error('请输入英文和数字的组合'))
+  } else {
+    callback()
+  }
+}
+// 电话号码
+const checkPhoneNumber = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error('请输入正确的电话号码'))
+  }
+  setTimeout(() => {
+    if (!Number.isInteger(value)) {
+      callback(new Error('请输入数字'))
+    }
+    else {
+      callback()
+    }
+  }, 1000)
+}
+// 密码
+const validatePass = (rule: any, value: any, callback: any) => {
+  if (value === '') {
+    callback(new Error('请输入密码'))
+  } else {
+    if (ruleForm.checkPass !== '') {
+      if (!ruleFormRef.value) return
+      ruleFormRef.value.validateField('checkPass', () => null)
+    }
+    callback()
+  }
+}
+// 密码匹配
+const validatePass2 = (rule: any, value: any, callback: any) => {
+  if (value === '') {
+    callback(new Error('请再次输入密码'))
+  } else if (value !== ruleForm.pass) {
+    callback(new Error("两次输入的密码不一样!"))
+  } else {
+    callback()
+  }
+}
+
+// 地址
+const Address = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error('请输入企业地址'))
+  } else {
+    callback()
+  }
+}
+
+// 社会信用代码
+const TrustNumber = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error('请输入统一社会信用代码'))
+  } else {
+    callback()
+  }
+}
+
+// 公司名称
+
+const companyID = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error('请输入公司名称'))
+  } else {
+    callback()
+  }
+}
+
+const ruleForm = reactive({
+  AccountNumber: '',
+  pass: '',
+  checkPass: '',
+  TrustNumber: '',
+  companyID: '',
+  Address: '',
+  PhoneNumber: '',
+  CompanyType: '',
+})
+
+const rules = reactive({
+  AccountNumber: [{ validator: checkAccountNumber, trigger: 'blur' }],
+  pass: [{ validator: validatePass, trigger: 'blur' }],
+  checkPass: [{ validator: validatePass2, trigger: 'blur' }],
+  PhoneNumber: [{ validator: checkPhoneNumber, trigger: 'blur' }],
+  companyID: [{ validator: companyID, trigger: 'blur' }],
+  TrustNumber: [{ validator: TrustNumber, trigger: 'blur' }],
+  Address: [{ validator: Address, trigger: 'blur' }],
+  CompanyType: [
+    {
+      // 决定了是否必须填
+      required: true, 
+      message: '请选择企业类型',
+      trigger: 'change',
+    },
+  ],
+})
+
+const submitForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.validate((valid) => {
+    if (valid) {
+      console.log('submit!');
+      handleregister(valid);
+    } else {
+      console.log('error submit!');
+      handleregister(valid);
+      return false
+    }
+
+  })
+}
+// 重置内容
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
+// ↑ ↑ ======表单涉及的代码=======
+
 </script>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
-$dark_gray: #889aa4;
-$light_gray: #eee;
-.login-container {
-  height: 100vh;
-  width: 100%;
-  background-color: #2d3a4b;
-  .login-form {
-    margin-bottom: 20vh;
-    width: 360px;
-  }
-  .title-container {
-    .title {
-      font-size: 22px;
-      color: #eee;
-      margin: 0px auto 25px auto;
-      text-align: center;
-      font-weight: bold;
-    }
-  }
-}
 
-.svg-container {
-  padding-left: 6px;
-  color: $dark_gray;
-  text-align: center;
-  width: 30px;
-}
-
-//错误提示信息
-.tip-message {
-  color: #e4393c;
-  height: 30px;
-  margin-top: -12px;
-  font-size: 12px;
-}
-
-//登录按钮
-.login-btn {
-  width: 100%;
-  margin-bottom: 30px;
-}
-.show-pwd {
-  width: 50px;
-  font-size: 16px;
-  color: $dark_gray;
-  cursor: pointer;
-  text-align: center;
-}
-
-.left {
-    float: left;
-}
-.right {
-    float: right;
-}
-</style>
-
-<style lang="scss">
-//css 样式重置 增加个前缀避免全局污染
-.login-container {
-  .el-input__wrapper {
-    background-color: transparent;
-    box-shadow: none;
-  }
-  .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    color: #454545;
-  }
-  .el-input input {
-    background: transparent;
-    border: 0px;
-    -webkit-appearance: none;
-    border-radius: 0px;
-    padding: 10px 5px 10px 15px;
-    color: #fff;
-    height: 42px; //此处调整item的高度
-    caret-color: #fff;
-  }
-  //hiden the input border
-  .el-input__inner {
-    box-shadow: none !important;
-  }
-}
 </style>
