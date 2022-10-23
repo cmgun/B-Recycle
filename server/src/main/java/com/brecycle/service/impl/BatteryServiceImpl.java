@@ -17,6 +17,7 @@ import com.brecycle.service.BatteryService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.sdk.BcosSDK;
 import org.fisco.bcos.sdk.abi.datatypes.DynamicArray;
 import org.fisco.bcos.sdk.client.Client;
@@ -118,6 +119,9 @@ public class BatteryServiceImpl implements BatteryService {
         BatteryContract contract = BatteryContract.load(battery.getAddress(), client, currentKeyPair);
         TransactionReceipt result = contract.transfer(to.getAddr(), param.getRemark(), BigInteger.valueOf(Long.parseLong(BatteryStatus.NORMAL.getValue())));
         log.info("电池流转执行结果：{}", result);
+        if (!StringUtils.equals(result.getStatus(), "0x0")) {
+            throw new BusinessException("电池流转失败");
+        }
         // 更新数据库，便于查询
         battery.setOwnerId(to.getId());
         batteryMapper.updateById(battery);

@@ -31,7 +31,15 @@ public enum BatteryStatus {
     /**
      * 拆解
      */
-    END("6");
+    END("6"),
+    /**
+     * 回收交易中，不可再进行交易绑定
+     */
+    RECYCLE_TRADING("7"),
+    /**
+     * 梯次利用交易中，不可再进行交易绑定
+     */
+    SECOND_RECYCLE_TRADING("8");
 
     /**
      * value

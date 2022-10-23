@@ -52,6 +52,8 @@ public class ShiroConfig {
         filterRuleMap.put("/user/**", "anon");
         // topic模块放行
         filterRuleMap.put("/topic/**", "anon");
+        // 模板下载放行
+        filterRuleMap.put("/download/**", "anon");
         filterRuleMap.put("/**", "token");
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return factoryBean;

@@ -24,6 +24,13 @@ public interface UserMapper extends BaseMapper<User> {
     User selectByUserName(@Param("name") String name);
 
     /**
+     * 根据名称查询
+     * @param name
+     * @return
+     */
+    User selectByName(@Param("name") String name);
+
+    /**
      * 企业列表查询
      * @param param
      * @return

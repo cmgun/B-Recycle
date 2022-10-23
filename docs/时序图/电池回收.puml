@@ -11,7 +11,6 @@ actor 电池生产商
 'actor 电池租赁商
 actor 回收商
 
-
 消费者 -> 车企或电池租赁商 : 电池置换
 车企或电池租赁商 -> Vue : 提交回收单
 电池生产商 -> Vue : 提交回收单
@@ -20,13 +19,19 @@ Controller -> Service : 回收申请
 Service -> JAVA_SDK : 部署回收委托合约
 Service <-- JAVA_SDK : 返回合约地址
 
-Service -> JAVA_SDK : 获取BatteryFactory合约
+alt 指定回收商
+Service -> JAVA_SDK : 获取BatteryContract合约
 Service <-- JAVA_SDK : 返回合约地址
-Service -> JAVA_SDK : BatteryFactory.transfer
+Service -> JAVA_SDK : BatteryContract.transfer
 note left
     msg.sender=对应发起方
 end note
 Service <-- JAVA_SDK : 返回结果
+end alt
+
+alt 委托平台交易
+    Service -> MySQL : 修改电池状态为交易中，防止重复绑定
+end alt
 
 database MySQL
 Service -> MySQL : 持久化数据
@@ -34,6 +39,7 @@ note left
     回收委托单，关联电池信息
 end note
 Service <-- MySQL : 返回结果
+Controller <-- Service :
 Vue <-- Controller : 返回结果
 车企或电池租赁商 <-- Vue : 返回结果
 电池生产商 <-- Vue : 返回结果
@@ -59,6 +65,11 @@ Service -> MySQL : 查询回收合约地址
 Service <-- MySQL : 返回结果
 Service -> JAVA_SDK : 获取回收委托合约
 Service <-- JAVA_SDK : 返回结果
+Service -> JAVA_SDK : 回收委托合约.竞价
+Service <-- JAVA_SDK : 返回结果
+note left
+    如果达到期望金额，交易自动成交
+end note
 Controller <-- Service :
 Vue <-- Controller :
 回收商 <-- Vue : 返回结果
@@ -66,7 +77,7 @@ Vue <-- Controller :
 Service -> Service : 定时器扫描到期委托合约
 Service -> JAVA_SDK : 获取回收委托合约
 Service <-- JAVA_SDK : 返回结果
-Service -> JAVA_SDK : 回收委托合约.交易撮合
+Service -> JAVA_SDK : 回收委托合约.交易成交
 Service <-- JAVA_SDK : 返回结果
 
 == 积分派发 ==
