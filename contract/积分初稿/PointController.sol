@@ -2,22 +2,21 @@ pragma solidity ^0.4.25;
 
 import "./PointData.sol";
 import "./BasicAuth.sol";
-import "./LibMath.sol";
 import "./P2PPoint.sol";
 import "./DAO.sol";
+import "./LibMath.sol";
+import "./AuctionPoints.sol";
 
 contract PointController {
     using LibMath for uint256;
 
     PointData _PointData;
     uint256 public state;
-    address public highestBidder;
-    uint256 public highestBid;
     uint256 public amount;
 
     event LogRegister(address account);
     event LogUnregister(address account);
-    event Transaction_msg(uint256 indexed t);
+
 
     modifier accountExist(address addr) {
         require(_PointData.hasAccount(addr)==true && addr != address(0), "Only existed account!");
@@ -50,19 +49,21 @@ contract PointController {
     }
 
     //注册模块：消费者、生产者（初始化积分后期由DAO转账）
-    function register() accountNotExist(msg.sender) public returns (address) {
+    function register() accountNotExist(msg.sender) public returns (bool) {
         _PointData.setAccount(msg.sender, true);
         // init balances
         _PointData.setBalance(msg.sender, 0);
+        return true;
         emit LogRegister(msg.sender);
     }
 
-    function unregister() canUnregister(msg.sender) public returns (address) {
+    function unregister() canUnregister(msg.sender) public returns (bool) {
         _PointData.setAccount(msg.sender, false);
+        return true;
         emit LogUnregister(msg.sender);
     }
 
-    //公共账户不知道是否能这么用
+    //公共账户
     function ADD_DAO(address account,uint256 value) public accountExist(account) returns (bool) {
         _PointData.addDAO(account);
         uint256 totalAmount = _PointData._totalAmount();
@@ -85,33 +86,6 @@ contract PointController {
     }
 
 
-
-    //交易模块；相当于P2P（生产者购买消费者回收者积分）
-    function sell(address _seller, uint256 _quant) public{
-        require(msg.sender == owner);
-        require(P2PPoint.transferFrom(msg.sender, this, _quant));
-        quant = _quant;
-        sell_time = now + 7 days
-        state = 1;
-        emit Transaction_msg(0); // send the msg to web3 if the function run to this point, which mean the function execute successfully
-    }
-
-
-    function bid(address _buyer, unit256 _price) public {
-        require(now <= auction_end, "Auction already ended.");
-        require(_price > highestBid, "There already is a higher bid.");
-        highestBidder = msg.sender;
-        highestBid = _price;
-        emit HighestBidIncreased(msg.sender, value);
-    }
-
-
-    function deal() public{
-        require(msg.sender == owner);
-        require(now >= sell_time, "Auction not yet ended.");
-        require(P2PPoint.transferTo(highestBidder, quant));
-        emit AuctionEnded(highestBidder, highestBid);
-    }
 
 
     //纳税：向DAO、积分派发：给与消费者、回收企业积分

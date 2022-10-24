@@ -4,7 +4,7 @@ import "./BasicAuth.sol";
 import "./DAO.sol";
 import "./LibRoles.sol";
 
-contract RewardPointData is BasicAuth, SourceEnterprise {
+contract PointData is BasicAuth, DAO {
 
     mapping(address => uint256) private _balances;
     mapping(address => bool) private _accounts;

@@ -43,6 +43,8 @@ dependencies {
     implementation "junit:junit:4.13.1"
     implementation "org.projectlombok:lombok:1.18.8"
     implementation "org.fisco-bcos.java-sdk:fisco-bcos-java-sdk:2.9.0"
+    implementation "org.apache.poi:poi:4.0.0"
+    implementation "org.apache.poi:poi-ooxml:4.0.0"
 //    implementation("com.webank:weid-java-sdk:1.8.2") {
 //        exclude group:'org.apache.logging.log4j'
 //    }

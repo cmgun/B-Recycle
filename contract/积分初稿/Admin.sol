@@ -14,8 +14,7 @@ contract Admin is BasicAuth {
         PointController controller = new PointController(_dataAddress);
         _controllerAddress = address(controller);
         data.upgradeVersion(_controllerAddress);
-        data.addIssuer(msg.sender);
-        data.addIssuer(_controllerAddress);//要不要加DAO合约信息
+        data.addDAO(_controllerAddress);//要不要加DAO合约信息
     }
 
     function upgradeVersion(address newVersion) public {

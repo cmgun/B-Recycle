@@ -114,4 +114,9 @@ contract-addr:
 
 # WeEvent服务配置
 weevent:
-  gateway-addr: "http://192.168.111.128:8091/weevent-broker/"
+  brokerUrl: "http://192.168.111.128:8091/weevent-broker"
+  batteryAddTopic: "brecycle.battery.add"
+  safeCheckTopic: "brecycle.battery.addSafeCheck"
+  productorTransferTopic: "brecycle.transfer.productor"
+  carTransferTopic: "brecycle.transfer.car"
+  rentTransferTopic: "brecycle.transfer.rent"

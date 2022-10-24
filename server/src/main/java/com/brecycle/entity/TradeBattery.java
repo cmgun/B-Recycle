@@ -7,13 +7,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 企业信息
+ * 交易关联的电池
  *
  * @author cmgun
  */
 @Data
-@TableName("ent_info")
-public class EntInfo {
+@TableName("trade_battery")
+public class TradeBattery {
 
     /**
      * 主键
@@ -21,27 +21,9 @@ public class EntInfo {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 用户id
-     */
     @TableField
-    private Long userId;
+    private Long tradeId;
 
-    /**
-     * 准入合约地址
-     */
     @TableField
-    private String accessContractAddr;
-
-    /**
-     * 准入状态
-     */
-    @TableField
-    private String accessStatus;
-
-    /**
-     * 备注
-     */
-    @TableField
-    private String remark;
+    private String batteryId;
 }

@@ -39,7 +39,7 @@ public class ErrorHandlerController {
 
     @ExceptionHandler(BusinessException.class)
     @ResponseBody
-    public Response businessExceptionHandler(HttpServletRequest request, HttpServletResponse response, LoginException exception) {
+    public Response businessExceptionHandler(HttpServletRequest request, HttpServletResponse response, BusinessException exception) {
 //        response.setStatus(Response.UNAUTHORIZED.intValue());
         log.warn("BusinessException，url:{}", request.getRequestURI(), exception);
         return Response.builder()

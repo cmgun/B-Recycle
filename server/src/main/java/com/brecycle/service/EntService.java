@@ -1,5 +1,6 @@
 package com.brecycle.service;
 
+import com.brecycle.entity.MongoFile;
 import com.brecycle.entity.dto.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,12 +28,26 @@ public interface EntService {
      * @param param 企业参数
      * @param currentUserName 当前用户
      */
-    void accessPass(EntAccessPassParam param, String currentUserName) throws Exception;
+    void accessPass(EntAccessAuditParam param, String currentUserName) throws Exception;
+
+    /**
+     * 审批拒绝
+     * @param param 企业参数
+     * @param currentUserName 当前用户
+     */
+    void accessReject(EntAccessAuditParam param, String currentUserName);
 
     /**
      * 获取准入结果
      * @param userName
      * @return
      */
-    AccessInfoDTO getAccessInfo(String userName) throws Exception ;
+    AccessInfoDTO getAccessInfo(String userName) throws Exception;
+
+    /**
+     * 文件下载
+     * @param fileId
+     * @return
+     */
+    MongoFile downloadFile(String fileId);
 }
