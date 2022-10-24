@@ -1,9 +1,6 @@
 package com.brecycle.service;
 
-import com.brecycle.entity.dto.BatteryInfoParam;
-import com.brecycle.entity.dto.BatterySafeCheckParam;
-import com.brecycle.entity.dto.BatteryTransferParam;
-import com.brecycle.entity.dto.TraceInfoDTO;
+import com.brecycle.entity.dto.*;
 
 import java.util.List;
 
@@ -26,7 +23,13 @@ public interface BatteryService {
      * 电池流转
      * @param param
      */
-    void transfer(BatteryTransferParam param);
+    void transfer(BatteryTransferParam param, String batteryStatus);
+
+    /**
+     * 电池拆解
+     * @param param
+     */
+    void endLife(BatteryEndParam param);
 
     /**
      * 获取电池溯源信息
@@ -34,4 +37,13 @@ public interface BatteryService {
      * @return
      */
     List<TraceInfoDTO> getTraceInfo(String batteryId, String currentUserName) throws Exception;
+
+    /**
+     * 电池列表
+     * @param param
+     * @param currentUserName
+     * @return
+     * @throws Exception
+     */
+    PageResult<BatteryListDTO> batteryList(BatteryListParam param, String currentUserName) throws Exception;
 }

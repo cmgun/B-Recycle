@@ -23,4 +23,8 @@ public class WeEventConfig {
     public String carTransferTopic;
 
     public String rentTransferTopic;
+
+    public String customerTransferTopic;
+
+    public String batteryEndTopic;
 }

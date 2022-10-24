@@ -83,7 +83,7 @@ contract TradeContract {
     }
 
     // 最终成交
-    function deal() public onlyOwner {
+    function deal() public onlyOwner returns(address buyer, uint256 _tradeAmt) {
         // 方便测试，暂时注释该条件
 //        require(now >= _endTime, "Auction did not end.");
         _buyer = _highestBuyer;
@@ -91,6 +91,7 @@ contract TradeContract {
         _status = 2;
         _tradeTime = now;
         emit newStatus(msg.sender, 2, now, "deal");
+        return (_buyer, _tradeAmt);
     }
 
     // 交易撤回

@@ -15,7 +15,7 @@ public enum TradeType {
     /**
      * 梯次利用委托交易
      */
-    SECOND_RECYCLE("2"),
+    SECOND_USED("2"),
     /**
      * 积分交易
      */

@@ -120,3 +120,5 @@ weevent:
   productorTransferTopic: "brecycle.transfer.productor"
   carTransferTopic: "brecycle.transfer.car"
   rentTransferTopic: "brecycle.transfer.rent"
+  customerTransferTopic: "brecycle.transfer.customer"
+  batteryEndTopic: "brecycle.battery.end"

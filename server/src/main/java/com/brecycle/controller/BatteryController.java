@@ -53,4 +53,15 @@ public class BatteryController {
         return Response.success("提交成功", traceInfoDTOS);
     }
 
+    @ApiOperation("查询电池信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "AUTHORIZE_TOKEN", value = "AUTHORIZE_TOKEN", dataType = "String", required = true)
+    })
+    @PostMapping("/list")
+    Response list(@RequestBody @ApiParam(value = "参数", required = true) BatteryListParam param, HttpServletRequest request) throws Exception {
+        String token = request.getHeader(JWTConfig.tokenHeader);
+        String userName = JwtTokenUtil.getUsername(token);
+        PageResult<BatteryListDTO> result = batteryService.batteryList(param, userName);
+        return Response.success("查询成功", result);
+    }
 }

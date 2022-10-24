@@ -30,6 +30,8 @@ public interface UserMapper extends BaseMapper<User> {
      */
     User selectByName(@Param("name") String name);
 
+    User selectByAddr(@Param("addr") String addr);
+
     /**
      * 企业列表查询
      * @param param

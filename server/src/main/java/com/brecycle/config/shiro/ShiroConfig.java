@@ -54,6 +54,8 @@ public class ShiroConfig {
         filterRuleMap.put("/topic/**", "anon");
         // 模板下载放行
         filterRuleMap.put("/download/**", "anon");
+        // 手动定时器执行
+        filterRuleMap.put("/schedule/**", "anon");
         filterRuleMap.put("/**", "token");
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return factoryBean;

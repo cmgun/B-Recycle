@@ -30,7 +30,7 @@ public class BatteryTransferListener implements IWeEventClient.EventListener {
         List<BatteryTransferParam> contents = JSONArray.parseArray(new String(event.getContent()), BatteryTransferParam.class);
         for (BatteryTransferParam content : contents) {
             try {
-                batteryService.transfer(content);
+                batteryService.transfer(content, null);
             } catch (Exception e) {
                 log.error("电池流转监听器，消息处理失败，当前参数:{}", JSON.toJSON(content), e);
             }

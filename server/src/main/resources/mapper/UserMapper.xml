@@ -21,6 +21,11 @@
         where name = #{name} and status = 1
     </select>
 
+    <select id="selectByAddr" resultType="com.brecycle.entity.User">
+        select * from user
+        where addr = #{addr}
+    </select>
+
     <select id="selectEntListByPage" resultMap="entList">
         select u.id, u.user_name, u.name, u.idno, e.access_status
         from user u

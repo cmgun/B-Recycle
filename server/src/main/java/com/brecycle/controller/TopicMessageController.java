@@ -3,9 +3,7 @@ package com.brecycle.controller;
 import com.alibaba.fastjson.JSON;
 import com.brecycle.common.Response;
 import com.brecycle.config.WeEventConfig;
-import com.brecycle.entity.dto.BatteryInfoParam;
-import com.brecycle.entity.dto.BatterySafeCheckParam;
-import com.brecycle.entity.dto.BatteryTransferParam;
+import com.brecycle.entity.dto.*;
 import com.webank.weevent.client.IWeEventClient;
 import com.webank.weevent.client.SendResult;
 import com.webank.weevent.client.WeEvent;
@@ -86,6 +84,49 @@ public class TopicMessageController {
         WeEvent weEvent = new WeEvent(topicName, JSON.toJSONString(param).getBytes());
         SendResult sendResult = client.publish(weEvent);
         log.info("电池流转-电池租赁商，发送结果:{}", sendResult);
+        return Response.success("消息发送成功");
+    }
+
+    @ApiOperation("电池流转-消费者发起")
+    @PostMapping("/battery/transfer/customer")
+    Response customerTransfer(@RequestBody @ApiParam(value = "参数", required = true) List<CustomerTransferParam> param) throws Exception {
+        String topicName = weEventConfig.getCustomerTransferTopic();
+        WeEvent weEvent = new WeEvent(topicName, JSON.toJSONString(param).getBytes());
+        SendResult sendResult = client.publish(weEvent);
+        // 后续需要记录积分
+        log.info("电池流转-消费者发起，发送结果:{}", sendResult);
+        return Response.success("消息发送成功");
+    }
+
+//    @ApiOperation("电池流转-梯次利用企业发起")
+//    @PostMapping("/battery/transfer/stored")
+//    Response storedTransfer(@RequestBody @ApiParam(value = "参数", required = true) List<CustomerTransferParam> param) throws Exception {
+//        String topicName = weEventConfig.getCustomerTransferTopic();
+//        WeEvent weEvent = new WeEvent(topicName, JSON.toJSONString(param).getBytes());
+//        SendResult sendResult = client.publish(weEvent);
+//        // 后续需要记录积分
+//        log.info("电池流转-消费者发起，发送结果:{}", sendResult);
+//        return Response.success("消息发送成功");
+//    }
+
+//    @ApiOperation("电池回收-回收商")
+//    @PostMapping("/battery/recycle")
+//    Response recycle(@RequestBody @ApiParam(value = "参数", required = true) List<BatteryRecycleParam> param) throws Exception {
+//        // 回收商把检测得出的电池信息发送
+//        String topicName = weEventConfig.getRentTransferTopic();
+//        WeEvent weEvent = new WeEvent(topicName, JSON.toJSONString(param).getBytes());
+//        SendResult sendResult = client.publish(weEvent);
+//        log.info("电池回收-回收商，发送结果:{}", sendResult);
+//        return Response.success("消息发送成功");
+//    }
+
+    @ApiOperation("电池回收拆解")
+    @PostMapping("/battery/end")
+    Response endLife(@RequestBody @ApiParam(value = "参数", required = true) List<BatteryEndParam> param) throws Exception {
+        String topicName = weEventConfig.getBatteryEndTopic();
+        WeEvent weEvent = new WeEvent(topicName, JSON.toJSONString(param).getBytes());
+        SendResult sendResult = client.publish(weEvent);
+        log.info("电池回收拆解，发送结果:{}", sendResult);
         return Response.success("消息发送成功");
     }
 }

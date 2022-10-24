@@ -8,10 +8,13 @@ import java.io.Serializable;
  * @author cmgun
  */
 @Data
-public class TraceInfoParam implements Serializable {
+public class BatteryListParam implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private int pageSize;
+
+    private int pageNo;
     /**
      * 电池编号
      */

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.brecycle.config.FiscoBcos;
-import com.brecycle.contract.BatteryContract;
 import com.brecycle.contract.TradeContract;
 import com.brecycle.controller.hanlder.BusinessException;
 import com.brecycle.entity.Battery;
@@ -21,7 +20,7 @@ import com.brecycle.mapper.TradeBatteryMapper;
 import com.brecycle.mapper.TradeMapper;
 import com.brecycle.mapper.UserMapper;
 import com.brecycle.service.BatteryService;
-import com.brecycle.service.RecycleService;
+import com.brecycle.service.SecondUsedService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -50,7 +49,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class RecycleServiceImpl implements RecycleService {
+public class SecondUsedServiceImpl implements SecondUsedService {
 
     @Autowired
     UserMapper userMapper;
@@ -68,16 +67,16 @@ public class RecycleServiceImpl implements RecycleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void apply(List<String> batteryIds, RecycleApplyParam param, String currentUserName) throws Exception {
+    public void apply(List<String> batteryIds, SecUsedApplyParam param, String currentUserName) throws Exception {
         // 获取当前登录用户的账户信息
         User user = userMapper.selectByUserName(currentUserName);
         CryptoSuite cryptoSuite = new CryptoSuite(CryptoType.ECDSA_TYPE);
         CryptoKeyPair currentKeyPair = cryptoSuite.getKeyPairFactory().createKeyPair(user.getPrivateKey());
-        // 指定回收商
+        // 指定梯次利用商
         if (param.isHasTarget()) {
-            User recycleEnt = userMapper.selectByName(param.getName());
-            if (recycleEnt == null) {
-                throw new BusinessException("指定回收商名称不存在");
+            User secondUsedEnt = userMapper.selectByName(param.getName());
+            if (secondUsedEnt == null) {
+                throw new BusinessException("指定梯次利用商名称不存在");
             }
             // SDK配置
             BcosSDK bcosSDK = fiscoBcos.getBcosSDK();
@@ -86,8 +85,8 @@ public class RecycleServiceImpl implements RecycleService {
             TradeContract tradeContract = TradeContract.deploy(client, currentKeyPair, JSONArray.toJSONString(batteryIds)
                     , BigInteger.valueOf(param.getLowestAmt().longValue()), BigInteger.valueOf(param.getExpectAmt().longValue())
                     , BigInteger.valueOf(param.getBidDays().longValue()));
-            TransactionReceipt result = tradeContract.targetDeal(recycleEnt.getAddr());
-            log.info("recycle.apply执行结果：{}", result);
+            TransactionReceipt result = tradeContract.targetDeal(secondUsedEnt.getAddr());
+            log.info("secUsed.apply执行结果：{}", result);
             if (!StringUtils.equals(result.getStatus(), "0x0")) {
                 throw new BusinessException("执行交易失败");
             }
@@ -96,19 +95,19 @@ public class RecycleServiceImpl implements RecycleService {
                 BatteryTransferParam transferParam = new BatteryTransferParam();
                 transferParam.setId(batteryId);
                 transferParam.setOriginUserName(currentUserName);
-                transferParam.setToUserName(recycleEnt.getUserName());
-                transferParam.setRemark("回收交易");
-                batteryService.transfer(transferParam, BatteryStatus.RECYCLE.getValue());
+                transferParam.setToUserName(secondUsedEnt.getUserName());
+                transferParam.setRemark("梯次利用交易");
+                batteryService.transfer(transferParam, BatteryStatus.SECOND_USED.getValue());
             }
             // 保存数据
             Trade trade = new Trade();
             trade.setSellerId(user.getId());
-            trade.setBuyerId(recycleEnt.getId());
+            trade.setBuyerId(secondUsedEnt.getId());
             trade.setLowestAmt(param.getLowestAmt());
             trade.setExpectAmt(param.getExpectAmt());
             trade.setTradeAmt(param.getExpectAmt());
             trade.setCreateTime(new Date());
-            trade.setTradeType(TradeType.RECYCLE.getValue());
+            trade.setTradeType(TradeType.SECOND_USED.getValue());
             trade.setStatus(TradeStatus.SUCCESS.getValue());
             trade.setAddr(tradeContract.getContractAddress());
             tradeMapper.insert(trade);
@@ -133,7 +132,7 @@ public class RecycleServiceImpl implements RecycleService {
         for (String batteryId : batteryIds) {
             Battery battery = new Battery();
             battery.setId(batteryId);
-            battery.setStatus(BatteryStatus.RECYCLE_TRADING.getValue());
+            battery.setStatus(BatteryStatus.SECOND_USED_TRADING.getValue());
             batteryMapper.updateById(battery);
         }
         // 保存交易数据
@@ -144,7 +143,7 @@ public class RecycleServiceImpl implements RecycleService {
         trade.setExpectAmt(param.getExpectAmt());
         trade.setBidDays(param.getBidDays());
         trade.setCreateTime(new Date());
-        trade.setTradeType(TradeType.RECYCLE.getValue());
+        trade.setTradeType(TradeType.SECOND_USED.getValue());
         trade.setStatus(TradeStatus.BIDING.getValue());
         trade.setAddr(tradeContract.getContractAddress());
         tradeMapper.insert(trade);
@@ -161,7 +160,7 @@ public class RecycleServiceImpl implements RecycleService {
     public PageResult<TradeListDTO> list(TradeListParam param) {
         IPage page = new Page<>(param.getPageNo(), param.getPageSize());
         IPage<Trade> data = tradeMapper.selectPage(page, new LambdaUpdateWrapper<Trade>()
-                .eq(Trade::getStatus, TradeStatus.BIDING.getValue()).eq(Trade::getTradeType, TradeType.RECYCLE.getValue()));
+                .eq(Trade::getStatus, TradeStatus.BIDING.getValue()).eq(Trade::getTradeType, TradeType.SECOND_USED.getValue()));
         PageResult<TradeListDTO> result = new PageResult<>();
         result.setTotal(data.getTotal());
         result.setPageNo(data.getCurrent());
@@ -205,7 +204,7 @@ public class RecycleServiceImpl implements RecycleService {
         Client client = bcosSDK.getClient(1);
         TradeContract tradeContract = TradeContract.load(trade.getAddr(), client, currentKeyPair);
         TransactionReceipt receipt = tradeContract.bid(BigInteger.valueOf(param.getBidAmt().longValue()));
-        log.info("recycle.bid执行结果：{}", receipt);
+        log.info("secUsed.bid执行结果：{}", receipt);
         Tuple1<Boolean> result = tradeContract.getBidOutput(receipt);
         if (!StringUtils.equals(receipt.getStatus(), "0x0")) {
             throw new BusinessException("提交失败，已存在更高竞价");
@@ -228,16 +227,18 @@ public class RecycleServiceImpl implements RecycleService {
         Client client = bcosSDK.getClient(1);
         TradeContract tradeContract = TradeContract.load(trade.getAddr(), client, currentKeyPair);
         TransactionReceipt receipt = tradeContract.deal();
-        log.info("recycle.deal执行结果：{}", receipt);
+        log.info("secUsed.deal执行结果：{}", receipt);
         if (!StringUtils.equals(receipt.getStatus(), "0x0")) {
             log.error("回收交易到期执行失败");
         }
+
         Tuple2<String, BigInteger> result = tradeContract.getDealOutput(receipt);
         User buyer = userMapper.selectByAddr(result.getValue1());
         trade.setBuyerId(buyer.getId());
         trade.setTradeAmt(BigDecimal.valueOf(result.getValue2().longValue()));
         trade.setStatus(TradeStatus.SUCCESS.getValue());
         tradeMapper.updateById(trade);
+        // 更新对应电池状态
         batteryTransfer(trade, buyer);
     }
 
@@ -251,8 +252,8 @@ public class RecycleServiceImpl implements RecycleService {
             transferParam.setId(batteryId);
             transferParam.setOriginUserName(originUser.getUserName());
             transferParam.setToUserName(buyer.getUserName());
-            transferParam.setRemark("回收交易");
-            batteryService.transfer(transferParam, BatteryStatus.RECYCLE.getValue());
+            transferParam.setRemark("梯次利用交易");
+            batteryService.transfer(transferParam, BatteryStatus.SECOND_USED.getValue());
         }
     }
 }

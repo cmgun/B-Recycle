@@ -1,8 +1,6 @@
 package com.brecycle.config;
 
-import com.brecycle.listener.BatteryAddListener;
-import com.brecycle.listener.BatterySafeCheckListener;
-import com.brecycle.listener.BatteryTransferListener;
+import com.brecycle.listener.*;
 import com.webank.weevent.client.IWeEventClient;
 import com.webank.weevent.client.WeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,10 @@ public class WeEventClientConfig {
     BatterySafeCheckListener batterySafeCheckListener;
     @Autowired
     BatteryTransferListener batteryTransferListener;
+    @Autowired
+    CustomerTransferListener customerTransferListener;
+    @Autowired
+    BatteryEndListener batteryEndListener;
 
     @Bean
     public IWeEventClient clientConfig() throws Exception {
@@ -36,13 +38,16 @@ public class WeEventClientConfig {
         client.open(eventConfig.getProductorTransferTopic());
         client.open(eventConfig.getRentTransferTopic());
         client.open(eventConfig.getCarTransferTopic());
+        client.open(eventConfig.getCustomerTransferTopic());
+        client.open(eventConfig.getBatteryEndTopic());
         // 绑定监听器
         client.subscribe(eventConfig.getBatteryAddTopic(), WeEvent.OFFSET_LAST, null, batteryAddListener);
         client.subscribe(eventConfig.getSafeCheckTopic(), WeEvent.OFFSET_LAST, null, batterySafeCheckListener);
         client.subscribe(eventConfig.getProductorTransferTopic(), WeEvent.OFFSET_LAST, null, batteryTransferListener);
         client.subscribe(eventConfig.getRentTransferTopic(), WeEvent.OFFSET_LAST, null, batteryTransferListener);
         client.subscribe(eventConfig.getCarTransferTopic(), WeEvent.OFFSET_LAST, null, batteryTransferListener);
-
+        client.subscribe(eventConfig.getCustomerTransferTopic(), WeEvent.OFFSET_LAST, null, customerTransferListener);
+        client.subscribe(eventConfig.getBatteryEndTopic(), WeEvent.OFFSET_LAST, null, batteryEndListener);
         return client;
     }
 }

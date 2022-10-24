@@ -27,7 +27,7 @@ public enum BatteryStatus {
     /**
      * 梯次利用
      */
-    SECOND_RECYCLE("5"),
+    SECOND_USED("5"),
     /**
      * 拆解
      */
@@ -39,7 +39,7 @@ public enum BatteryStatus {
     /**
      * 梯次利用交易中，不可再进行交易绑定
      */
-    SECOND_RECYCLE_TRADING("8");
+    SECOND_USED_TRADING("8");
 
     /**
      * value

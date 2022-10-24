@@ -6,9 +6,9 @@ import com.brecycle.entity.dto.*;
 import java.util.List;
 
 /**
- * 回收处理
+ * 梯次利用
  */
-public interface RecycleService {
+public interface SecondUsedService {
 
     /**
      * 回收申请
@@ -16,7 +16,7 @@ public interface RecycleService {
      * @param param
      * @param currentUserName
      */
-    void apply(List<String> batteryIds, RecycleApplyParam param, String currentUserName) throws Exception;
+    void apply(List<String> batteryIds, SecUsedApplyParam param, String currentUserName) throws Exception;
 
     /**
      * 交易查询

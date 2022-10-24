@@ -1,15 +1,15 @@
 package com.brecycle.service.impl;
 
 import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.brecycle.config.FiscoBcos;
 import com.brecycle.contract.BatteryContract;
 import com.brecycle.controller.hanlder.BusinessException;
 import com.brecycle.entity.Battery;
 import com.brecycle.entity.User;
-import com.brecycle.entity.dto.BatteryInfoParam;
-import com.brecycle.entity.dto.BatterySafeCheckParam;
-import com.brecycle.entity.dto.BatteryTransferParam;
-import com.brecycle.entity.dto.TraceInfoDTO;
+import com.brecycle.entity.dto.*;
 import com.brecycle.enums.BatteryStatus;
 import com.brecycle.mapper.BatteryMapper;
 import com.brecycle.mapper.UserMapper;
@@ -33,6 +33,8 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author cmgun
@@ -99,7 +101,7 @@ public class BatteryServiceImpl implements BatteryService {
     }
 
     @Override
-    public void transfer(BatteryTransferParam param) {
+    public void transfer(BatteryTransferParam param, String batteryStatus) {
         Battery battery = batteryMapper.selectById(param.getId());
         if (battery == null) {
             throw new BusinessException("编号为" + param.getId() + "的电池信息缺失");
@@ -117,13 +119,36 @@ public class BatteryServiceImpl implements BatteryService {
         CryptoSuite cryptoSuite = new CryptoSuite(CryptoType.ECDSA_TYPE);
         CryptoKeyPair currentKeyPair = cryptoSuite.getKeyPairFactory().createKeyPair(origin.getPrivateKey());
         BatteryContract contract = BatteryContract.load(battery.getAddress(), client, currentKeyPair);
-        TransactionReceipt result = contract.transfer(to.getAddr(), param.getRemark(), BigInteger.valueOf(Long.parseLong(BatteryStatus.NORMAL.getValue())));
+        String status = StringUtils.isNotBlank(batteryStatus) ? batteryStatus : BatteryStatus.NORMAL.getValue();
+        TransactionReceipt result = contract.transfer(to.getAddr(), param.getRemark(), BigInteger.valueOf(Long.parseLong(status)));
         log.info("电池流转执行结果：{}", result);
         if (!StringUtils.equals(result.getStatus(), "0x0")) {
             throw new BusinessException("电池流转失败");
         }
         // 更新数据库，便于查询
         battery.setOwnerId(to.getId());
+        battery.setStatus(batteryStatus);
+        batteryMapper.updateById(battery);
+    }
+
+    @Override
+    public void endLife(BatteryEndParam param) {
+        Battery battery = batteryMapper.selectById(param.getId());
+        User owner = userMapper.selectByUserName(param.getOriginUserName());
+        if (owner == null) {
+            throw new BusinessException("账号为" + param.getOriginUserName() + "的用户信息缺失");
+        }
+        BcosSDK bcosSDK = fiscoBcos.getBcosSDK();
+        Client client = bcosSDK.getClient(1);
+        CryptoSuite cryptoSuite = new CryptoSuite(CryptoType.ECDSA_TYPE);
+        CryptoKeyPair currentKeyPair = cryptoSuite.getKeyPairFactory().createKeyPair(owner.getPrivateKey());
+        BatteryContract contract = BatteryContract.load(battery.getAddress(), client, currentKeyPair);
+        TransactionReceipt result = contract.endLife("电池拆解");
+        log.info("电池拆解执行结果：{}", result);
+        if (!StringUtils.equals(result.getStatus(), "0x0")) {
+            throw new BusinessException("电池拆解失败");
+        }
+        battery.setStatus(BatteryStatus.END.getValue());
         batteryMapper.updateById(battery);
     }
 
@@ -154,5 +179,31 @@ public class BatteryServiceImpl implements BatteryService {
             traceInfos.add(info);
         }
         return traceInfos;
+    }
+
+    @Override
+    public PageResult<BatteryListDTO> batteryList(BatteryListParam param, String currentUserName) throws Exception {
+        User currentUser = userMapper.selectByUserName(currentUserName);
+        if (currentUser == null) {
+            throw new BusinessException("账号为" + currentUserName + "的用户信息缺失");
+        }
+        IPage page = new Page<>(param.getPageNo(), param.getPageSize());
+        IPage<Battery> data = batteryMapper.selectPage(page, new LambdaUpdateWrapper<Battery>()
+                .eq(Battery::getOwnerId, currentUser.getId())
+                .and(StringUtils.isNotBlank(param.getId()), batteryLambdaUpdateWrapper -> batteryLambdaUpdateWrapper.eq(Battery::getId, param.getId()))
+        );
+        List<BatteryListDTO> list = data.getRecords().stream().map(item -> {
+            BatteryListDTO dto = new BatteryListDTO();
+            dto.setId(item.getId());
+            dto.setStatus(item.getStatus());
+            return dto;
+        }).collect(Collectors.toList());
+        PageResult<BatteryListDTO> result = new PageResult<>();
+        result.setTotal(data.getTotal());
+        result.setPageNo(data.getCurrent());
+        result.setPageCount(data.getPages());
+        result.setPageSize(data.getSize());
+        result.setData(list);
+        return result;
     }
 }
