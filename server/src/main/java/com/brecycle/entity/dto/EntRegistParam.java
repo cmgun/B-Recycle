@@ -34,4 +34,9 @@ public class EntRegistParam implements Serializable {
      * 企业类型，见RoleEnums.key
      */
     private String type;
+
+    /**
+     * 其他信息
+     */
+    private String info;
 }

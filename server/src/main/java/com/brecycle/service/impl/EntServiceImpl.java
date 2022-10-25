@@ -71,9 +71,9 @@ public class EntServiceImpl implements EntService {
     @Autowired
     EntInfoMapper entInfoMapper;
     @Autowired
-    private UserRoleMapper userRoleMapper;
+    UserRoleMapper userRoleMapper;
     @Autowired
-    private FiscoBcos fiscoBcos;
+    FiscoBcos fiscoBcos;
 
 
     @Override

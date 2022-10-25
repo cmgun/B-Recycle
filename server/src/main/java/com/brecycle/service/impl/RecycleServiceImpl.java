@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.brecycle.config.FiscoBcos;
-import com.brecycle.contract.BatteryContract;
 import com.brecycle.contract.TradeContract;
 import com.brecycle.controller.hanlder.BusinessException;
 import com.brecycle.entity.Battery;
@@ -233,6 +232,21 @@ public class RecycleServiceImpl implements RecycleService {
             log.error("回收交易到期执行失败");
         }
         Tuple2<String, BigInteger> result = tradeContract.getDealOutput(receipt);
+        // 没有买方，说明交易需要撤回
+        if (StringUtils.isBlank(result.getValue1())) {
+            // 撤回交易
+            trade.setStatus(TradeStatus.REJECT.getValue());
+            tradeMapper.updateById(trade);
+            List<TradeBattery> tradeBatteries = tradeBatteryMapper.selectList(new LambdaUpdateWrapper<TradeBattery>()
+                            .eq(TradeBattery::getTradeId, trade.getId()));
+            for (TradeBattery tradeBattery : tradeBatteries) {
+                Battery battery = new Battery();
+                battery.setId(tradeBattery.getBatteryId());
+                battery.setStatus(BatteryStatus.WAIT_RECYCLE.getValue());
+                batteryMapper.updateById(battery);
+            }
+            return;
+        }
         User buyer = userMapper.selectByAddr(result.getValue1());
         trade.setBuyerId(buyer.getId());
         trade.setTradeAmt(BigDecimal.valueOf(result.getValue2().longValue()));

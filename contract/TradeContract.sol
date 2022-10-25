@@ -86,6 +86,10 @@ contract TradeContract {
     function deal() public onlyOwner returns(address buyer, uint256 _tradeAmt) {
         // 方便测试，暂时注释该条件
 //        require(now >= _endTime, "Auction did not end.");
+        if (_highestAmt <= 0) {
+            _status = 3;
+            return (_buyer, _tradeAmt);
+        }
         _buyer = _highestBuyer;
         _tradeAmt = _highestAmt;
         _status = 2;

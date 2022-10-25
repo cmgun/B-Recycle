@@ -22,6 +22,8 @@ public class WeEventConfig {
 
     public String carTransferTopic;
 
+    public String carInfoTopic;
+
     public String rentTransferTopic;
 
     public String customerTransferTopic;

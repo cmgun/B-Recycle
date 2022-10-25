@@ -1,5 +1,6 @@
 package com.brecycle.service;
 
+import com.brecycle.entity.User;
 import com.brecycle.entity.dto.*;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public interface BatteryService {
      * 电池拆解
      * @param param
      */
-    void endLife(BatteryEndParam param);
+    void endLife(BatteryEndParam param) throws Exception;
 
     /**
      * 获取电池溯源信息
@@ -46,4 +47,11 @@ public interface BatteryService {
      * @throws Exception
      */
     PageResult<BatteryListDTO> batteryList(BatteryListParam param, String currentUserName) throws Exception;
+
+    /**
+     * 保存汽车生产信息
+     * @param car
+     * @param param
+     */
+    void saveCarInfo(User car, BatteryCarInfoParam param) throws Exception;
 }

@@ -56,6 +56,8 @@ public class ShiroConfig {
         filterRuleMap.put("/download/**", "anon");
         // 手动定时器执行
         filterRuleMap.put("/schedule/**", "anon");
+        // 积分模块初始化
+        filterRuleMap.put("/point/init/**", "anon");
         filterRuleMap.put("/**", "token");
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return factoryBean;

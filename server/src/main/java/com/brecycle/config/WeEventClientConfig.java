@@ -25,6 +25,8 @@ public class WeEventClientConfig {
     CustomerTransferListener customerTransferListener;
     @Autowired
     BatteryEndListener batteryEndListener;
+    @Autowired
+    BatteryCarInfoListener batteryCarInfoListener;
 
     @Bean
     public IWeEventClient clientConfig() throws Exception {
@@ -40,6 +42,7 @@ public class WeEventClientConfig {
         client.open(eventConfig.getCarTransferTopic());
         client.open(eventConfig.getCustomerTransferTopic());
         client.open(eventConfig.getBatteryEndTopic());
+        client.open(eventConfig.getCarInfoTopic());
         // 绑定监听器
         client.subscribe(eventConfig.getBatteryAddTopic(), WeEvent.OFFSET_LAST, null, batteryAddListener);
         client.subscribe(eventConfig.getSafeCheckTopic(), WeEvent.OFFSET_LAST, null, batterySafeCheckListener);
@@ -48,6 +51,7 @@ public class WeEventClientConfig {
         client.subscribe(eventConfig.getCarTransferTopic(), WeEvent.OFFSET_LAST, null, batteryTransferListener);
         client.subscribe(eventConfig.getCustomerTransferTopic(), WeEvent.OFFSET_LAST, null, customerTransferListener);
         client.subscribe(eventConfig.getBatteryEndTopic(), WeEvent.OFFSET_LAST, null, batteryEndListener);
+        client.subscribe(eventConfig.getCarInfoTopic(), WeEvent.OFFSET_LAST, null, batteryCarInfoListener);
         return client;
     }
 }

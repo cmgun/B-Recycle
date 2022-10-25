@@ -7,13 +7,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 交易关联的电池
+ * 汽车关联的电池
  *
  * @author cmgun
  */
 @Data
-@TableName("trade_battery")
-public class TradeBattery {
+@TableName("car_battery")
+public class CarBattery {
 
     /**
      * 主键
@@ -22,11 +22,8 @@ public class TradeBattery {
     private Long id;
 
     @TableField
-    private Long tradeId;
-
-    @TableField
     private String batteryId;
 
     @TableField
-    private String lastBatteryStatus;
+    private String carId;
 }

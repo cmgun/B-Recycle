@@ -32,7 +32,7 @@ public class BatteryInfoParam implements Serializable {
 
     private String vdc;
 
-    private String mah;
+    private String kah;
 
     private Integer chargeTimes;
 

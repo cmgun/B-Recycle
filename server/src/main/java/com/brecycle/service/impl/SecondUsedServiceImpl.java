@@ -231,8 +231,22 @@ public class SecondUsedServiceImpl implements SecondUsedService {
         if (!StringUtils.equals(receipt.getStatus(), "0x0")) {
             log.error("回收交易到期执行失败");
         }
-
         Tuple2<String, BigInteger> result = tradeContract.getDealOutput(receipt);
+        // 没有买方，说明交易需要撤回
+        if (StringUtils.isBlank(result.getValue1())) {
+            // 撤回交易
+            trade.setStatus(TradeStatus.REJECT.getValue());
+            tradeMapper.updateById(trade);
+            List<TradeBattery> tradeBatteries = tradeBatteryMapper.selectList(new LambdaUpdateWrapper<TradeBattery>()
+                    .eq(TradeBattery::getTradeId, trade.getId()));
+            for (TradeBattery tradeBattery : tradeBatteries) {
+                Battery battery = new Battery();
+                battery.setId(tradeBattery.getBatteryId());
+                battery.setStatus(BatteryStatus.RECYCLE.getValue());
+                batteryMapper.updateById(battery);
+            }
+            return;
+        }
         User buyer = userMapper.selectByAddr(result.getValue1());
         trade.setBuyerId(buyer.getId());
         trade.setTradeAmt(BigDecimal.valueOf(result.getValue2().longValue()));

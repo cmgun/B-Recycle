@@ -50,7 +50,7 @@ public class Battery {
     private String vdc;
 
     @TableField
-    private String mah;
+    private String kah;
 
     @TableField
     private String status;
@@ -61,4 +61,6 @@ public class Battery {
     @TableField
     private Long ownerId;
 
+    @TableField
+    private Date endTime;
 }

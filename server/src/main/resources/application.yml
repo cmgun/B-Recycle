@@ -122,3 +122,36 @@ weevent:
   rentTransferTopic: "brecycle.transfer.rent"
   customerTransferTopic: "brecycle.transfer.customer"
   batteryEndTopic: "brecycle.battery.end"
+  carInfoTopic: "brecycle.battery.carInfo"
+
+point:
+  # 是否系统首年
+  isFirstYear: true
+  # 当前年数
+  varT: 1
+  # 每年的市场预计汽车产量
+  marketPredict:
+    2023: 15000000
+    2022: 14000000
+    2021: 12000000
+  # 每年预计注册到系统中的总产量
+  systemPredict:
+    2023: 7000000
+    2022: 6000000
+    2021: 5000000
+  # 平均每辆车电池容量：千安时
+  carAvgKmh: 50
+  # 积分比率，电池生产者和车企消耗积分时使用，DAO设定值
+  alpha: 0.8
+  # 环节配额：一次回收
+  firstRecyclePartRatio: 0.2
+  # 环节配额：二次回收
+  secondRecyclePartRatio: 0.5
+  # 环节配额：拆解回收
+  endRecyclePartRatio: 0.3
+  # 积分总额派发分配比例：电池生产商:车企
+  producePayRatio: 0.5
+  # 积分合约地址
+  pointController: "0xe331be6a3792fbcc8f1af869608d18887ddb0da2"
+  # DAO用户
+  dao: "admin"

@@ -8,15 +8,20 @@ import com.brecycle.config.FiscoBcos;
 import com.brecycle.contract.BatteryContract;
 import com.brecycle.controller.hanlder.BusinessException;
 import com.brecycle.entity.Battery;
+import com.brecycle.entity.CarBattery;
+import com.brecycle.entity.CarInfo;
 import com.brecycle.entity.User;
 import com.brecycle.entity.dto.*;
 import com.brecycle.enums.BatteryStatus;
 import com.brecycle.mapper.BatteryMapper;
+import com.brecycle.mapper.CarBatteryMapper;
+import com.brecycle.mapper.CarInfoMapper;
 import com.brecycle.mapper.UserMapper;
 import com.brecycle.service.BatteryService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.sdk.BcosSDK;
 import org.fisco.bcos.sdk.abi.datatypes.DynamicArray;
@@ -33,7 +38,6 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -44,11 +48,15 @@ import java.util.stream.Collectors;
 public class BatteryServiceImpl implements BatteryService {
 
     @Autowired
-    private FiscoBcos fiscoBcos;
+    FiscoBcos fiscoBcos;
     @Autowired
     BatteryMapper batteryMapper;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    CarInfoMapper carInfoMapper;
+    @Autowired
+    CarBatteryMapper carBatteryMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -132,7 +140,7 @@ public class BatteryServiceImpl implements BatteryService {
     }
 
     @Override
-    public void endLife(BatteryEndParam param) {
+    public void endLife(BatteryEndParam param) throws Exception {
         Battery battery = batteryMapper.selectById(param.getId());
         User owner = userMapper.selectByUserName(param.getOriginUserName());
         if (owner == null) {
@@ -149,6 +157,8 @@ public class BatteryServiceImpl implements BatteryService {
             throw new BusinessException("电池拆解失败");
         }
         battery.setStatus(BatteryStatus.END.getValue());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        battery.setEndTime(dateFormat.parse(param.getEndTime()));
         batteryMapper.updateById(battery);
     }
 
@@ -205,5 +215,29 @@ public class BatteryServiceImpl implements BatteryService {
         result.setPageSize(data.getSize());
         result.setData(list);
         return result;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveCarInfo(User car, BatteryCarInfoParam param) throws Exception {
+        // 检查当前电池批次拥有者是否为该用户
+        List<Battery> batteries = batteryMapper.selectList(new LambdaUpdateWrapper<Battery>()
+                .eq(Battery::getOwnerId, car.getId()).in(Battery::getId, param.getBatteryIds()));
+        if (CollectionUtils.size(batteries) != param.getBatteryIds().size()) {
+            throw new BusinessException("汽车编号:" + param.getCarBatchNo() + "对应的电池所属用户非当前企业");
+        }
+        CarInfo carInfo = new CarInfo();
+        carInfo.setId(param.getCarBatchNo());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        carInfo.setCreateTime(dateFormat.parse(param.getCreateTime()));
+        carInfo.setKah(param.getKah());
+        carInfo.setCreatorId(car.getId());
+        carInfoMapper.insert(carInfo);
+        for (String batteryId : param.getBatteryIds()) {
+            CarBattery carBattery = new CarBattery();
+            carBattery.setBatteryId(batteryId);
+            carBattery.setCarId(carInfo.getId());
+            carBatteryMapper.insert(carBattery);
+        }
     }
 }

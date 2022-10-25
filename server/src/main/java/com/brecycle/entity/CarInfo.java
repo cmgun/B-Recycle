@@ -1,32 +1,33 @@
 package com.brecycle.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
- * 交易关联的电池
+ * 汽车信息
  *
  * @author cmgun
  */
 @Data
-@TableName("trade_battery")
-public class TradeBattery {
+@TableName("car_info")
+public class CarInfo {
 
     /**
      * 主键
      */
-    @TableId(type = IdType.AUTO)
-    private Long id;
+    @TableId
+    private String id;
 
     @TableField
-    private Long tradeId;
+    private Long creatorId;
 
     @TableField
-    private String batteryId;
+    private Date createTime;
 
     @TableField
-    private String lastBatteryStatus;
+    private String kah;
 }

@@ -44,4 +44,10 @@ public class EntInfo {
      */
     @TableField
     private String remark;
+
+    /**
+     * 扩展字段
+     */
+    @TableField
+    private String info;
 }

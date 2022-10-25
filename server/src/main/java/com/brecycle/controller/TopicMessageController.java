@@ -73,7 +73,18 @@ public class TopicMessageController {
         String topicName = weEventConfig.getCarTransferTopic();
         WeEvent weEvent = new WeEvent(topicName, JSON.toJSONString(param).getBytes());
         SendResult sendResult = client.publish(weEvent);
-        log.info("电池流转-生产商，发送结果:{}", sendResult);
+        log.info("电池流转-车企，发送结果:{}", sendResult);
+        return Response.success("消息发送成功");
+    }
+
+    @ApiOperation("电池信息登记-车企")
+    @PostMapping("/battery/info/car")
+    Response carProductInfo(@RequestBody @ApiParam(value = "参数", required = true) List<BatteryCarInfoParam> param) throws Exception {
+        // 电池额外信息记录在battery.info
+        String topicName = weEventConfig.getCarTransferTopic();
+        WeEvent weEvent = new WeEvent(topicName, JSON.toJSONString(param).getBytes());
+        SendResult sendResult = client.publish(weEvent);
+        log.info("电池流转-车企，发送结果:{}", sendResult);
         return Response.success("消息发送成功");
     }
 
@@ -97,28 +108,6 @@ public class TopicMessageController {
         log.info("电池流转-消费者发起，发送结果:{}", sendResult);
         return Response.success("消息发送成功");
     }
-
-//    @ApiOperation("电池流转-梯次利用企业发起")
-//    @PostMapping("/battery/transfer/stored")
-//    Response storedTransfer(@RequestBody @ApiParam(value = "参数", required = true) List<CustomerTransferParam> param) throws Exception {
-//        String topicName = weEventConfig.getCustomerTransferTopic();
-//        WeEvent weEvent = new WeEvent(topicName, JSON.toJSONString(param).getBytes());
-//        SendResult sendResult = client.publish(weEvent);
-//        // 后续需要记录积分
-//        log.info("电池流转-消费者发起，发送结果:{}", sendResult);
-//        return Response.success("消息发送成功");
-//    }
-
-//    @ApiOperation("电池回收-回收商")
-//    @PostMapping("/battery/recycle")
-//    Response recycle(@RequestBody @ApiParam(value = "参数", required = true) List<BatteryRecycleParam> param) throws Exception {
-//        // 回收商把检测得出的电池信息发送
-//        String topicName = weEventConfig.getRentTransferTopic();
-//        WeEvent weEvent = new WeEvent(topicName, JSON.toJSONString(param).getBytes());
-//        SendResult sendResult = client.publish(weEvent);
-//        log.info("电池回收-回收商，发送结果:{}", sendResult);
-//        return Response.success("消息发送成功");
-//    }
 
     @ApiOperation("电池回收拆解")
     @PostMapping("/battery/end")

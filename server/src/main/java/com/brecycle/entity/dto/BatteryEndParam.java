@@ -62,4 +62,9 @@ public class BatteryEndParam implements Serializable {
      * 其他元素回收率
      */
     private BigDecimal otherRatio;
+
+    /**
+     * 拆解时间 yyyy-MM-dd HH:mm:ss
+     */
+    private String endTime;
 }

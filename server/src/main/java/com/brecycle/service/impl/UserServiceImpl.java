@@ -159,6 +159,7 @@ public class UserServiceImpl implements UserService {
         userRole.setUserId(entity.getId());
         userRole.setRoleId(Long.valueOf(RoleEnums.CUSTOMER.getKey()));
         userRoleMapper.insert(userRole);
+        // FIXME 积分账户注册
     }
 
     @Override
@@ -210,6 +211,10 @@ public class UserServiceImpl implements UserService {
         entInfo.setUserId(entity.getId());
         entInfo.setAccessStatus(Integer.valueOf(param.getType()).equals(RoleEnums.RECYCLE.getKey())
                 ? AccessStatus.WAIT_APPLY.getValue() : AccessStatus.DEFAULT.getValue());
+        // 扩展字段，保存一些积分计算需要的字段
+        entInfo.setInfo(param.getInfo());
         entInfoMapper.insert(entInfo);
+        // FIXME 积分账户注册
+        // FIXME 积分派发
     }
 }
