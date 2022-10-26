@@ -44,16 +44,23 @@
               <el-form-item label="地址" prop="Address">
                 <el-input v-model="ruleForm.Address" type="text" clearable />
               </el-form-item>
+              
               <!-- 选择器 -->
               <el-form-item label="企业类型" prop="CompanyType">
                 <el-select v-model="ruleForm.CompanyType" placeholder="请选择企业类型" >
-                  <el-option label="车企" value="CQ" />
-                  <el-option label="电池生产企业" value="DCSCS" />
-                  <el-option label="电池租赁商" value="DCZLS" />
-                  <el-option label="电池回收商" value="DCHSS" />
-                  <el-option label="储能企业" value="CNQY" />
-                  <el-option label="电池原材料生产企业" value="DCYCLSCQY" />
+                  <el-option label="车企" value="2" />
+                  <el-option label="电池生产企业" value="3" />
+                  <el-option label="电池租赁商" value="4" />
+                  <el-option label="电池回收商" value="5" />
+                  <el-option label="储能企业" value="6" />
+                  <el-option label="电池原材料生产企业" value="10" />
                 </el-select>
+              </el-form-item>
+              <el-form-item v-show="ruleForm.CompanyType == '2'" label="上一年汽车产量" prop="CarProductRegist">
+                <el-input v-show="ruleForm.CompanyType == '2'" v-model="ruleForm.CarProductRegist" type="text" clearable />
+              </el-form-item>
+              <el-form-item v-show="ruleForm.CompanyType == '3'" label="上一年电池产量" prop="BatteryProductRegist">
+                <el-input v-show="ruleForm.CompanyType == '3'" v-model="ruleForm.BatteryProductRegist" type="text" clearable />
               </el-form-item>
               <!-- 空一行！ -->
               <br />
@@ -74,19 +81,52 @@
 import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
+import { useUserStore } from '@/store/user'
+import { Md5 } from 'ts-md5'
 
 // handleregister 处理注册的方法：提交数据给后端【可参考登录处理方法】，返回一个弹框：注册信息已提交
 
 const handleregister = (valid) => {
-  //注册信息提交弹窗 
-  if (valid)
-    ElMessage({
-      message: '注册信息已成功提交。',
-      type: 'success',
-    })
-  else {
-    ElMessage.error('注册信息无法提交，请检查后重新提交。')
+  let params = {
+    userName: ruleForm.AccountNumber,
+    password: ruleForm.pass,
+    name: ruleForm.companyID,
+    phone: ruleForm.PhoneNumber,
+    idno: ruleForm.TrustNumber,
+    address: ruleForm.Address,
+    type: ruleForm.CompanyType,
+    info: ""
   }
+  params.password = Md5.hashStr(params.password)
+  if (params.type == '2') {
+    let extInfo = {
+      carProductRegist: ruleForm.CarProductRegist
+    }
+    params.info = JSON.stringify(extInfo)
+  }
+  if (params.type == '3') {
+    let extInfo = {
+      batteryProductRegist: ruleForm.BatteryProductRegist
+    }
+    params.info = JSON.stringify(extInfo)
+  }
+
+  const userStore = useUserStore()
+  userStore
+    .entRegist(params)
+    .then(() => {
+      console.log("entRegist success")
+      ElMessage({message: '注册成功。', type: 'success',})
+      useCommon()
+        .sleep(3)
+        .then(() => {
+          router.push('/login')
+        })
+    })
+    .catch((res) => {
+      console.log("entRegist error")
+      ElMessage.error(res.msg)
+    })
 }
 
 //use the auto import from vite.config.js of AutoImport
@@ -183,6 +223,8 @@ const ruleForm = reactive({
   Address: '',
   PhoneNumber: '',
   CompanyType: '',
+  CarProductRegist: '',
+  BatteryProductRegist: ''
 })
 
 const rules = reactive({

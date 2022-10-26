@@ -99,12 +99,22 @@ export const useUserStore = defineStore('user', {
           })
       })
     },
-    // customer regist
     customerRegist(data: ObjTy) {
       return new Promise((resolve, reject) => {
         customerRegistReq(data)
           .then(() => {
             
+            resolve(null)
+          })
+          .catch((error: any) => {
+            reject(error)
+          })
+      })
+    },
+    entRegist(data: ObjTy) {
+      return new Promise((resolve, reject) => {
+        entRegistReq(data)
+          .then(() => {
             resolve(null)
           })
           .catch((error: any) => {
