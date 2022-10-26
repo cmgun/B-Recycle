@@ -59,6 +59,11 @@ public class BatteryEndParam implements Serializable {
     private BigDecimal CoRatio;
 
     /**
+     * 镍回收率
+     */
+    private BigDecimal NiRatio;
+
+    /**
      * 其他元素回收率
      */
     private BigDecimal otherRatio;

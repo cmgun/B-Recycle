@@ -16,6 +16,7 @@ import com.brecycle.enums.RoleEnums;
 import com.brecycle.enums.UserStatus;
 import com.brecycle.enums.UserType;
 import com.brecycle.mapper.*;
+import com.brecycle.service.PointService;
 import com.brecycle.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -45,19 +46,21 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserMapper userMapper;
+    UserMapper userMapper;
     @Autowired
-    private RoleMapper roleMapper;
+    RoleMapper roleMapper;
     @Autowired
-    private ResourceMapper resourceMapper;
+    ResourceMapper resourceMapper;
     @Autowired
-    private UserRoleMapper userRoleMapper;
+    UserRoleMapper userRoleMapper;
     @Autowired
-    private EntInfoMapper entInfoMapper;
+    EntInfoMapper entInfoMapper;
     @Autowired
-    private RedisUtil redisUtil;
+    RedisUtil redisUtil;
     @Autowired
-    private FiscoBcos fiscoBcos;
+    FiscoBcos fiscoBcos;
+    @Autowired
+    PointService pointService;
 
     @Override
     public UserInfo login(String userName, String password) throws Exception {
@@ -121,7 +124,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void customerRegist(CustomerRegistParam param) {
+    public void customerRegist(CustomerRegistParam param) throws Exception {
         // 查询是否已有重复账户
         User existsUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUserName, param.getUserName()));
@@ -159,12 +162,13 @@ public class UserServiceImpl implements UserService {
         userRole.setUserId(entity.getId());
         userRole.setRoleId(Long.valueOf(RoleEnums.CUSTOMER.getKey()));
         userRoleMapper.insert(userRole);
-        // FIXME 积分账户注册
+        // 积分账户注册
+        pointService.registAccount(entity);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void entRegist(EntRegistParam param) {
+    public void entRegist(EntRegistParam param) throws Exception {
         // 查询是否已有重复账户
         User existsUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUserName, param.getUserName()));
@@ -175,6 +179,14 @@ public class UserServiceImpl implements UserService {
                 .eq(User::getIdno, param.getIdno()));
         if (existsUser != null) {
             throw new BusinessException("企业信息重复");
+        }
+        if (Integer.valueOf(param.getType()).equals(RoleEnums.PRODUCTOR.getKey())
+                && !StringUtils.contains(param.getInfo(), PointServiceImpl.PRODUCT_REGIST_PARAM)) {
+            throw new BusinessException("上一年生产资料信息必填");
+        }
+        if (Integer.valueOf(param.getType()).equals(RoleEnums.CAR.getKey())
+                && !StringUtils.contains(param.getInfo(), PointServiceImpl.CAR_REGIST_PARAM)) {
+            throw new BusinessException("上一年生产资料信息必填");
         }
 
         // 创建非国密账户
@@ -214,7 +226,9 @@ public class UserServiceImpl implements UserService {
         // 扩展字段，保存一些积分计算需要的字段
         entInfo.setInfo(param.getInfo());
         entInfoMapper.insert(entInfo);
-        // FIXME 积分账户注册
-        // FIXME 积分派发
+        // 积分账户注册
+        pointService.registAccount(entity);
+        // 积分派发
+        pointService.registPointPublish(entity, entInfo, userRole.getRoleId());
     }
 }

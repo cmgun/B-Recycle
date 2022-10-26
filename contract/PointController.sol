@@ -92,6 +92,14 @@ contract PointController {
         _pointLog[msg.sender].push(PointLog({addr:msg.sender, timestamp:now, beforePoint: beforePoint, afterPoint: afterPoint, remark: "积分初始化"}));
     }
 
+    function getTotalAmount1() public onlyDAO view returns(uint256) {
+        return _pointData.getTotalAmount1();
+    }
+
+    function getTotalAmount2() public onlyDAO view returns(uint256) {
+        return _pointData.getTotalAmount2();
+    }
+
     // 添加DAO账户
     function addDAO(address account) public {
         _dao.addDAO(account);
@@ -123,7 +131,7 @@ contract PointController {
         (fromBeforePoint, toBeforePoint, fromAfterPoint, toAfterPoint) = _pointData.transfer(msg.sender, DAOaddr, point);
         emit TransferEvent(msg.sender, DAOaddr, point);
         _pointLog[msg.sender].push(PointLog({addr:msg.sender, timestamp:now, beforePoint: fromBeforePoint, afterPoint: fromAfterPoint, remark: "积分缴纳"}));
-        _pointLog[msg.sender].push(PointLog({addr:DAOaddr, timestamp:now, beforePoint: toBeforePoint, afterPoint: toAfterPoint, remark: "积分缴纳"}));
+        _pointLog[DAOaddr].push(PointLog({addr:DAOaddr, timestamp:now, beforePoint: toBeforePoint, afterPoint: toAfterPoint, remark: "积分缴纳"}));
     }
 
     // DAO向目标账户转移积分
@@ -139,7 +147,7 @@ contract PointController {
         (fromBeforePoint, toBeforePoint, fromAfterPoint, toAfterPoint) = _pointData.transfer(msg.sender, to, point);
         emit TransferEvent(msg.sender, to, point);
         _pointLog[msg.sender].push(PointLog({addr:msg.sender, timestamp:now, beforePoint: fromBeforePoint, afterPoint: fromAfterPoint, remark: "DAO派发"}));
-        _pointLog[msg.sender].push(PointLog({addr:to, timestamp:now, beforePoint: toBeforePoint, afterPoint: toAfterPoint, remark: "DAO派发"}));
+        _pointLog[to].push(PointLog({addr:to, timestamp:now, beforePoint: toBeforePoint, afterPoint: toAfterPoint, remark: "DAO派发"}));
     }
 
     // 普通账户之间转移积分
@@ -155,7 +163,7 @@ contract PointController {
         (fromBeforePoint, toBeforePoint, fromAfterPoint, toAfterPoint) = _pointData.transfer(msg.sender, to, point);
         emit TransferEvent(msg.sender, to, point);
         _pointLog[msg.sender].push(PointLog({addr:msg.sender, timestamp:now, beforePoint: fromBeforePoint, afterPoint: fromAfterPoint, remark: "普通交易"}));
-        _pointLog[msg.sender].push(PointLog({addr:msg.sender, timestamp:now, beforePoint: toBeforePoint, afterPoint: toAfterPoint, remark: "普通交易"}));
+        _pointLog[to].push(PointLog({addr:msg.sender, timestamp:now, beforePoint: toBeforePoint, afterPoint: toAfterPoint, remark: "普通交易"}));
     }
 
     // 积分冻结

@@ -13,11 +13,13 @@ import com.brecycle.entity.CarInfo;
 import com.brecycle.entity.User;
 import com.brecycle.entity.dto.*;
 import com.brecycle.enums.BatteryStatus;
+import com.brecycle.enums.RoleEnums;
 import com.brecycle.mapper.BatteryMapper;
 import com.brecycle.mapper.CarBatteryMapper;
 import com.brecycle.mapper.CarInfoMapper;
 import com.brecycle.mapper.UserMapper;
 import com.brecycle.service.BatteryService;
+import com.brecycle.service.PointService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
@@ -57,6 +59,8 @@ public class BatteryServiceImpl implements BatteryService {
     CarInfoMapper carInfoMapper;
     @Autowired
     CarBatteryMapper carBatteryMapper;
+    @Autowired
+    PointService pointService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -74,8 +78,6 @@ public class BatteryServiceImpl implements BatteryService {
         CryptoKeyPair currentKeyPair = cryptoSuite.getKeyPairFactory().createKeyPair(user.getPrivateKey());
         BatteryContract contract = BatteryContract.deploy(client, currentKeyPair, param.getId()
                 , param.getBatchNo(), JSON.toJSONString(param));
-        // FIXME 调用积分合约
-
         // 保存数据
         Battery battery = new Battery();
         BeanUtils.copyProperties(battery, param);
@@ -84,6 +86,8 @@ public class BatteryServiceImpl implements BatteryService {
         battery.setStatus(BatteryStatus.SAFE_CHECK.getValue());
         battery.setOwnerId(user.getId());
         batteryMapper.insert(battery);
+        // 调用积分合约
+        pointService.payPoint(user, Lists.newArrayList(battery), RoleEnums.PRODUCTOR.getKey());
     }
 
     @Override
@@ -239,5 +243,8 @@ public class BatteryServiceImpl implements BatteryService {
             carBattery.setCarId(carInfo.getId());
             carBatteryMapper.insert(carBattery);
         }
+        List<Battery> batteryList = batteryMapper.selectBatchIds(param.getBatteryIds());
+        // 积分缴纳
+        pointService.payPoint(car, batteryList, RoleEnums.CAR.getKey());
     }
 }

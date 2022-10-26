@@ -233,7 +233,7 @@ public class SecondUsedServiceImpl implements SecondUsedService {
         }
         Tuple2<String, BigInteger> result = tradeContract.getDealOutput(receipt);
         // 没有买方，说明交易需要撤回
-        if (StringUtils.isBlank(result.getValue1())) {
+        if (StringUtils.isBlank(result.getValue1()) || result.getValue1().startsWith("0x00000")) {
             // 撤回交易
             trade.setStatus(TradeStatus.REJECT.getValue());
             tradeMapper.updateById(trade);

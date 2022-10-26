@@ -9,6 +9,7 @@ import com.brecycle.entity.dto.CustomerTransferParam;
 import com.brecycle.enums.BatteryStatus;
 import com.brecycle.service.BatteryService;
 import com.brecycle.service.PointService;
+import com.google.common.collect.Lists;
 import com.webank.weevent.client.IWeEventClient;
 import com.webank.weevent.client.WeEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,8 @@ public class CustomerTransferListener implements IWeEventClient.EventListener {
                     throw new BusinessException("充放电次数不可为空");
                 }
                 batteryService.transfer(content, BatteryStatus.WAIT_RECYCLE.getValue());
-                // FIXME 消费者积分派发
+                // 消费者积分派发
+                pointService.customerPoint(content);
             } catch (Exception e) {
                 log.error("消费者电池流转监听器，消息处理失败，当前参数:{}", JSON.toJSON(content), e);
             }

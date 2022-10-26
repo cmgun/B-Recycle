@@ -29,13 +29,13 @@ contract PointData is BasicAuth {
         uint fromBeforePoint = _point[_from];
         // 操作前to账户积分
         uint toBeforePoint = _point[_to];
-        // 操作后from账户积分
-        uint fromAfterPoint = fromBeforePoint - _value;
-        // 操作后to账户积分
-        uint toAfterPoint = toBeforePoint + _value;
-        _point[_from] = fromAfterPoint;
-        _point[_to] = toAfterPoint;
+        _point[_from] -= _value;
+        _point[_to] += _value;
         emit LogSend(_from, _to, _value);
+        // 操作后from账户积分
+        uint fromAfterPoint = _point[_from];
+        // 操作后to账户积分
+        uint toAfterPoint = _point[_to];
 
         assert(_point[_from] + _point[_to] == previousBalances);
         return (fromBeforePoint, toBeforePoint, fromAfterPoint, toAfterPoint);

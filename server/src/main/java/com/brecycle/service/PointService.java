@@ -6,6 +6,7 @@ import com.brecycle.entity.Trade;
 import com.brecycle.entity.User;
 import com.brecycle.entity.dto.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface PointService {
@@ -27,11 +28,18 @@ public interface PointService {
     void initPoint() throws Exception;
 
     /**
+     * 初始化指定积分
+     * @param value1
+     * @param value2
+     */
+    void initPoint(BigDecimal value1, BigDecimal value2);
+
+    /**
      * 积分账户注册
      * DAO账户操作
      * @param user
      */
-    void registAccount(User user);
+    void registAccount(User user) throws Exception;
 
     /**
      * 企业注册积分派发
@@ -39,43 +47,52 @@ public interface PointService {
      * @param user
      * @param entInfo
      */
-    void registPointPublish(User user, EntInfo entInfo);
+    void registPointPublish(User user, EntInfo entInfo, Long role) throws Exception;
 
     /**
      * 年度结算，对回收商拆解行为进行年度积分派发
      * @param recycleEnt
      */
-    void yearRecycleEntPublish(User recycleEnt);
+    void yearRecycleEntPublish(User recycleEnt, BigDecimal phaseEndBatteryKah, BigDecimal currentEndBatteryKah) throws Exception;
 
     /**
      * 积分缴纳
      * @param payEnt 电池生产商、车企
      * @param batteryList
      */
-    void payPoint(User payEnt, List<Battery> batteryList);
+    void payPoint(User payEnt, List<Battery> batteryList, Integer role);
 
     /**
      * 消费者积分获取
      * DAO执行transfer
      *
-     * @param customer
-     * @param battery
+     * @param param
      */
-    void customerPoint(User customer, List<Battery> battery);
+    void customerPoint(CustomerTransferParam param);
 
     /**
      * 拆解环节梯次利用企业积分获取
-     * @param storedEnt
-     * @param batteryList
      */
-    void secondUsedPoint(User storedEnt, List<Battery> batteryList);
+    void secondUsedPoint(BatteryEndParam param);
 
     /**
      * 拆解环节回收商积分获取
-     * @param recycleEnt
-     * @param batteryList
      */
-    void secondRecyclePoint(User recycleEnt, List<Battery> batteryList);
+    void secondRecyclePoint(BatteryEndParam param);
+
+    /**
+     * 查询积分记录
+     * @param userName
+     * @return
+     */
+    List<PointLogDTO> getPointLogs(String userName) throws Exception;
+
+    /**
+     * 查询指定用户的积分
+     * @param userName
+     * @return
+     */
+    BigDecimal getPoint(String userName) throws Exception ;
 
     /**
      * 积分交易申请

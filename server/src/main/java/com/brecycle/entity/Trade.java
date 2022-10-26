@@ -53,4 +53,7 @@ public class Trade {
 
     @TableField
     private String addr;
+
+    @TableField
+    private String info;
 }

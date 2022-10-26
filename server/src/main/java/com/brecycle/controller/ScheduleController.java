@@ -1,27 +1,17 @@
 package com.brecycle.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.brecycle.common.Response;
-import com.brecycle.config.WeEventConfig;
-import com.brecycle.entity.dto.BatteryInfoParam;
-import com.brecycle.entity.dto.BatterySafeCheckParam;
-import com.brecycle.entity.dto.BatteryTransferParam;
+import com.brecycle.schedule.PointDealSchedule;
 import com.brecycle.schedule.RecycleDealSchedule;
 import com.brecycle.schedule.SecondUsedDealSchedule;
-import com.webank.weevent.client.IWeEventClient;
-import com.webank.weevent.client.SendResult;
-import com.webank.weevent.client.WeEvent;
+import com.brecycle.schedule.YearRecycleEntPublishSchedule;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * 提供给特定系统进行topic消息发送
@@ -38,6 +28,10 @@ public class ScheduleController {
     RecycleDealSchedule recycleDealSchedule;
     @Autowired
     SecondUsedDealSchedule secondUsedDealSchedule;
+    @Autowired
+    PointDealSchedule pointDealSchedule;
+    @Autowired
+    YearRecycleEntPublishSchedule yearRecycleEntPublishSchedule;
 
 
     @ApiOperation("回收交易到期")
@@ -51,6 +45,20 @@ public class ScheduleController {
     @PostMapping("/secondUsed/deal")
     Response secondUsedDeal() {
         secondUsedDealSchedule.process();
+        return Response.success("执行成功");
+    }
+
+    @ApiOperation("积分交易到期")
+    @PostMapping("/point/deal")
+    Response pointDeal() {
+        pointDealSchedule.process();
+        return Response.success("执行成功");
+    }
+
+    @ApiOperation("年度回收商积分派发到期")
+    @PostMapping("/point/yearRecycleEntPublish")
+    Response yearRecycleEntPublish() {
+        yearRecycleEntPublishSchedule.process();
         return Response.success("执行成功");
     }
 }

@@ -75,7 +75,7 @@ public class UserRealm extends AuthorizingRealm {
         }
         // TODO 增加数据库验证
 //        UserInfo userInfo = userInfoService.getUserByUsername(username);
-        UserInfo userInfo = UserInfo.builder().userName("test111").build();
+        UserInfo userInfo = UserInfo.builder().userName(username).build();
         if (null == userInfo) {
             throw new AuthenticationException("该用户不存在");
         }

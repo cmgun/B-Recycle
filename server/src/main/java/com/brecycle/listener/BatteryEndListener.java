@@ -6,6 +6,7 @@ import com.brecycle.entity.dto.BatteryEndParam;
 import com.brecycle.entity.dto.BatteryTransferParam;
 import com.brecycle.enums.BatteryStatus;
 import com.brecycle.service.BatteryService;
+import com.brecycle.service.PointService;
 import com.webank.weevent.client.IWeEventClient;
 import com.webank.weevent.client.WeEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,8 @@ public class BatteryEndListener implements IWeEventClient.EventListener {
 
     @Autowired
     BatteryService batteryService;
+    @Autowired
+    PointService pointService;
 
     @Override
     public void onEvent(WeEvent event) {
@@ -49,8 +52,10 @@ public class BatteryEndListener implements IWeEventClient.EventListener {
                 // FIXME 积分计算
                 if (content.getSecondUsed()) {
                     // 有梯次利用
+                    pointService.secondUsedPoint(content);
                 }
                 // 拆解商（回收商）派发积分
+                pointService.secondRecyclePoint(content);
 
             } catch (Exception e) {
                 log.error("电池拆解监听器，消息处理失败，当前参数:{}", JSON.toJSON(content), e);

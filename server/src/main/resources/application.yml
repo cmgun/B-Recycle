@@ -140,8 +140,10 @@ point:
     2022: 6000000
     2021: 5000000
   # 平均每辆车电池容量：千安时
-  carAvgKmh: 50
-  # 积分比率，电池生产者和车企消耗积分时使用，DAO设定值
+  carAvgKAh: 50
+  # 平均每块电池容量：千安时
+  batteryAvgKAh: 0.055
+  # 积分比率，DAO设定值
   alpha: 0.8
   # 环节配额：一次回收
   firstRecyclePartRatio: 0.2
@@ -152,6 +154,6 @@ point:
   # 积分总额派发分配比例：电池生产商:车企
   producePayRatio: 0.5
   # 积分合约地址
-  pointController: "0xe331be6a3792fbcc8f1af869608d18887ddb0da2"
+  pointController: "0xbb4ae196c032c53ce856289acb76c36771e8a74e"
   # DAO用户
   dao: "admin"

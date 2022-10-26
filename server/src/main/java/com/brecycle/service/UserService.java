@@ -35,11 +35,11 @@ public interface UserService {
      * 消费者注册
      * @param param
      */
-    void customerRegist(CustomerRegistParam param);
+    void customerRegist(CustomerRegistParam param) throws Exception;
 
     /**
      * 企业注册
      * @param param
      */
-    void entRegist(EntRegistParam param);
+    void entRegist(EntRegistParam param) throws Exception;
 }

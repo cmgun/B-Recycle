@@ -25,7 +25,9 @@ public class PointConfig {
 
     public Map<String, Integer> systemPredict;
 
-    public Long carAvgKmh;
+    public Double carAvgKAh;
+
+    public Double batteryAvgKAh;
 
     public Float alpha;
 

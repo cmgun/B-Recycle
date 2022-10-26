@@ -37,6 +37,8 @@ public class EntRegistParam implements Serializable {
 
     /**
      * 其他信息
+     * 电池生产商，需要batteryProductRegist
+     * 车企，需要carProductRegist
      */
     private String info;
 }
