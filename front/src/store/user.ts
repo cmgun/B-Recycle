@@ -1,4 +1,4 @@
-import { loginReq, logoutReq, getInfoReq } from '@/api/user'
+import { loginReq, logoutReq, getInfoReq, customerRegistReq, entRegistReq } from '@/api/user'
 import { setToken, removeToken } from '@/utils/auth'
 import { ObjTy } from '~/common'
 import router, { constantRoutes, asyncRoutes } from '@/router'
@@ -92,6 +92,19 @@ export const useUserStore = defineStore('user', {
         logoutReq()
           .then(() => {
             this.resetState()
+            resolve(null)
+          })
+          .catch((error: any) => {
+            reject(error)
+          })
+      })
+    },
+    // customer regist
+    customerRegist(data: ObjTy) {
+      return new Promise((resolve, reject) => {
+        customerRegistReq(data)
+          .then(() => {
+            
             resolve(null)
           })
           .catch((error: any) => {

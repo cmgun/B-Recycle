@@ -57,25 +57,43 @@
 import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
+import { useUserStore } from '@/store/user'
+import { Md5 } from 'ts-md5'
 
 
 // handleregister 处理注册的方法：提交数据给后端【可参考登录处理方法】，返回一个弹框：注册信息已提交
 const handleregister = (valid) => {
-  //注册信息提交弹窗 
-  if (valid)
-    ElMessage({
-      message: '注册信息已成功提交。',
-      type: 'success',
-    })
-  else {
-    ElMessage.error('注册信息无法提交，请检查后重新提交。')
+  let params = {
+    userName: ruleForm.AccountNumber,
+    password: ruleForm.pass,
+    name: ruleForm.ID,
+    phone: ruleForm.PhoneNumber,
+    idno: ruleForm.IDnumber
   }
+  params.password = Md5.hashStr(params.password)
+
+  const userStore = useUserStore()
+  userStore
+    .customerRegist(params)
+    .then(() => {
+      console.log("customerRegist success")
+      ElMessage({message: '注册成功。', type: 'success',})
+      useCommon()
+        .sleep(3)
+        .then(() => {
+          router.push('/login')
+        })
+    })
+    .catch((res) => {
+      console.log("customerRegist error")
+      ElMessage.error(res.msg)
+    })
 }
 
 //use the auto import from vite.config.js of AutoImport
 const router = useRouter()
 
-//返回 
+//返回
 let backLogin = () => {
   router.push(`/login`)
 }

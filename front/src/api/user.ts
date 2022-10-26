@@ -27,3 +27,19 @@ export function logoutReq() {
     method: 'post'
   })
 }
+
+export function customerRegistReq(data: ObjTy) {
+  return request({
+    url: '/user/customerRegist',
+    data,
+    method: 'post'
+  })
+}
+
+export function entRegistReq(data: ObjTy) {
+  return request({
+    url: '/user/entRegist',
+    data,
+    method: 'post'
+  })
+}
