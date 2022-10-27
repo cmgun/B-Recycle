@@ -35,7 +35,7 @@
               <el-table-column prop="entName" label="企业名称" width="auto" />
               <!-- <el-table-column prop="accessStatus" label="准入审核状态" :formatter="formatter" width="auto" /> -->
 
-              <el-table-column prop="accessStatus" label="企业类型" width="auto" :filters="[
+              <el-table-column prop="accessStatus" label="准入状态" width="auto" :filters="[
                   { text: '无需准入', value: '0' },
                   { text: '等待准入申请', value: '1' },
                   { text: '审批中', value: '2' },
