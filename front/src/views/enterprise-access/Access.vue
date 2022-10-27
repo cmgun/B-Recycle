@@ -1,106 +1,50 @@
-<!-- 机构准入审批 -->
+<!-- 审批文件提交页面 -->
 <template>
-  <div class="scroll-y">
-    <h3 class="mb2">props operate demo of settings.js</h3>
-    <div class="rowSS">
-      <div class="mb1">
-        page layout related
-        <div class="mt2">
-          sidebarLogo：
-          <el-switch v-model="appStore.settings.sidebarLogo" />
-        </div>
-        <div class="mt3">
-          showNavbarTitle：
-          <el-switch v-model="appStore.settings.showNavbarTitle" />
-        </div>
-        <div class="mt3">
-          ShowDropDown：
-          <el-switch v-model="appStore.settings.ShowDropDown" />
-        </div>
-        <div class="mt3">
-          showHamburger：
-          <el-switch v-model="appStore.settings.showHamburger" />
-        </div>
-        <div class="mt3">
-          showLeftMenu：
-          <el-switch v-model="appStore.settings.showLeftMenu" />
-        </div>
-        <div class="mt3">
-          showTagsView：
-          <el-switch v-model="appStore.settings.showTagsView" />
-        </div>
-        <div class="mt3">
-          showTopNavbar：
-          <el-switch v-model="appStore.settings.showTopNavbar" />
-        </div>
-      </div>
-
-      <div class="mb1 ml6">
-        page animation related
-        <div class="mt2">
-          mainNeedAnimation：places to "settings file" for setting
-          <!-- <el-switch v-model="appStore.settings.mainNeedAnimation" />-->
-        </div>
-        <div class="mt3">
-          isNeedNprogress：
-          <el-switch v-model="appStore.settings.isNeedNprogress" />
-        </div>
-      </div>
-    </div>
-    <div class="mt2 mb1">store.commit to change</div>
-    <el-button type="primary" @click="testChangeSettings">testChangeSettings</el-button>
+  <div class="app-container">
+      <el-upload ref="uploadRef"
+          action="" :auto-upload="false" :on-change="(file)=>changeHandler(file)" :limit="1">
+          <template #trigger>
+              <el-button type="primary" size="large">选取文件</el-button>
+          </template>
+          <!-- 上传到服务器 -->
+          <el-button class="ml-3" type="success" size="large" @click="submitUpload">
+              提交审批（上传到服务器）
+          </el-button>
+          <template #tip>
+              <!-- front-size 设置字体大小 margin-top设置顶部占位 -->
+              <div style="margin-top:10px; font-size: large;">请上传资质文件</div>
+              <div class="el-upload__tip">文件不能超过5MB</div>
+          </template>
+      </el-upload>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useAppStore } from '@/store/app'
+import { ref } from 'vue'
+import { UploadInstance, valueEquals } from 'element-plus'
+import { ElMessage } from 'element-plus'
+import { useEntAccessStore } from '@/store/entAccess'
 
-const settings = computed(() => {
-  return appStore.settings || {}
-})
 
-const appStore = useAppStore()
-const testChangeSettings = () => {
-  appStore.M_settings({ sidebarLogo: !settings.value.sidebarLogo })
-}
+const uploadRef = ref<UploadInstance>()
 
-const source = ref(false)
-const sourceFun = () => {
-  source.value = !source.value
-}
-const handle = () => {
-  new Promise((resolve, reject) => {
-    reject('reject promise')
-  }).then((res) => {
-    console.log('ok')
-  })
-}
+let fileParam
 
-const flag = ref(null)
-
-const consoleErrorFun = () => {
-  console.error('console.error')
-}
-
-const normalError = () => {
-  throw new Error(' throw new Error("")\n')
-}
-const { proxy }: any = getCurrentInstance()
-const updateReq = () => {
-  return proxy
-    .$axiosReq({
-      // baseURL: 'http://8.135.1.141/micro-service-test',
-      url: '/integration-front/brand/updateBy',
-      data: { id: 'fai' },
-      method: 'put',
-      isParams: true,
-      bfLoading: true
+const submitUpload = () => {
+  let formData = new FormData()
+  formData.append("file", fileParam.raw)
+  const entAccessStore = useEntAccessStore()
+  entAccessStore.apply(formData)
+  .then(() => {
+      console.log("apply success")
+      ElMessage({ message: '提交成功，等待审查机构进行审查。', type: 'success' })
     })
-    .then(() => {})
-  // .catch((err) => {
-  //   console.log('接口catch', err)
-  // })
+    .catch((res) => {
+      console.log("apply error")
+    })
+}
+
+const changeHandler = (file) => {
+    fileParam = file
 }
 </script>
-
-<style scoped lang="scss"></style>

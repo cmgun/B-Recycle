@@ -358,19 +358,19 @@ export const asyncRoutes: RouterTy = [
     path: '/enterprise-access',
     component: Layout,
     name: '机构准入',
-    meta: { title: '机构准入', icon: 'tree', roles: ['car', 'productor', 'rent', 'recycle', 'stored', 'safe', 'material', 'admin', 'supervision'] },
+    meta: { title: '机构准入', icon: 'tree', roles: ['recycle', 'audit', 'admin', 'supervision'] },
     children: [
       {
         path: 'access',
-        name: '准入审批',
+        name: '准入申请',
         component: () => import('@/views/enterprise-access/Access.vue'),
-        meta: { title: '准入审批', roles: ['admin', 'supervision'] }
+        meta: { title: '准入申请', roles: ['audit'] }
       },
       {
         path: 'access-result',
         name: '准入结果查询',
         component: () => import('@/views/enterprise-access/AccessResult.vue'),
-        meta: { title: '准入结果查询', roles: ['car', 'productor', 'rent', 'recycle', 'stored', 'safe', 'material']  }
+        meta: { title: '准入结果查询', roles: ['recycle', 'audit']  }
       },
       {
         path: 'enterprise-list',

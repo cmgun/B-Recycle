@@ -134,7 +134,7 @@ export function axiosReq({
     isDownLoadFile: isDownLoadFile ?? false,
     isAlertErrorMsg: isAlertErrorMsg,
     baseURL: baseURL ?? import.meta.env.VITE_APP_BASE_URL,
-    timeout: timeout ?? 15000
+    timeout: timeout ?? 60000
   })
 }
 

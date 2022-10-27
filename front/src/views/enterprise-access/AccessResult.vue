@@ -1,106 +1,58 @@
-<!-- 机构准入审批 -->
 <template>
-  <div class="scroll-y">
-    <h3 class="mb2">props operate demo of settings.js</h3>
-    <div class="rowSS">
-      <div class="mb1">
-        page layout related
-        <div class="mt2">
-          333444:
-          <el-switch v-model="appStore.settings.sidebarLogo" />
-        </div>
-        <div class="mt3">
-          showNavbarTitle：
-          <el-switch v-model="appStore.settings.showNavbarTitle" />
-        </div>
-        <div class="mt3">
-          ShowDropDown：
-          <el-switch v-model="appStore.settings.ShowDropDown" />
-        </div>
-        <div class="mt3">
-          showHamburger：
-          <el-switch v-model="appStore.settings.showHamburger" />
-        </div>
-        <div class="mt3">
-          showLeftMenu：
-          <el-switch v-model="appStore.settings.showLeftMenu" />
-        </div>
-        <div class="mt3">
-          showTagsView：
-          <el-switch v-model="appStore.settings.showTagsView" />
-        </div>
-        <div class="mt3">
-          showTopNavbar：
-          <el-switch v-model="appStore.settings.showTopNavbar" />
-        </div>
-      </div>
-
-      <div class="mb1 ml6">
-        page animation related
-        <div class="mt2">
-          mainNeedAnimation：places to "settings file" for setting
-          <!-- <el-switch v-model="appStore.settings.mainNeedAnimation" />-->
-        </div>
-        <div class="mt3">
-          isNeedNprogress：
-          <el-switch v-model="appStore.settings.isNeedNprogress" />
-        </div>
-      </div>
-    </div>
-    <div class="mt2 mb1">store.commit to change</div>
-    <el-button type="primary" @click="testChangeSettings">testChangeSettings</el-button>
-  </div>
+  <el-row class="mb-4">
+     <el-button type="primary" round size="large" @click="open">点击此处查询审批状态</el-button>
+     <!-- <el-alert class=el-alert title="你已通过审批" type="success" description="" center effect="dark" show-icon />
+     <el-alert class=el-alert title="未通过审批" type="error" description="请重新提交文档" center effect="dark" show-icon /> -->
+ </el-row>
 </template>
 
 <script lang="ts" setup>
-import { useAppStore } from '@/store/app'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useEntAccessStore } from '@/store/entAccess'
+// import type { Action } from 'element-plus'
 
-const settings = computed(() => {
-  return appStore.settings || {}
-})
-
-const appStore = useAppStore()
-const testChangeSettings = () => {
-  appStore.M_settings({ sidebarLogo: !settings.value.sidebarLogo })
-}
-
-const source = ref(false)
-const sourceFun = () => {
-  source.value = !source.value
-}
-const handle = () => {
-  new Promise((resolve, reject) => {
-    reject('reject promise')
-  }).then((res) => {
-    console.log('ok')
-  })
-}
-
-const flag = ref(null)
-
-const consoleErrorFun = () => {
-  console.error('console.error')
-}
-
-const normalError = () => {
-  throw new Error(' throw new Error("")\n')
-}
-const { proxy }: any = getCurrentInstance()
-const updateReq = () => {
-  return proxy
-    .$axiosReq({
-      // baseURL: 'http://8.135.1.141/micro-service-test',
-      url: '/integration-front/brand/updateBy',
-      data: { id: 'fai' },
-      method: 'put',
-      isParams: true,
-      bfLoading: true
+const open = () => {
+  // 查询调用请求后，弹窗，弹结果
+  const entAccessStore = useEntAccessStore()
+  entAccessStore.accessResult()
+  .then((res: any) => {
+      console.log("accessResult:" + res.code)
+      let accessResult
+      if (res.accessStatus == '1') {
+        accessResult = '等待准入申请中'
+      }
+      if (res.accessStatus == '2') {
+        accessResult = '审批中'
+      }
+      if (res.accessStatus == '3') {
+        accessResult = '审批拒绝'
+      }
+      if (res.accessStatus == '4') {
+        accessResult = '审批通过'
+      }
+      let msg = '审批结果：' + accessResult + '，审批机构：' + res.approvalEntName
+      ElMessageBox({
+        message: msg,
+        title: '查询结果',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        showCancelButton: false,
+        type: 'info'
+      })
     })
-    .then(() => {})
-  // .catch((err) => {
-  //   console.log('接口catch', err)
-  // })
+    .catch((res) => {
+      console.log("accessResult error")
+    })
+
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped>
+.el-alert {
+ margin: 20px 0 0;
+}
+
+.el-alert:first-child {
+ margin: 0;
+}
+</style>
