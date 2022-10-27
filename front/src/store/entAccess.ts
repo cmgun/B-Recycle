@@ -1,4 +1,4 @@
-import { applyReq, accessResultReq, entListReq, passReq, rejectReq } from '@/api/entAccess'
+import { applyReq, accessResultReq, entListReq, passReq, rejectReq, downloadReq } from '@/api/entAccess'
 import { ObjTy } from '~/common'
 import { defineStore } from 'pinia'
 
@@ -51,6 +51,17 @@ export const useEntAccessStore = defineStore('entAccess', {
     reject(data: ObjTy) {
       return new Promise((resolve, reject) => {
         rejectReq(data)
+          .then((res: ObjTy) => {
+            resolve(res.data)
+          })
+          .catch((error: any) => {
+            reject(error)
+          })
+      })
+    },
+    download(data: ObjTy) {
+      return new Promise((resolve, reject) => {
+        downloadReq(data)
           .then((res: ObjTy) => {
             resolve(res.data)
           })

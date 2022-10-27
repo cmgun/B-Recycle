@@ -40,3 +40,10 @@ export function rejectReq(data: ObjTy) {
     method: 'post',
   })
 }
+
+export function downloadReq(data: ObjTy) {
+  return request({
+    url: '/ent/download/' + data,
+    isDownLoadFile: true
+  })
+}

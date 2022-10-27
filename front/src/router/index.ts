@@ -350,11 +350,8 @@ export const asyncRoutes: RouterTy = [
       }
     ]
   },
-  // 404 page must be placed at the end !!!
-  // using pathMatch install of "*" in vue-router 4.0
-  { path: '/:pathMatch(.*)', redirect: '/404', hidden: true },
    // 业务菜单开始
-   {
+  {
     path: '/enterprise-access',
     component: Layout,
     name: '机构准入',
@@ -379,7 +376,85 @@ export const asyncRoutes: RouterTy = [
         meta: { title: '企业列表', roles: ['admin', 'supervision'] }
       }
     ]
-  }
+  },
+  {
+    path: '/battery',
+    component: Layout,
+    name: '电池管理',
+    meta: { title: '电池管理', icon: 'tree', roles: ['recycle', 'admin', 'supervision', 'customer', 'car', 'productor', 'rent', 'stored', 'safe', 'material'] },
+    children: [
+      {
+        path: 'list',
+        name: '电池信息查询',
+        component: () => import('@/views/battery/BatteryList.vue'),
+        meta: { title: '电池信息查询', roles: ['recycle', 'admin', 'supervision', 'customer', 'car', 'productor', 'rent', 'stored', 'safe', 'material'] }
+      },
+      {
+        path: 'add',
+        name: '电池信息录入',
+        component: () => import('@/views/battery/BatteryList.vue'),
+        meta: { title: '电池信息录入', roles: ['productor'] }
+      },
+    ]
+  },
+  {
+    path: '/firstRecycle',
+    component: Layout,
+    name: '梯次利用',
+    meta: { title: '梯次利用', icon: 'tree', roles: ['productor', 'recycle', 'car', 'rent']},
+    children: [
+      {
+        path: 'apply',
+        name: '发起交易',
+        component: () => import('@/views/battery/BatteryList.vue'),
+        meta: { title: '发起交易', roles: ['productor', 'recycle', 'car', 'rent'] }
+      },
+      {
+        path: 'myTrade',
+        name: '我的交易',
+        component: () => import('@/views/battery/FirstLifeRecycleTrade.vue'),
+        meta: { title: '我的交易', roles: ['productor', 'recycle', 'car', 'rent'] }
+      },
+      {
+        path: 'tradeList',
+        name: '交易平台',
+        component: () => import('@/views/battery/FirstLifeRecycleTrade.vue'),
+        meta: { title: '交易平台', roles: ['productor', 'recycle', 'car', 'rent'] }
+      },
+    ]
+  },
+  {
+    path: '/secondRecycle',
+    component: Layout,
+    name: '拆解回收',
+    meta: { title: '拆解回收', icon: 'example', roles: ['stored', 'recycle']},
+    children: [
+      {
+        path: 'apply',
+        name: '发起交易',
+        component: () => import('@/views/battery/SecondLifeRecycleTrade.vue'),
+        meta: { title: '发起交易', roles: ['stored', 'recycle'] }
+      },
+      {
+        path: 'myTrade',
+        name: '我的交易',
+        component: () => import('@/views/battery/SecondLifeRecycleTrade.vue'),
+        meta: { title: '我的交易', roles: ['stored', 'recycle'] }
+      },
+      {
+        path: 'tradeList',
+        name: '交易平台',
+        component: () => import('@/views/battery/SecondLifeRecycleTrade.vue'),
+        meta: { title: '交易平台', roles: ['stored', 'recycle'] }
+      },
+    ]
+  },
+
+
+
+  // 404 page must be placed at the end !!!
+  // using pathMatch install of "*" in vue-router 4.0
+  { path: '/:pathMatch(.*)', redirect: '/404', hidden: true }
 ]
 
 const router: Router = createRouter({
