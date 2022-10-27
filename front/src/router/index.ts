@@ -350,27 +350,25 @@ export const asyncRoutes: RouterTy = [
       }
     ]
   },
-  // 404 page must be placed at the end !!!
-  // using pathMatch install of "*" in vue-router 4.0
-  { path: '/:pathMatch(.*)', redirect: '/404', hidden: true },
    // 业务菜单开始
    {
     path: '/enterprise-access',
     component: Layout,
     name: '机构准入',
+    alwaysShow: true, // will always show the root menu
     meta: { title: '机构准入', icon: 'tree', roles: ['recycle', 'audit', 'admin', 'supervision'] },
     children: [
       {
         path: 'access',
         name: '准入申请',
         component: () => import('@/views/enterprise-access/Access.vue'),
-        meta: { title: '准入申请', roles: ['audit'] }
+        meta: { title: '准入申请', roles: ['audit','supervision'] }
       },
       {
         path: 'access-result',
         name: '准入结果查询',
         component: () => import('@/views/enterprise-access/AccessResult.vue'),
-        meta: { title: '准入结果查询', roles: ['recycle', 'audit']  }
+        meta: { title: '准入结果查询', roles: ['recycle', 'audit', 'supervision']  }
       },
       {
         path: 'enterprise-list',
@@ -379,7 +377,48 @@ export const asyncRoutes: RouterTy = [
         meta: { title: '企业列表', roles: ['admin', 'supervision'] }
       }
     ]
-  }
+  },
+  {
+    path: '/Integral-trading',
+    component: Layout,
+    name: '积分交易',
+    alwaysShow: true, // will always show the root menu
+    meta: { title: '积分交易', icon: 'tree', roles: ['recycle', 'audit', 'admin', 'supervision'] },
+    children: [
+      {
+        path: 'access',
+        name: '交易所',
+        component: () => import('@/views/Integral-trading/bourse.vue'),
+        meta: { title: '交易所', roles: ['audit','supervision'] }
+      },
+      {
+        path: 'access-result',
+        name: '积分明细',
+        component: () => import('@/views/Integral-trading/RunningAccount.vue'),
+        meta: { title: '积分明细', roles: ['recycle', 'audit', 'supervision']  }
+      },
+      {
+        path: 'enterprise-list',
+        name: '发起交易',
+        component: () => import('@/views/Integral-trading/transaction.vue'),
+        meta: { title: '发起交易', roles: ['admin', 'supervision'] }
+      },
+      {
+        path: 'enterprise-list',
+        name: '查看我的交易',
+        component: () => import('@/views/Integral-trading/EntList.vue'),
+        meta: { title: '查看我的交易', roles: ['admin', 'supervision'] }
+      },
+    ]
+  },
+
+
+
+
+  
+  // 404 一定要放在最后一栏！！！！
+  // using pathMatch install of "*" in vue-router 4.0
+  { path: '/:pathMatch(.*)', redirect: '/404', hidden: true },
 ]
 
 const router: Router = createRouter({
