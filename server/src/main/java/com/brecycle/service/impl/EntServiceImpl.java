@@ -134,7 +134,7 @@ public class EntServiceImpl implements EntService {
         CryptoSuite cryptoSuite = new CryptoSuite(CryptoType.ECDSA_TYPE);
         CryptoKeyPair currentKeyPair = cryptoSuite.getKeyPairFactory().createKeyPair(user.getPrivateKey());
         // 查询准入企业信息
-        User accessEnt = userMapper.selectById(param.getId());
+        User accessEnt = userMapper.selectOne(new LambdaUpdateWrapper<User>().eq(User::getUserName, param.getUserName()));
         // 创建准入合约
         EntAccess entAccess = EntAccess.deploy(client, currentKeyPair, accessEnt.getAddr()
                 , accessEnt.getName(), accessEnt.getIdno(), accessEnt.getMobile()
@@ -157,7 +157,7 @@ public class EntServiceImpl implements EntService {
     @Override
     public void accessReject(EntAccessAuditParam param, String currentUserName) {
         // 获取对应企业的用户信息
-        User accessEnt = userMapper.selectById(param.getId());
+        User accessEnt = userMapper.selectOne(new LambdaUpdateWrapper<User>().eq(User::getUserName, param.getUserName()));
         EntInfo entInfo = new EntInfo();
         entInfo.setAccessStatus(AccessStatus.REJECT.getValue());
         entInfo.setRemark(param.getRemark());
