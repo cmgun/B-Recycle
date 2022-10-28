@@ -479,7 +479,9 @@ public class PointServiceImpl implements PointService {
     @Override
     public PageResult<TradeListDTO> list(TradeListParam param) {
         IPage page = new Page<>(param.getPageNo(), param.getPageSize());
-        param.setStatus(TradeStatus.BIDING.getValue());
+        if (param.getMyId() == null) {
+            param.setStatus(TradeStatus.BIDING.getValue());
+        }
         param.setTradeType(TradeType.POINT.getValue());
         IPage<Trade> data = tradeMapper.selectTradeListByPage(page, param);
         PageResult<TradeListDTO> result = new PageResult<>();
@@ -493,6 +495,12 @@ public class PointServiceImpl implements PointService {
                 tradeListDTO.setId(item.getId());
                 User seller = userMapper.selectById(item.getSellerId());
                 tradeListDTO.setSellerName(seller.getName());
+                if (item.getBuyerId() != null) {
+                    User buyer = userMapper.selectById(item.getBuyerId());
+                    tradeListDTO.setBuyerName(buyer.getName());
+                    tradeListDTO.setTradeAmt(item.getTradeAmt());
+                }
+                tradeListDTO.setStatus(item.getStatus());
                 tradeListDTO.setLowestAmt(item.getLowestAmt());
                 // 交易积分
                 JSONObject info = JSON.parseObject(item.getInfo());
@@ -535,6 +543,8 @@ public class PointServiceImpl implements PointService {
         if (result.getValue1()) {
             // 达到期望交易
             trade.setStatus(TradeStatus.SUCCESS.getValue());
+            trade.setBuyerId(buyer.getId());
+            trade.setTradeAmt(param.getBidAmt());
             tradeMapper.updateById(trade);
             JSONObject info = JSON.parseObject(trade.getInfo());
             // 积分转移

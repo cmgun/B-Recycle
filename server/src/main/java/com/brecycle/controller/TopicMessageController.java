@@ -81,10 +81,10 @@ public class TopicMessageController {
     @PostMapping("/battery/info/car")
     Response carProductInfo(@RequestBody @ApiParam(value = "参数", required = true) List<BatteryCarInfoParam> param) throws Exception {
         // 电池额外信息记录在battery.info
-        String topicName = weEventConfig.getCarTransferTopic();
+        String topicName = weEventConfig.getCarInfoTopic();
         WeEvent weEvent = new WeEvent(topicName, JSON.toJSONString(param).getBytes());
         SendResult sendResult = client.publish(weEvent);
-        log.info("电池流转-车企，发送结果:{}", sendResult);
+        log.info("电池信息登记-车企，发送结果:{}", sendResult);
         return Response.success("消息发送成功");
     }
 

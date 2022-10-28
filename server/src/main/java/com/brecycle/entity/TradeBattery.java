@@ -26,7 +26,4 @@ public class TradeBattery {
 
     @TableField
     private String batteryId;
-
-    @TableField
-    private String lastBatteryStatus;
 }

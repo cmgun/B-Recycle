@@ -30,5 +30,11 @@ public class TradeListDTO implements Serializable {
      */
     private String sellerName;
 
+    private String status;
+
+    private String buyerName;
+
     private BigDecimal lowestAmt;
+
+    private BigDecimal tradeAmt;
 }

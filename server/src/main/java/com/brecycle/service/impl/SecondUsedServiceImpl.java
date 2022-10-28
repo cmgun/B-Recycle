@@ -70,6 +70,14 @@ public class SecondUsedServiceImpl implements SecondUsedService {
     public void apply(List<String> batteryIds, SecUsedApplyParam param, String currentUserName) throws Exception {
         // 获取当前登录用户的账户信息
         User user = userMapper.selectByUserName(currentUserName);
+        Integer batteries = batteryMapper.selectCount(new LambdaUpdateWrapper<Battery>()
+                .in(Battery::getId, batteryIds)
+                .eq(Battery::getOwnerId, user.getId())
+                .notIn(Battery::getStatus, Lists.newArrayList(BatteryStatus.RECYCLE_TRADING.getValue()
+                        , BatteryStatus.SECOND_USED_TRADING.getValue())));
+        if (!batteries.equals(batteryIds.size())) {
+            throw new BusinessException("当前所选电池存在交易中状态");
+        }
         CryptoSuite cryptoSuite = new CryptoSuite(CryptoType.ECDSA_TYPE);
         CryptoKeyPair currentKeyPair = cryptoSuite.getKeyPairFactory().createKeyPair(user.getPrivateKey());
         // 指定梯次利用商
@@ -159,7 +167,9 @@ public class SecondUsedServiceImpl implements SecondUsedService {
     @Override
     public PageResult<TradeListDTO> list(TradeListParam param) {
         IPage page = new Page<>(param.getPageNo(), param.getPageSize());
-        param.setStatus(TradeStatus.BIDING.getValue());
+        if (param.getMyId() == null) {
+            param.setStatus(TradeStatus.BIDING.getValue());
+        }
         param.setTradeType(TradeType.SECOND_USED.getValue());
         IPage<Trade> data = tradeMapper.selectTradeListByPage(page, param);
         PageResult<TradeListDTO> result = new PageResult<>();
@@ -173,8 +183,14 @@ public class SecondUsedServiceImpl implements SecondUsedService {
                 tradeListDTO.setId(item.getId());
                 User seller = userMapper.selectById(item.getSellerId());
                 tradeListDTO.setSellerName(seller.getName());
+                if (item.getBuyerId() != null) {
+                    User buyer = userMapper.selectById(item.getBuyerId());
+                    tradeListDTO.setBuyerName(buyer.getName());
+                    tradeListDTO.setTradeAmt(item.getTradeAmt());
+                }
+                tradeListDTO.setStatus(item.getStatus());
                 tradeListDTO.setLowestAmt(item.getLowestAmt());
-                tradeListDTO.setInfo("电池回收");
+                tradeListDTO.setInfo("回收报废交易");
                 return tradeListDTO;
             }).collect(Collectors.toList()));
         } else {
@@ -213,6 +229,8 @@ public class SecondUsedServiceImpl implements SecondUsedService {
         if (result.getValue1()) {
             // 达到期望交易
             trade.setStatus(TradeStatus.SUCCESS.getValue());
+            trade.setBuyerId(buyer.getId());
+            trade.setTradeAmt(param.getBidAmt());
             tradeMapper.updateById(trade);
             batteryTransfer(trade, buyer);
         }

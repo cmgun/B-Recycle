@@ -12,9 +12,12 @@
     <select id="selectTradeListByPage" resultType="com.brecycle.entity.Trade">
         select *
         from trade
-        where status = #{param.status} and trade_type = #{param.type}
+        where trade_type = #{param.tradeType}
         <if test="param.myId != null and param.myId != ''">
             and (seller_id = #{param.myId} or buyer_id = #{param.myId} )
+        </if>
+        <if test="param.status != null and param.status !=''">
+            status = #{param.status}
         </if>
     </select>
 </mapper>

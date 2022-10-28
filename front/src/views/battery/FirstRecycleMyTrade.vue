@@ -5,42 +5,26 @@
 
 <template>
   <!--  查询条件   -->
-  <el-form ref="tableConfig" inline="true" :model="searchParam" label-width="80px">
-    <el-form-item label="账户名">
-      <el-input v-model="searchParam.userName" clearable />
-    </el-form-item>
-    <el-form-item label="企业名称">
-      <el-input v-model="searchParam.entName" clearable />
-    </el-form-item>
-    <el-form-item label="准入状态">
-      <el-select v-model="searchParam.accessStatus" placeholder="请选择准入状态" >
-        <el-option label="无需准入" value="0" />
-        <el-option label="等待准入申请" value="1" />
-        <el-option label="审批中" value="2" />
-        <el-option label="审批拒绝" value="3" />
-        <el-option label="审批通过" value="4" />
-      </el-select>
-    </el-form-item>
+  <!-- <el-form ref="tableConfig" inline="true" :model="searchParam" label-width="80px">
     <el-form-item>
       <el-button type="primary" @click="search">查询</el-button>
     </el-form-item>
-  </el-form>
+  </el-form> -->
   <!-- el-scrollbar是滚动条 -->
   <el-scrollbar>
       <!----------------------------- 表单 ------------------------>
       <div>
           <el-table ref="tableRef" row-key="date" :data="tableData" style="width: auto">
               <!-- <el-table-column  prop="name" label="企业名称" width="auto" /> -->
-              <el-table-column prop="userName" label="账户名称" width="auto" />
-              <el-table-column prop="entName" label="企业名称" width="auto" />
-              <!-- <el-table-column prop="accessStatus" label="准入审核状态" :formatter="formatter" width="auto" /> -->
-
-              <el-table-column prop="accessStatus" label="准入状态" width="auto" :filters="[
-                  { text: '无需准入', value: '0' },
-                  { text: '等待准入申请', value: '1' },
-                  { text: '审批中', value: '2' },
-                  { text: '审批拒绝', value: '3' },
-                  { text: '审批通过', value: '4' }
+              <el-table-column prop="id" label="交易编号" width="auto" />
+              <el-table-column prop="info" label="交易内容" width="auto" />
+              <el-table-column prop="sellerName" label="交易卖方" width="auto" />
+              <el-table-column prop="buyerName" label="交易买方" width="auto" />
+              <el-table-column prop="amount" label="最终成交金额" width="auto" />
+              <el-table-column prop="status" label="交易状态" width="auto" :filters="[
+                  { text: '竞价中', value: '1' },
+                  { text: '交易成功', value: '2' },
+                  { text: '撤回', value: '3' }
                 ]" :filter-method="filterTag" filter-placement="bottom-end">
 
                     <template #default="scope">
@@ -49,20 +33,18 @@
                         <!-- 可以用于写是否通过质检的状态返回 -->
                         <!-- 要实现不同标签，不同颜色 -->
                         <el-tag
-                            :type="tagType(scope.row.accessStatus)"
-                            disable-transitions>{{ tagText(scope.row.accessStatus) }}</el-tag>
+                            :type="tagType(scope.row.status)"
+                            disable-transitions>{{ tagText(scope.row.status) }}</el-tag>
                         <!-- <el-tag type="type="scope.row.tag === 'home' ? '' : 'success'" disable-transitions>{{ scope.row.tag }}</el-tag> -->
                     </template>
               </el-table-column>
-
-              <el-table-column prop="opt" label="操作" width="auto">
+              <!-- <el-table-column prop="opt" label="交易内容" width="auto">
                 <template #default="scope">
                   <div style="line-height: 1; font-size: 0;">
-                    <el-button v-show="scope.row.accessStatus == '2'" type="success" @click="pass(scope.row.userName)">审批通过</el-button>
-                    <el-button v-show="scope.row.accessStatus == '2'" type="danger" @click="reject(scope.row.userName)">审批拒绝</el-button>
+                    <el-button v-show="scope.row.accessStatus == '2'" type="info" @click="showDetail(scope.row.id)">点击查看</el-button>
                   </div>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
           </el-table>
       </div>
   </el-scrollbar>
@@ -82,7 +64,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { ElTable } from 'element-plus'
-import { useEntAccessStore } from '@/store/entAccess'
+import { useBatteryStore } from '@/store/battery'
 
 
 // ===================分页=========================
@@ -115,75 +97,63 @@ const searchParam = reactive({
 })
 
 // ===================列表=========================
-interface User {
+interface Trade {
   // date: string
-  userName: string
-  entName: string
-  accessStatus: string
+  id: number
+  info: string
+  sellerName: string
+  buyerName: string
+  amount: number
+  status: string
 }
 const tableRef = ref<InstanceType<typeof ElTable>>()
 
 // 标签颜色
-const tagType = (accessStatus) => {
-  if (accessStatus == '0') {
-    return 'info'
-  }
-  if (accessStatus == '1') {
-    return 'info'
-  }
-  if (accessStatus == '2') {
+const tagType = (status) => {
+  if (status == '1') {
     return 'warning'
   }
-  if (accessStatus == '3') {
-    return 'danger'
-  }
-  if (accessStatus == '4') {
+  if (status == '2') {
     return 'success'
+  }
+  if (status == '3') {
+    return 'danger'
   }
 }
 
 // 枚举映射
-const tagText = (accessStatus) => {
-  if (accessStatus == '0') {
-    return '无需准入'
+const tagText = (status) => {
+  if (status == '1') {
+    return '竞价中'
   }
-  if (accessStatus == '1') {
-    return '等待准入申请'
+  if (status == '2') {
+    return '交易成功'
   }
-  if (accessStatus == '2') {
-    return '审批中'
-  }
-  if (accessStatus == '3') {
-    return '审批拒绝'
-  }
-  if (accessStatus == '4') {
-    return '审批通过'
+  if (status == '3') {
+    return '撤回'
   }
 }
 
 // const formatter = (row: User, column: TableColumnCtx<User>) => {
 //   return row.license
 // }
-const filterTag = (value: string, row: User) => {
-  return row.accessStatus === value
+const filterTag = (value: string, row: Trade) => {
+  return row.status === value
 }
 
 
 // 列表数据
-const tableData = reactive(new Array<User>)
+const tableData = reactive(new Array<Trade>)
 
-const entAccessStore = useEntAccessStore()
+const batteryStore = useBatteryStore()
 // 调用查询接口
 const search = () => {
   let param = {
     pageSize: pageSize.value,
     pageNo: currentPage.value,
-    userName: searchParam.userName,
-    entName: searchParam.entName,
-    accessStatus: searchParam.accessStatus,
   }
 
-  entAccessStore.entList(param)
+  batteryStore.firstRecycleMyTrade(param)
   .then((res: any) => {
       console.log("list success")
       // 填充分页插件
@@ -197,9 +167,12 @@ const search = () => {
       for (let i = 0; i < res.data.length; i++) {
         let data = res.data[i]
         tableData.push({
-          userName: data.userName,
-          entName: data.entName,
-          accessStatus: data.accessStatus
+          id: data.id,
+          info: data.info,
+          sellerName: data.sellerName,
+          buyerName: data.buyerName,
+          amount: data.tradeAmt,
+          status: data.status
         })
       }
       // tableData.value = result
@@ -210,60 +183,8 @@ const search = () => {
 
 }
 
-const pass = (userName) => {
-  let param = {
-    userName: userName,
-    remark: '审批通过'
-  }
-  entAccessStore.pass(param)
-  .then((res: any) => {
-      // 填充分页插件
-      currentPage.value = 1
-      search()
-    })
-    .catch((res) => {
-      console.log("pass error")
-    })
-}
-
-const reject = (userName) => {
-  let param = {
-    userName: userName,
-    remark: '审批拒绝'
-  }
-  entAccessStore.reject(param)
-  .then((res: any) => {
-      // 填充分页插件
-      currentPage.value = 1
-      search()
-    })
-    .catch((res) => {
-      console.log("reject error")
-    })
-}
-
-const download = (userName) => {
-  console.log('download' + userName)
-  entAccessStore.download(userName)
-  .then((res: any) => {
-      console.log(res)
-      let blob = res.data
-      let url = window.URL.createObjectURL(blob); // 创建一个临时的url指向blob对象
-      let a = document.createElement("a");
-      a.href = url;
-      a.download = userName;
-      a.click();
-      // 释放这个临时的对象url
-      window.URL.revokeObjectURL(url); 
-    })
-    .catch((res) => {
-      console.log("download error")
-    })
-}
-
-
 // 初始化加载数据
-// search()
+search()
 // ===================列表=========================
 
 
