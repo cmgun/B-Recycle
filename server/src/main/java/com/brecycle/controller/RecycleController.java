@@ -3,7 +3,9 @@ package com.brecycle.controller;
 import com.brecycle.common.Response;
 import com.brecycle.config.shiro.JWTConfig;
 import com.brecycle.config.shiro.JwtTokenUtil;
+import com.brecycle.entity.User;
 import com.brecycle.entity.dto.*;
+import com.brecycle.mapper.UserMapper;
 import com.brecycle.service.RecycleService;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.*;
@@ -32,6 +34,8 @@ public class RecycleController {
 
     @Autowired
     RecycleService recycleService;
+    @Autowired
+    UserMapper userMapper;
 
     @ApiOperation("回收申请")
     @ApiImplicitParams({
@@ -68,6 +72,20 @@ public class RecycleController {
     })
     @PostMapping("/list")
     Response list(@RequestBody @ApiParam(value = "参数", required = true) TradeListParam param) {
+        PageResult<TradeListDTO> result = recycleService.list(param);
+        return Response.success("查询成功", result);
+    }
+
+    @ApiOperation("查询登录企业的交易列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "AUTHORIZE_TOKEN", value = "AUTHORIZE_TOKEN", dataType = "String", required = true)
+    })
+    @PostMapping("/myList")
+    Response myList(@RequestBody @ApiParam(value = "参数", required = true) TradeListParam param, HttpServletRequest request) {
+        String token = request.getHeader(JWTConfig.tokenHeader);
+        String userName = JwtTokenUtil.getUsername(token);
+        User current = userMapper.selectByUserName(userName);
+        param.setMyId(current.getId());
         PageResult<TradeListDTO> result = recycleService.list(param);
         return Response.success("查询成功", result);
     }

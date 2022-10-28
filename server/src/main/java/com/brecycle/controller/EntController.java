@@ -98,16 +98,15 @@ public class EntController {
 
     /**
      * 单个文件下载
-     * @param fileId
      * @return
      */
     @ApiOperation("文件下载")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "AUTHORIZE_TOKEN", value = "AUTHORIZE_TOKEN", dataType = "String", required = true)
     })
-    @GetMapping("/download/{fileId}")
-    public ResponseEntity<Object> fileDownload(@PathVariable(name = "fileId") String fileId) throws UnsupportedEncodingException {
-        MongoFile file = entService.downloadFile(fileId);
+    @GetMapping("/download/{userName}")
+    public ResponseEntity<Object> fileDownload(@PathVariable(name = "userName") String userName) throws UnsupportedEncodingException {
+        MongoFile file = entService.downloadFile(userName);
 
         if (file != null) {
             String fileName = file.getFileName();

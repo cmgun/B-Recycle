@@ -196,7 +196,10 @@ public class EntServiceImpl implements EntService {
     }
 
     @Override
-    public MongoFile downloadFile(String fileId) {
+    public MongoFile downloadFile(String userName) {
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUserName, userName));
+        List<UserFile> files = userFileMapper.selectList(new LambdaQueryWrapper<UserFile>().eq(UserFile::getUserId, user.getId()));
+        String fileId = files.get(0).getFileId();
         // 获取Binary文件
         Optional<MongoFile> file = mongoFileRepository.findById(fileId);
         if (file.isPresent()) {

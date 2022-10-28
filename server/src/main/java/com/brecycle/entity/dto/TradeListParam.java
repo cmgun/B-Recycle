@@ -23,5 +23,10 @@ public class TradeListParam implements Serializable {
      */
     private String tradeType;
 
-    private String sellerName;
+    private String status;
+
+    /**
+     * 查询自身
+     */
+    private Long myId;
 }

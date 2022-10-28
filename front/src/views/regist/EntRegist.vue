@@ -1,79 +1,56 @@
 <!--suppress ALL -->
 <template>
-  <div>
-    <!-- 使用了container来布局 -->
-    <div class="common-layout">
-      <el-container>
-        <el-header height="100xp">
-          <br />
-          <h2 class="text-center">
-            企业注册信息表
-          </h2>
-        </el-header>
-        <el-container>
-          <el-aside width="720px"></el-aside>
-          <el-main>
-            <!-- X 未实现功能：账号（不允许中文）、密码 = = 再次输入密码、名字（不允许空格）、手机号11位、身份证号18位-->
-            <!-- 布局看起来不够好看 -->
-            <el-form ref="ruleFormRef" :model="ruleForm" label-position="top" status-icon :rules="rules"
-              class="demo-ruleForm" style="max-width: 460px">
-
-              <el-form-item label="账号" prop="AccountNumber">
-                <el-input v-model="ruleForm.AccountNumber" clearable />
-              </el-form-item>
-
-              <el-form-item label="密码" prop="pass">
-                <el-input v-model="ruleForm.pass" type="password" autocomplete="off" clearable />
-              </el-form-item>
-              <el-form-item label="再次输入密码" prop="checkPass">
-                <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" clearable />
-              </el-form-item>
-
-              <el-form-item label="企业名称" prop="companyID">
-                <el-input v-model="ruleForm.companyID" type="text" clearable />
-              </el-form-item>
-
-              <el-form-item label="统一社会信用代码" prop="TrustNumber">
-                <el-input v-model.number="ruleForm.TrustNumber" clearable />
-              </el-form-item>
-
-              <el-form-item label="电话" prop="PhoneNumber">
-                <el-input v-model.number="ruleForm.PhoneNumber" clearable />
-              </el-form-item>
-
-              <el-form-item label="地址" prop="Address">
-                <el-input v-model="ruleForm.Address" type="text" clearable />
-              </el-form-item>
-              
-              <!-- 选择器 -->
-              <el-form-item label="企业类型" prop="CompanyType">
-                <el-select v-model="ruleForm.CompanyType" placeholder="请选择企业类型" >
-                  <el-option label="车企" value="2" />
-                  <el-option label="电池生产企业" value="3" />
-                  <el-option label="电池租赁商" value="4" />
-                  <el-option label="电池回收商" value="5" />
-                  <el-option label="储能企业" value="6" />
-                  <el-option label="电池原材料生产企业" value="10" />
-                </el-select>
-              </el-form-item>
-              <el-form-item v-show="ruleForm.CompanyType == '2'" label="上一年汽车产量" prop="CarProductRegist">
-                <el-input v-show="ruleForm.CompanyType == '2'" v-model="ruleForm.CarProductRegist" type="text" clearable />
-              </el-form-item>
-              <el-form-item v-show="ruleForm.CompanyType == '3'" label="上一年电池产量" prop="BatteryProductRegist">
-                <el-input v-show="ruleForm.CompanyType == '3'" v-model="ruleForm.BatteryProductRegist" type="text" clearable />
-              </el-form-item>
-              <!-- 空一行！ -->
-              <br />
-              <el-form-item>
-                <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
-                <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-                <el-button @click.prevent="backLogin">返回</el-button>
-              </el-form-item>
-            </el-form>
-          </el-main>
-        </el-container>
-      </el-container>
-    </div>
+  <div class="entRegist-container columnCC">
+    <el-form ref="ruleFormRef" class="entRegist-form" :model="ruleForm" label-position="top" status-icon :rules="rules">
+      <div class="title-container">
+        <h3 class="title text-center">企业注册信息表</h3>
+      </div>
+      <el-form-item label="账号" prop="AccountNumber">
+        <el-input v-model="ruleForm.AccountNumber" clearable />
+      </el-form-item>
+      <el-form-item label="密码" prop="pass">
+        <el-input v-model="ruleForm.pass" type="password" autocomplete="off" clearable />
+      </el-form-item>
+      <el-form-item label="再次输入密码" prop="checkPass">
+        <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" clearable />
+      </el-form-item>
+      <el-form-item label="企业名称" prop="companyID">
+        <el-input v-model="ruleForm.companyID" type="text" clearable />
+      </el-form-item>
+      <el-form-item label="统一社会信用代码" prop="TrustNumber">
+        <el-input v-model.number="ruleForm.TrustNumber" clearable />
+      </el-form-item>
+      <el-form-item label="电话" prop="PhoneNumber">
+        <el-input v-model.number="ruleForm.PhoneNumber" clearable />
+      </el-form-item>
+      <el-form-item label="地址" prop="Address">
+        <el-input v-model="ruleForm.Address" type="text" clearable />
+      </el-form-item>
+      <!-- 选择器 -->
+      <el-form-item label="企业类型" prop="CompanyType">
+        <el-select v-model="ruleForm.CompanyType" placeholder="请选择企业类型" >
+          <el-option label="车企" value="2" />
+          <el-option label="电池生产企业" value="3" />
+          <el-option label="电池租赁商" value="4" />
+          <el-option label="电池回收商" value="5" />
+          <el-option label="储能企业" value="6" />
+          <el-option label="电池原材料生产企业" value="10" />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-show="ruleForm.CompanyType == '2'" label="上一年汽车产量" prop="CarProductRegist">
+        <el-input v-show="ruleForm.CompanyType == '2'" v-model="ruleForm.CarProductRegist" type="text" clearable />
+      </el-form-item>
+      <el-form-item v-show="ruleForm.CompanyType == '3'" label="上一年电池产量" prop="BatteryProductRegist">
+        <el-input v-show="ruleForm.CompanyType == '3'" v-model="ruleForm.BatteryProductRegist" type="text" clearable />
+      </el-form-item>
+      <!-- 空一行！ -->
+      <br />
+      <el-form-item>
+        <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
+        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+        <el-button @click.prevent="backLogin">返回</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
@@ -132,7 +109,7 @@ const handleregister = (valid) => {
 //use the auto import from vite.config.js of AutoImport
 const router = useRouter()
 
-//返回 
+//返回
 let backLogin = () => {
   router.push(`/login`)
 }
@@ -238,7 +215,7 @@ const rules = reactive({
   CompanyType: [
     {
       // 决定了是否必须填
-      required: true, 
+      required: true,
       message: '请选择企业类型',
       trigger: 'change',
     },
@@ -269,5 +246,25 @@ const resetForm = (formEl: FormInstance | undefined) => {
 </script>
 
 <style lang="scss" scoped>
-
+// $bg: #2d3a4b;
+// $dark_gray: #889aa4;
+// $light_gray: #eee;
+.entRegist-container {
+  height: 100vh;
+  width: 100%;
+  // background-color: #2d3a4b;
+  .entRegist-form {
+    margin-bottom: 20vh;
+    width: 360px;
+  }
+  .title-container {
+    .title {
+      font-size: 22px;
+      // color: #eee;
+      margin: 0px auto 25px auto;
+      text-align: center;
+      font-weight: bold;
+    }
+  }
+}
 </style>

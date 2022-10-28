@@ -8,4 +8,13 @@
         from trade
         where status = '1' and trade_type = #{type} and  <![CDATA[ DATE_ADD(create_time,INTERVAL bid_days day) < NOW()]]>
     </select>
+
+    <select id="selectTradeListByPage" resultType="com.brecycle.entity.Trade">
+        select *
+        from trade
+        where status = #{param.status} and trade_type = #{param.type}
+        <if test="param.myId != null and param.myId != ''">
+            and (seller_id = #{param.myId} or buyer_id = #{param.myId} )
+        </if>
+    </select>
 </mapper>

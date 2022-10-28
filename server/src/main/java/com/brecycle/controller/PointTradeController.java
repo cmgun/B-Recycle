@@ -1,25 +1,17 @@
 package com.brecycle.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.brecycle.common.Response;
 import com.brecycle.config.shiro.JWTConfig;
 import com.brecycle.config.shiro.JwtTokenUtil;
+import com.brecycle.entity.User;
 import com.brecycle.entity.dto.*;
+import com.brecycle.mapper.UserMapper;
 import com.brecycle.service.PointService;
-import com.google.common.collect.Lists;
-import com.webank.weevent.client.SendResult;
-import com.webank.weevent.client.WeEvent;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -36,6 +28,8 @@ public class PointTradeController {
 
     @Autowired
     PointService pointService;
+    @Autowired
+    UserMapper userMapper;
 
     @ApiOperation("初始化积分合约")
     @PostMapping("/init/deploy")
@@ -108,6 +102,20 @@ public class PointTradeController {
     })
     @PostMapping("/list")
     Response list(@RequestBody @ApiParam(value = "参数", required = true) TradeListParam param) {
+        PageResult<TradeListDTO> result = pointService.list(param);
+        return Response.success("查询成功", result);
+    }
+
+    @ApiOperation("查询登录企业的交易列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "AUTHORIZE_TOKEN", value = "AUTHORIZE_TOKEN", dataType = "String", required = true)
+    })
+    @PostMapping("/myList")
+    Response myList(@RequestBody @ApiParam(value = "参数", required = true) TradeListParam param, HttpServletRequest request) {
+        String token = request.getHeader(JWTConfig.tokenHeader);
+        String userName = JwtTokenUtil.getUsername(token);
+        User current = userMapper.selectByUserName(userName);
+        param.setMyId(current.getId());
         PageResult<TradeListDTO> result = pointService.list(param);
         return Response.success("查询成功", result);
     }

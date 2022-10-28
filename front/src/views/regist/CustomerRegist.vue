@@ -1,56 +1,39 @@
 <!--suppress ALL -->
 <template>
-  <div>
-    <!-- 使用了container来布局 -->
-    <div class="common-layout">
-      <el-container>
-        <el-header height="100xp">
-          <br />
-          <h2 class="text-center " >
-            消费者信息注册表
-          </h2>
-        </el-header>
-        <el-container>
-          <el-aside width="720px"></el-aside>
-          <el-main>
-            <!-- X 未实现功能：账号（不允许中文）、密码 = = 再次输入密码、名字（不允许空格）、手机号11位、身份证号18位-->
-            <!-- 布局看起来不够好看 -->
-            <el-form ref="ruleFormRef" :model="ruleForm" label-position="top" status-icon :rules="rules"
-              class="demo-ruleForm" style="max-width: 460px">
+  <div class="cusRegist-container columnCC">
+    <el-form ref="ruleFormRef" class="cusRegist-form" :model="ruleForm" label-position="top" status-icon :rules="rules">
+      <div class="title-container">
+        <h3 class="title text-center">消费者信息注册表</h3>
+      </div>
+      <el-form-item label="账号" prop="AccountNumber">
+        <el-input v-model="ruleForm.AccountNumber" clearable />
+      </el-form-item>
+      <el-form-item label="密码" prop="pass">
+        <el-input v-model="ruleForm.pass" type="password" autocomplete="off" clearable />
+      </el-form-item>
+      <el-form-item label="再次输入密码" prop="checkPass">
+        <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" clearable />
+      </el-form-item>
+      <el-form-item label="姓名" prop="ID">
+        <el-input v-model="ruleForm.ID" type="text" clearable />
+      </el-form-item>
+      <el-form-item label="身份证号" prop="IDnumber">
+        <el-input v-model.number="ruleForm.IDnumber" clearable />
+      </el-form-item>
+      <el-form-item label="电话号码" prop="PhoneNumber">
+        <el-input v-model.number="ruleForm.PhoneNumber" clearable />
+      </el-form-item>
 
-              <el-form-item label="账号" prop="AccountNumber">
-                <el-input v-model="ruleForm.AccountNumber" clearable />
-              </el-form-item>
-
-              <el-form-item label="密码" prop="pass">
-                <el-input v-model="ruleForm.pass" type="password" autocomplete="off" clearable />
-              </el-form-item>
-              <el-form-item label="再次输入密码" prop="checkPass">
-                <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" clearable />
-              </el-form-item>
-
-              <el-form-item label="姓名" prop="ID">
-                <el-input v-model="ruleForm.ID" type="text" clearable />
-              </el-form-item>
-
-              <el-form-item label="身份证号" prop="IDnumber">
-                <el-input v-model.number="ruleForm.IDnumber" clearable />
-              </el-form-item>
-              <el-form-item label="电话号码" prop="PhoneNumber">
-                <el-input v-model.number="ruleForm.PhoneNumber" clearable />
-              </el-form-item>
-              <br />
-              <el-form-item>
-                <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
-                <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-                <el-button @click.prevent="backLogin">返回</el-button>
-              </el-form-item>
-            </el-form>
-          </el-main>
-        </el-container>
-      </el-container>
-    </div>
+      <!-- 空一行！ -->
+      <br />
+      <el-form-item>
+        <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
+        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+        <el-button @click.prevent="backLogin">返回</el-button>
+      </el-form-item>
+    </el-form>
   </div>
+
 </template>
 
 <script setup lang="ts">
@@ -217,5 +200,23 @@ const resetForm = (formEl: FormInstance | undefined) => {
 </script>
 
 <style lang="scss" scoped>
-
+// $dark_gray: #889aa4;
+// $light_gray: #eee;
+.cusRegist-container {
+  height: 100vh;
+  width: 100%;
+  // background-color: #2d3a4b;
+  .cusRegist-form {
+    margin-bottom: 20vh;
+    width: 360px;
+  }
+  .title-container {
+    .title {
+      font-size: 22px;
+      margin: 0px auto 25px auto;
+      text-align: center;
+      font-weight: bold;
+    }
+  }
+}
 </style>

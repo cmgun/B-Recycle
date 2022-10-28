@@ -159,8 +159,9 @@ public class SecondUsedServiceImpl implements SecondUsedService {
     @Override
     public PageResult<TradeListDTO> list(TradeListParam param) {
         IPage page = new Page<>(param.getPageNo(), param.getPageSize());
-        IPage<Trade> data = tradeMapper.selectPage(page, new LambdaUpdateWrapper<Trade>()
-                .eq(Trade::getStatus, TradeStatus.BIDING.getValue()).eq(Trade::getTradeType, TradeType.SECOND_USED.getValue()));
+        param.setStatus(TradeStatus.BIDING.getValue());
+        param.setTradeType(TradeType.SECOND_USED.getValue());
+        IPage<Trade> data = tradeMapper.selectTradeListByPage(page, param);
         PageResult<TradeListDTO> result = new PageResult<>();
         result.setTotal(data.getTotal());
         result.setPageNo(data.getCurrent());

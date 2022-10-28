@@ -46,8 +46,7 @@ public interface EntService {
 
     /**
      * 文件下载
-     * @param fileId
      * @return
      */
-    MongoFile downloadFile(String fileId);
+    MongoFile downloadFile(String userName);
 }

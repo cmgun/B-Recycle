@@ -351,24 +351,24 @@ export const asyncRoutes: RouterTy = [
     ]
   },
    // 业务菜单开始
-   {
+  {
     path: '/enterprise-access',
     component: Layout,
     name: '机构准入',
-    alwaysShow: true, // will always show the root menu
+    alwaysShow: true,
     meta: { title: '机构准入', icon: 'tree', roles: ['recycle', 'audit', 'admin', 'supervision'] },
     children: [
       {
         path: 'access',
         name: '准入申请',
         component: () => import('@/views/enterprise-access/Access.vue'),
-        meta: { title: '准入申请', roles: ['audit','supervision'] }
+        meta: { title: '准入申请', roles: ['audit'] }
       },
       {
         path: 'access-result',
         name: '准入结果查询',
         component: () => import('@/views/enterprise-access/AccessResult.vue'),
-        meta: { title: '准入结果查询', roles: ['recycle', 'audit', 'supervision']  }
+        meta: { title: '准入结果查询', roles: ['recycle', 'audit']  }
       },
       {
         path: 'enterprise-list',
@@ -379,46 +379,119 @@ export const asyncRoutes: RouterTy = [
     ]
   },
   {
-    path: '/Integral-trading',
+    path: '/battery',
     component: Layout,
-    name: '积分交易',
-    alwaysShow: true, // will always show the root menu
-    meta: { title: '积分交易', icon: 'tree', roles: ['recycle', 'audit', 'admin', 'supervision'] },
+    name: '电池管理',
+    alwaysShow: true,
+    meta: { title: '电池管理', icon: 'tree', roles: ['recycle', 'admin', 'supervision', 'customer', 'car', 'productor', 'rent', 'stored', 'safe', 'material'] },
     children: [
       {
-        path: 'access',
-        name: '交易所',
-        component: () => import('@/views/Integral-trading/bourse.vue'),
-        meta: { title: '交易所', roles: ['audit','supervision'] }
+        path: 'list',
+        name: '电池信息查询',
+        component: () => import('@/views/battery/BatteryList.vue'),
+        meta: { title: '电池信息查询', roles: ['recycle', 'admin', 'supervision', 'customer', 'car', 'productor', 'rent', 'stored', 'safe', 'material'] }
       },
       {
-        path: 'access-result',
-        name: '积分明细',
-        component: () => import('@/views/Integral-trading/RunningAccount.vue'),
-        meta: { title: '积分明细', roles: ['recycle', 'audit', 'supervision']  }
-      },
-      {
-        path: 'enterprise-list',
-        name: '发起交易',
-        component: () => import('@/views/Integral-trading/transaction.vue'),
-        meta: { title: '发起交易', roles: ['admin', 'supervision'] }
-      },
-      {
-        path: 'enterprise-list',
-        name: '查看我的交易',
-        component: () => import('@/views/Integral-trading/EntList.vue'),
-        meta: { title: '查看我的交易', roles: ['admin', 'supervision'] }
+        path: 'add',
+        name: '电池信息录入',
+        component: () => import('@/views/battery/BatteryAdd.vue'),
+        meta: { title: '电池信息录入', roles: ['productor'] }
       },
     ]
   },
+  {
+    path: '/firstRecycle',
+    component: Layout,
+    name: '梯次利用',
+    alwaysShow: true,
+    meta: { title: '梯次利用', icon: 'tree', roles: ['productor', 'recycle', 'car', 'rent']},
+    children: [
+      {
+        path: 'apply',
+        name: '发起交易',
+        component: () => import('@/views/battery/BatteryList.vue'),
+        meta: { title: '发起交易', roles: ['productor', 'recycle', 'car', 'rent'] }
+      },
+      {
+        path: 'myTrade',
+        name: '我的交易',
+        component: () => import('@/views/battery/FirstLifeRecycleTrade.vue'),
+        meta: { title: '我的交易', roles: ['productor', 'recycle', 'car', 'rent'] }
+      },
+      {
+        path: 'tradeList',
+        name: '交易平台',
+        component: () => import('@/views/battery/FirstLifeRecycleTrade.vue'),
+        meta: { title: '交易平台', roles: ['productor', 'recycle', 'car', 'rent'] }
+      },
+    ]
+  },
+  {
+    path: '/secondRecycle',
+    component: Layout,
+    name: '拆解回收',
+    alwaysShow: true,
+    meta: { title: '拆解回收', icon: 'example', roles: ['stored', 'recycle']},
+    children: [
+      {
+        path: 'apply',
+        name: '发起交易',
+        component: () => import('@/views/battery/SecondLifeRecycleTrade.vue'),
+        meta: { title: '发起交易', roles: ['stored', 'recycle'] }
+      },
+      {
+        path: 'myTrade',
+        name: '我的交易',
+        component: () => import('@/views/battery/SecondLifeRecycleTrade.vue'),
+        meta: { title: '我的交易', roles: ['stored', 'recycle'] }
+      },
+      {
+        path: 'tradeList',
+        name: '交易平台',
+        component: () => import('@/views/battery/SecondLifeRecycleTrade.vue'),
+        meta: { title: '交易平台', roles: ['stored', 'recycle'] }
+      },
+    ]
+  },
+  {
+      path: '/point',
+      component: Layout,
+      name: '积分交易',
+      alwaysShow: true, // will always show the root menu
+      meta: { title: '积分交易', icon: 'tree', roles: ['recycle', 'admin', 'supervision', 'customer', 'car', 'productor', 'rent', 'stored', 'safe', 'material'] },
+      children: [
+        {
+          path: 'tradeList',
+          name: '交易所',
+          component: () => import('@/views/point/TradeList.vue'),
+          meta: { title: '交易所', roles: ['audit','supervision'] }
+        },
+        {
+          path: 'account',
+          name: '积分明细',
+          component: () => import('@/views/point/Account.vue'),
+          meta: { title: '积分明细', roles: ['recycle', 'audit', 'supervision']  }
+        },
+        {
+          path: 'apply',
+          name: '发起交易',
+          component: () => import('@/views/point/TradeApply.vue'),
+          meta: { title: '发起交易', roles: ['admin', 'supervision'] }
+        },
+        {
+          path: 'myTradeList',
+          name: '查看我的交易',
+          component: () => import('@/views/point/MyTradeList.vue'),
+          meta: { title: '查看我的交易', roles: ['admin', 'supervision'] }
+        },
+      ]
+    },
 
 
 
-
-  
-  // 404 一定要放在最后一栏！！！！
+  // 404 page must be placed at the end !!!
   // using pathMatch install of "*" in vue-router 4.0
-  { path: '/:pathMatch(.*)', redirect: '/404', hidden: true },
+  { path: '/:pathMatch(.*)', redirect: '/404', hidden: true }
 ]
 
 const router: Router = createRouter({
