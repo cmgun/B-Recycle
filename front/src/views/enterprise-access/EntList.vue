@@ -4,6 +4,7 @@
 <!-- 和v-model 字段息息相关！看errorlog页面中的searchForm即可 -->
 
 <template>
+  <div class="app-container">
   <!--  查询条件   -->
   <el-form ref="tableConfig" inline="true" :model="searchParam" label-width="80px">
     <el-form-item label="账户名">
@@ -77,6 +78,7 @@
       </div>
   </el-affix>
   <!----------------------------------------- 分页 --------------------------------------------->
+  </div>
 </template>
 
 <script lang="ts" setup>

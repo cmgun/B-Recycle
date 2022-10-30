@@ -17,7 +17,7 @@
             and (seller_id = #{param.myId} or buyer_id = #{param.myId} )
         </if>
         <if test="param.status != null and param.status !=''">
-            status = #{param.status}
+            and status = #{param.status}
         </if>
     </select>
 </mapper>

@@ -1,6 +1,6 @@
 <!--suppress ALL -->
 <template>
-    <div>
+    <div class="app-container">
         <!-- 使用了container来布局 -->
         <div class="common-layout">
             <el-container>

@@ -4,17 +4,11 @@
 <!-- 和v-model 字段息息相关！看errorlog页面中的searchForm即可 -->
 
 <template>
-  <!--  查询条件   -->
-  <!-- <el-form ref="tableConfig" inline="true" :model="searchParam" label-width="80px">
-    <el-form-item>
-      <el-button type="primary" @click="search">查询</el-button>
-    </el-form-item>
-  </el-form> -->
-  <!-- el-scrollbar是滚动条 -->
-  <el-scrollbar>
+  <div class="app-container">
+    <el-scrollbar>
       <!----------------------------- 表单 ------------------------>
       <div>
-          <el-table ref="tableRef" row-key="date" :data="tableData" style="width: auto">
+        <el-table ref="tableRef" row-key="date" :data="tableData" style="width: auto">
               <!-- <el-table-column  prop="name" label="企业名称" width="auto" /> -->
               <el-table-column prop="id" label="交易编号" width="auto" />
               <el-table-column prop="info" label="交易内容" width="auto" />
@@ -45,20 +39,21 @@
                   </div>
                 </template>
               </el-table-column> -->
-          </el-table>
+        </el-table>
       </div>
-  </el-scrollbar>
+    </el-scrollbar>
   <!----------------------------------------- 分页 --------------------------------------------->
   <!-- 此处需要用axiosReq请求信息，可以参考errorlog.vue 中分页的用法 -->
    <!-----关注 Errorlog 中 v-model的使用 ----------------->
-  <el-affix position="bottom" :offset="20">
-      <div class="columnCC mt2 ">
-          <el-pagination :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 30, 40]"
-              :background="true" layout="total, sizes, prev, pager, next, jumper" :total="totalPage" :page-count="pageCount"
-              @size-change="handleSizeChange" @current-change="handleCurrentChange" />
-      </div>
-  </el-affix>
+    <el-affix position="bottom" :offset="20">
+        <div class="columnCC mt2 ">
+            <el-pagination :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 30, 40]"
+                :background="true" layout="total, sizes, prev, pager, next, jumper" :total="totalPage" :page-count="pageCount"
+                @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+        </div>
+    </el-affix>
   <!----------------------------------------- 分页 --------------------------------------------->
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -188,43 +183,7 @@ search()
 // ===================列表=========================
 
 
-
 </script>
 <style scoped lang="scss">
 
-.demo-pagination-block+.demo-pagination-block {
-  margin-top: 10px;
-}
-
-.demo-pagination-block .demonstration {
-  margin-bottom: 16px;
-}
-
-.detail-container {
-  flex-wrap: wrap;
-}
-
-.detail-container-item {
-  min-width: 40%;
-  margin-bottom: 20px;
-}
-
-.detailDialog-title {
-  margin-bottom: 14px;
-  font-weight: bold;
-  font-size: 16px;
-}
-
-// 滚动条
-.scrollbar-demo-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px;
-  margin: 10px;
-  text-align: center;
-  border-radius: 4px;
-  background: var(--el-color-primary-light-9);
-  color: var(--el-color-primary);
-}
 </style>

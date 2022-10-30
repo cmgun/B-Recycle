@@ -1,9 +1,11 @@
 <template>
+  <div class="app-container">
   <el-row class="mb-4">
      <el-button type="primary" round size="large" @click="open">点击此处查询审批状态</el-button>
      <!-- <el-alert class=el-alert title="你已通过审批" type="success" description="" center effect="dark" show-icon />
      <el-alert class=el-alert title="未通过审批" type="error" description="请重新提交文档" center effect="dark" show-icon /> -->
  </el-row>
+ </div>
 </template>
 
 <script lang="ts" setup>

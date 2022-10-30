@@ -4,12 +4,7 @@
 <!-- 和v-model 字段息息相关！看errorlog页面中的searchForm即可 -->
 
 <template>
-  <!--  查询条件   -->
-  <!-- <el-form ref="tableConfig" inline="true" :model="searchParam" label-width="80px">
-    <el-form-item>
-      <el-button type="primary" @click="search">查询</el-button>
-    </el-form-item>
-  </el-form> -->
+  <div class="app-container">
   <!-- el-scrollbar是滚动条 -->
   <el-scrollbar>
       <!----------------------------- 表单 ------------------------>
@@ -50,6 +45,7 @@
       </div>
   </el-affix>
   <!----------------------------------------- 分页 --------------------------------------------->
+  </div>
 </template>
 
 <script lang="ts" setup>
