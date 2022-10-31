@@ -1,19 +1,14 @@
 @startuml
 'https://plantuml.com/class-diagram
+title 合约结构模型
 
 '电池溯源模块
 package 电池模块 <<Rectangle>> {
-class Battery {
+class BatteryContract {
 电池id
 批次号
-充放电次数
-出厂日期
-电池类型代码
-规格代码
-标称电压
-标称容量
-其他电池信息
 电池状态
+其他电池信息
 当前所有者
 溯源记录
 + 查询溯源记录()
@@ -28,7 +23,7 @@ class Battery {
 '机构准入模块
 package 企业准入模块 <<Rectangle>> {
 class EntAccess {
-address
+企业address
 企业名称
 统一社会信用代码
 电话
@@ -37,69 +32,83 @@ address
 状态（正常、注销）
 备注
 准入审批方address
+审批时间
 
 + 查询企业准入信息()
-# 准入审批()
+}
 }
 
-'class EntAccess {
-'已准入的企业列表
-'机构类型与企业id映射
-'企业id与机构类型映射
-'企业id-准入状态映射
-'
-'+ 企业准入()
-'+ 企业信息变更()
-'+ 根据企业id查找对应机构类型()
-'+ 根据机构类型查找对应企业()
-'}
-'note left of EntAccess
-'企业准入合约
-'企业信息变更需要特定权限
-'end note
-'
-'Enterprise --> EntAccess
+'竞价交易模块
+package 竞价交易模块 <<Rectangle>> {
+class TradeContract {
+卖方地址
+买方地址
+交易信息
+交易状态
+最低金额
+期望金额
+成交金额
+结束时间
+交易时间
+当前最高价买方地址
+当前最高价格
+记录参加过竞价的买方
 
++ 竞价交易()
++ 指定交易()
+# 交易成交()
+# 交易撤回()
+}
 }
 
 '积分模块
 package 积分模块 <<Rectangle>> {
-class Point {
-账户
-可用积分
-冻结积分
-账户状态（正常，冻结）
-积分变更记录
+class DAO {
+DAO账户积分
+DAO账户列表
 
-+ 增加积分()
-+ 扣减积分()
-+ 查看积分()
-+ 查看积分记录()
++ 是否DAO账户()
++ 添加DAO账户()
+# 移除DAO账户()
+}
+
+
+class PointData {
+账户对应的积分
+账户对应的冻结积分
+账户列表
+积分总额
+
 + 积分转移()
++ 冻结积分()
++ 解冻积分()
++ 从冻结积分中转移到指定账户()
++ 设置账户()
++ 设置账户积分()
++ 设置积分总额()
 }
-note left of Point
-账户积分合约
-end note
 
-class PointTrade {
-卖方账户
-买方账户
-交易金额
-交易状态
-发起时间
-交易时间
-备注
 
-+ 交易发起()
-+ 交易认领()
-+ 交易执行()
-+ 交易终止()
+class PointController {
+账户积分操作记录列表
+DAO信息
+账户积分信息
+
++ 注册账户()
++ 初始化积分()
++ 添加DAO账户()
++ 查询指定账户积分()
++ 企业缴纳积分()
+# DAO向目标账户转移积分()
++ 普通账户之间转移积分()
++ 积分冻结()
++ 从冻结积分中转移积分()
++ 积分解冻()
++ 获取指定账户积分操作记录()
 }
-note left of PointTrade
-积分交易合约
-end note
 
-Point --> PointTrade
+PointController <-- PointData
+PointController <-- DAO
 }
 
 

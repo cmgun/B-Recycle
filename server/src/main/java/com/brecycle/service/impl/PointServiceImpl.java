@@ -504,7 +504,7 @@ public class PointServiceImpl implements PointService {
                 tradeListDTO.setLowestAmt(item.getLowestAmt());
                 // 交易积分
                 JSONObject info = JSON.parseObject(item.getInfo());
-                tradeListDTO.setInfo((String) info.get(TRADE_INFO_KEY));
+                tradeListDTO.setInfo(String.valueOf(info.get(TRADE_INFO_KEY)));
                 return tradeListDTO;
             }).collect(Collectors.toList()));
         } else {

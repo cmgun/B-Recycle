@@ -52,6 +52,7 @@ end note
 回收商 -> Vue : 查看回收单
 Vue -> Controller :
 Controller -> Service :
+database MySQL
 Service -> MySQL : 分页查询
 Service <-- MySQL : 返回结果
 Controller <-- Service :

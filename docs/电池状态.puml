@@ -1,5 +1,6 @@
 @startuml
 'https://plantuml.com/state-diagram'
+title 电池状态机
 
 '电池状态列表
 初始化 : 电池生产

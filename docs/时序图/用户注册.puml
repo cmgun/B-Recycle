@@ -1,6 +1,6 @@
 @startuml
 'https://plantuml.com/sequence-diagram
-title 用户注册（消费者/企业注册）
+title 用户注册
 actor 用户
 
 用户 -> Vue : 输入账户信息、密码、身份信息
