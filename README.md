@@ -98,6 +98,9 @@ point:
 VITE_APP_PROXY_URL = 'http://localhost:8090/'
 ```
 
+## 系统架构
+![image](docs/output/系统架构图.png)
+
 ## 关键业务时序图
 ### 用户注册
 ![image](docs/output/用户注册-用户注册.png)
