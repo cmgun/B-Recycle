@@ -48,7 +48,7 @@ export const constantRoutes: RouterTy = [
     children: [
       {
         path: 'dashboard',
-        name: 'Dashboard',
+        name: '首页',
         component: () => import('@/views/dashboard/index.vue'),
         //using el svg icon, the elSvgIcon first when at the same time using elSvgIcon and icon
         meta: { title: '首页', elSvgIcon: 'Fold' }
