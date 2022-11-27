@@ -23,3 +23,45 @@
   @include main-show-wh();
   overflow: auto;
 }
+
+
+// 我改的样式
+.app-container {
+  padding: 20px;
+}
+
+// 搜索框的背景卡
+.search{
+  padding:18px  0 0  10px;
+  margin-bottom: 10px;
+  box-shadow: var(--el-box-shadow-light);
+  border-radius: var(--el-card-border-radius);
+  border: 1px solid var(--el-card-border-color);
+}
+
+// 背景卡
+.el-card.is-always-shadow {
+  box-shadow: var(--el-box-shadow-light);
+}
+
+.el-card {
+  border-radius: var(--el-card-border-radius);
+  border: 1px solid var(--el-card-border-color);
+  background-color: var(--el-card-bg-color);
+  overflow: hidden;
+  color: var(--el-text-color-primary);
+  transition: var(--el-transition-duration);
+}
+
+.el-card {
+  --el-card-border-color: var(--el-border-color-light);
+  --el-card-border-radius: 4px;
+  --el-card-padding: 20px;
+  --el-card-bg-color: var(--el-fill-color-blank);
+}
+
+// 底部
+.pagination-container[data-v-8c60cd3a] {
+  background: #fff;
+  padding: 32px 16px;
+}

@@ -1,5 +1,6 @@
 <template>
-  <el-config-provider :locale="locale" namespace="el" size="small">
+  <!-- 全局设置组件的大小 -->
+  <el-config-provider :locale="locale" namespace="el" size="large">
     <router-view />
   </el-config-provider>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div className="app-container">
+  <div className="app-container scroll-y">
     <el-input v-model="filterText" placeholder="Filter keyword" style="margin-bottom: 30px" />
     <el-tree
       ref="tree2"

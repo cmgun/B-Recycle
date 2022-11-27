@@ -1,6 +1,6 @@
 <!--suppress ALL -->
 <template>
-    <div class="app-container">
+    <div class="app-container scroll-y">
         <!-- 使用了container来布局 -->
         <div class="common-layout">
             <el-container>

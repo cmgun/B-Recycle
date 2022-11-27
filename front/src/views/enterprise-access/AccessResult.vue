@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container scroll-y">
   <el-row class="mb-4">
      <el-button type="primary" round size="large" @click="open">点击此处查询审批状态</el-button>
      <!-- <el-alert class=el-alert title="你已通过审批" type="success" description="" center effect="dark" show-icon />

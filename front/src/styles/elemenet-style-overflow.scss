@@ -1,8 +1,11 @@
 // cover some element-ui styles
 
+
+.el-table
 .el-breadcrumb__inner,
 .el-breadcrumb__inner a {
   font-weight: 400 !important;
+
 }
 
 .el-upload {
@@ -126,5 +129,20 @@
 .elFormItemMarginB0px {
   .el-form-item {
     margin-bottom: 12px !important;
+
   }
 }
+
+
+// 我修改的
+.el-form-item__label {
+  height: 50px !important; 
+  line-height: 50px !important;
+  font-size: larger !important;
+  font-family: system-ui !important;
+  size: auto !important;
+}
+label {
+  font-weight: 550;
+}
+
