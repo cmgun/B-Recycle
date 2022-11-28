@@ -146,3 +146,17 @@ label {
   font-weight: 550;
 }
 
+// card 的header统一高度
+.el-card__header {
+  height: 60px !important;
+}
+
+.el-card {
+  border-radius: var(--el-card-border-radius) !important;
+  border: 1px solid var(--el-card-border-color) !important;
+  background-color: var(--el-card-bg-color) !important;
+  overflow: hidden !important;
+  color: var(--el-text-color-primary) !important;
+  transition: var(--el-transition-duration) !important;
+  font-size: large !important;
+}
