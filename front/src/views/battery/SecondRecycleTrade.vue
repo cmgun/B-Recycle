@@ -20,7 +20,7 @@
         <el-table-column prop="opt" label="报价" width="auto">
           <template #default="scope">
             <div style="line-height: 1; font-size: 0;">
-              <el-input v-model="scope.row.bidAmt" link type="primary" size="small" placeholder="输入报价" clearable />
+              <el-input v-model="scope.row.bidAmt" link type="primary"  placeholder="输入报价" clearable />
               <!-- <el-button type="success" @click="bid(scope.row.id, scope.row.bidAmt)">提交</el-button> -->
             </div>
           </template>

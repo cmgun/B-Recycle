@@ -36,7 +36,7 @@
         </div>
       </el-form-item>
       <div class="tip-message">{{ tipMessage }}</div>
-      <el-button :loading="loading" type="primary" class="login-btn" size="default" @click.prevent="handleLogin">
+      <el-button :loading="loading" type="primary" class="login-btn"  @click.prevent="handleLogin">
         登录
       </el-button>
       <div>
