@@ -122,7 +122,7 @@ export const asyncRoutes: RouterTy = [
         path: 'apply',
         name: 'FirstRecycleAdd',
         component: () => import('@/views/battery/FirstRecycleAdd.vue'),
-        meta: { title: '发起交易', roles: ['productor', 'stored', 'recycle', 'car', 'rent'] }
+        meta: { title: '发起交易', roles: ['productor', 'stored', 'car', 'rent'] }
       },
       {
         path: 'myTrade',
