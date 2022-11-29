@@ -1,34 +1,34 @@
 <!--suppress ALL -->
 <template>
-  <div class="entRegist-container columnCC">
+  <div class="entRegist-container columnCC scroll-y">
     <el-form ref="ruleFormRef" class="entRegist-form" :model="ruleForm" label-position="top" status-icon :rules="rules">
       <div class="title-container">
         <h3 class="title text-center">企业注册信息表</h3>
       </div>
-      <el-form-item label="账号" prop="AccountNumber">
-        <el-input v-model="ruleForm.AccountNumber" clearable />
-      </el-form-item>
-      <el-form-item label="密码" prop="pass">
-        <el-input v-model="ruleForm.pass" type="password" autocomplete="off" clearable />
-      </el-form-item>
-      <el-form-item label="再次输入密码" prop="checkPass">
-        <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" clearable />
-      </el-form-item>
-      <el-form-item label="企业名称" prop="companyID">
-        <el-input v-model="ruleForm.companyID" type="text" clearable />
-      </el-form-item>
-      <el-form-item label="统一社会信用代码" prop="TrustNumber">
-        <el-input v-model.number="ruleForm.TrustNumber" clearable />
-      </el-form-item>
-      <el-form-item label="电话" prop="PhoneNumber">
-        <el-input v-model.number="ruleForm.PhoneNumber" clearable />
-      </el-form-item>
-      <el-form-item label="地址" prop="Address">
-        <el-input v-model="ruleForm.Address" type="text" clearable />
-      </el-form-item>
+        <el-form-item size="large" label="账号" prop="AccountNumber">
+          <el-input v-model="ruleForm.AccountNumber" clearable />
+        </el-form-item>
+        <el-form-item label="密码" prop="pass">
+          <el-input v-model="ruleForm.pass" type="password" autocomplete="off" clearable />
+        </el-form-item>
+        <el-form-item label="再次输入密码" prop="checkPass">
+          <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" clearable />
+        </el-form-item>
+        <el-form-item label="企业名称" prop="companyID">
+          <el-input v-model="ruleForm.companyID" type="text" clearable />
+        </el-form-item>
+        <el-form-item label="统一社会信用代码" prop="TrustNumber">
+          <el-input v-model.number="ruleForm.TrustNumber" clearable />
+        </el-form-item>
+        <el-form-item label="电话" prop="PhoneNumber">
+          <el-input v-model.number="ruleForm.PhoneNumber" clearable />
+        </el-form-item>
+        <el-form-item label="地址" prop="Address">
+          <el-input v-model="ruleForm.Address" type="text" clearable />
+        </el-form-item>
       <!-- 选择器 -->
-      <el-form-item label="企业类型" prop="CompanyType">
-        <el-select v-model="ruleForm.CompanyType" placeholder="请选择企业类型" >
+      <el-form-item label="企业类型" prop="CompanyType" size="large">
+        <el-select v-model="ruleForm.CompanyType" placeholder="请选择企业类型">
           <el-option label="车企" value="2" />
           <el-option label="电池生产企业" value="3" />
           <el-option label="电池租赁商" value="4" />
@@ -45,11 +45,20 @@
       </el-form-item>
       <!-- 空一行！ -->
       <br />
-      <el-form-item>
-        <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
-        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-        <el-button @click.prevent="backLogin">返回</el-button>
-      </el-form-item>
+      <el-row :gutter="24">
+        <el-col :span="6">
+          <el-button size="large" type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
+        </el-col>
+        <el-col :span="6">
+          <el-button size="large" @click="resetForm(ruleFormRef)">重置</el-button>
+        </el-col>
+        <el-col :span="6">
+          <el-button size="large" @click.prevent="backLogin">返回</el-button>
+        </el-col>
+      </el-row>
+      <br />
+      <br />
+      <br /><br />
     </el-form>
   </div>
 </template>
@@ -93,7 +102,7 @@ const handleregister = (valid) => {
     .entRegist(params)
     .then(() => {
       console.log("entRegist success")
-      ElMessage({message: '注册成功。', type: 'success',})
+      ElMessage({ message: '注册成功。', type: 'success', })
       useCommon()
         .sleep(3)
         .then(() => {
@@ -252,16 +261,18 @@ const resetForm = (formEl: FormInstance | undefined) => {
 .entRegist-container {
   height: 100vh;
   width: 100%;
+
   // background-color: #2d3a4b;
   .entRegist-form {
-    margin-bottom: 20vh;
-    width: 360px;
+    margin-bottom: 7vh;
+    width: 600px;
   }
+
   .title-container {
     .title {
       font-size: 22px;
       // color: #eee;
-      margin: 0px auto 25px auto;
+      margin: 620px auto 25px auto;
       text-align: center;
       font-weight: bold;
     }

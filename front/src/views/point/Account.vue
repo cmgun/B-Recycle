@@ -1,10 +1,10 @@
 <!-- 积分明细 -->
 <template>
-    <div class="app-container">
+    <div class="app-container scroll-y">
     <!-- el-scrollbar是滚动条 -->
-    <el-scrollbar>
+
         <!----------------------------- 表单 ------------------------>
-        <div>
+        <div class="search">
             <el-row>
                 <el-col :span="4">
                     <el-descriptions title="" :column="2" size="default" border>
@@ -20,7 +20,7 @@
                 <el-table-column prop="remark" label="操作备注" width="flex" />
             </el-table>
         </div>
-    </el-scrollbar>
+
     <!----------------------------------------- 分页 --------------------------------------------->
     <!-- 此处需要用axiosReq请求信息，可以参考errorlog.vue 中分页的用法 -->
     <!-----关注 Errorlog 中 v-model的使用 ----------------->

@@ -41,7 +41,7 @@ const getBreadcrumb = () => {
   const first: any = matched[0]
   if (!isDashboard(first)) {
     //it can replace the first page if not exits
-    matched = [{ path: '/dashboard', meta: { title: 'Dashboard' } }].concat(matched)
+    matched = [{ path: '/dashboard', meta: { title: '首页' } }].concat(matched)
   }
   levelList.value = matched.filter(
     (item: RouteItemTy) => item.meta && item.meta.title && item.meta.breadcrumb !== false
@@ -53,7 +53,7 @@ const isDashboard = (route: RouteItemTy) => {
   if (!name) {
     return false
   }
-  return name.trim().toLocaleLowerCase() === 'Dashboard'.toLocaleLowerCase()
+  return name.trim().toLocaleLowerCase() === '首页'.toLocaleLowerCase()
 }
 const pathCompile = (path: string) => {
   const { params } = route

@@ -4,7 +4,7 @@
 <!-- 和v-model 字段息息相关！看errorlog页面中的searchForm即可 -->
 
 <template>
-  <div class="app-container">
+  <div class="app-container scroll-y">
   <!--  查询条件   -->
   <el-form ref="tableConfig" inline="true" :model="searchParam" label-width="80px">
     <el-form-item label="账户名">

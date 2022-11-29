@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container scroll-y">
     <el-form ref="form" :model="subform" label-width="120px">
       <el-form-item label="Activity name">
         <el-input v-model="subform.name" />

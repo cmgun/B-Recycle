@@ -1,10 +1,11 @@
+<!-- 交易所 -->
 <!-- tag!!! 是企业名字的标签信息 -->
 <!-- json文件返回的信息与prop字段对应 -->
 <!-- 分页需要后端信息返回关键字才好写成动态的，所以这里都写成静态的了 -->
 <!-- 和v-model 字段息息相关！看errorlog页面中的searchForm即可 -->
 
 <template>
-  <div class="app-container">
+  <div class="app-container scroll-y">
   <!--  查询条件   -->
   <!-- <el-form ref="tableConfig" inline="true" :model="searchParam" label-width="80px">
     <el-form-item>
@@ -12,9 +13,8 @@
     </el-form-item>
   </el-form> -->
   <!-- el-scrollbar是滚动条 -->
-  <el-scrollbar>
       <!----------------------------- 表单 ------------------------>
-      <div>
+      <div class="search">
           <el-table ref="tableRef" row-key="date" :data="tableData" style="width: auto">
               <!-- <el-table-column  prop="name" label="企业名称" width="auto" /> -->
               <el-table-column prop="id" label="交易编号" width="auto" />
@@ -25,7 +25,7 @@
               <el-table-column prop="opt" label="报价" width="auto">
                 <template #default="scope">
                   <div style="line-height: 1; font-size: 0;">
-                    <el-input v-model="scope.row.bidAmt" link type="primary" size="small" placeholder="输入报价" clearable />
+                    <el-input v-model="scope.row.bidAmt" link type="primary" placeholder="输入报价" clearable />
                     <!-- <el-button type="success" @click="bid(scope.row.id, scope.row.bidAmt)">提交</el-button> -->
                   </div>
                 </template>
@@ -39,17 +39,14 @@
               </el-table-column>
           </el-table>
       </div>
-  </el-scrollbar>
   <!----------------------------------------- 分页 --------------------------------------------->
   <!-- 此处需要用axiosReq请求信息，可以参考errorlog.vue 中分页的用法 -->
    <!-----关注 Errorlog 中 v-model的使用 ----------------->
-  <el-affix position="bottom" :offset="20">
-      <div class="columnCC mt2 ">
+      <div class="columnCC mt2 " position="bottom" :offset="20">
           <el-pagination :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 30, 40]"
               :background="true" layout="total, sizes, prev, pager, next, jumper" :total="totalPage" :page-count="pageCount"
               @size-change="handleSizeChange" @current-change="handleCurrentChange" />
       </div>
-  </el-affix>
   <!----------------------------------------- 分页 --------------------------------------------->
   </div>
 </template>

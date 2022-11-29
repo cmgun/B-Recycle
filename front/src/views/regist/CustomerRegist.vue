@@ -1,36 +1,45 @@
 <!--suppress ALL -->
 <template>
-  <div class="cusRegist-container columnCC">
+  <div class="columnCC  cusRegist-container scroll-y ">
     <el-form ref="ruleFormRef" class="cusRegist-form" :model="ruleForm" label-position="top" status-icon :rules="rules">
       <div class="title-container">
         <h3 class="title text-center">消费者信息注册表</h3>
       </div>
-      <el-form-item label="账号" prop="AccountNumber">
-        <el-input v-model="ruleForm.AccountNumber" clearable />
-      </el-form-item>
-      <el-form-item label="密码" prop="pass">
-        <el-input v-model="ruleForm.pass" type="password" autocomplete="off" clearable />
-      </el-form-item>
-      <el-form-item label="再次输入密码" prop="checkPass">
-        <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" clearable />
-      </el-form-item>
-      <el-form-item label="姓名" prop="ID">
-        <el-input v-model="ruleForm.ID" type="text" clearable />
-      </el-form-item>
-      <el-form-item label="身份证号" prop="IDnumber">
-        <el-input v-model.number="ruleForm.IDnumber" clearable />
-      </el-form-item>
-      <el-form-item label="电话号码" prop="PhoneNumber">
-        <el-input v-model.number="ruleForm.PhoneNumber" clearable />
-      </el-form-item>
+      <div class=" mt-2">
+        <el-form-item label="账号" prop="AccountNumber">
+          <el-input v-model="ruleForm.AccountNumber" clearable />
+        </el-form-item>
+        <el-form-item label="密码" prop="pass">
+          <el-input v-model="ruleForm.pass" type="password" autocomplete="off" clearable />
+        </el-form-item>
+        <el-form-item label="再次输入密码" prop="checkPass">
+          <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" clearable />
+        </el-form-item>
+        <el-form-item label="姓名" prop="ID">
+          <el-input v-model="ruleForm.ID" type="text" clearable />
+        </el-form-item>
+        <el-form-item label="身份证号" prop="IDnumber">
+          <el-input v-model.number="ruleForm.IDnumber" clearable />
+        </el-form-item>
+        <el-form-item label="电话号码" prop="PhoneNumber">
+          <el-input v-model.number="ruleForm.PhoneNumber" clearable />
+        </el-form-item>
+      </div>
 
       <!-- 空一行！ -->
       <br />
-      <el-form-item>
-        <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
-        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-        <el-button @click.prevent="backLogin">返回</el-button>
-      </el-form-item>
+      <el-row :gutter="24">
+        <el-col :span="6">
+          <el-button size="large" type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
+        </el-col>
+        <el-col :span="6">
+          <el-button size="large" @click="resetForm(ruleFormRef)">重置</el-button>
+        </el-col>
+        <el-col :span="6">
+          <el-button size="large" @click.prevent="backLogin">返回</el-button>
+        </el-col>
+      </el-row>
+
     </el-form>
   </div>
 
@@ -42,6 +51,9 @@ import { reactive, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import { Md5 } from 'ts-md5'
+
+
+
 
 
 // handleregister 处理注册的方法：提交数据给后端【可参考登录处理方法】，返回一个弹框：注册信息已提交
@@ -60,7 +72,7 @@ const handleregister = (valid) => {
     .customerRegist(params)
     .then(() => {
       console.log("customerRegist success")
-      ElMessage({message: '注册成功。', type: 'success',})
+      ElMessage({ message: '注册成功。', type: 'success', })
       useCommon()
         .sleep(3)
         .then(() => {
@@ -85,7 +97,7 @@ let backLogin = () => {
 // ↓ ↓ ======表单涉及的代码=======
 const ruleFormRef = ref<FormInstance>()
 
-// 名字 没改好
+
 const checkID = (rule: any, value: any, callback: any) => {
   if (!value) {
     return callback(new Error('请输入身份证姓名'))
@@ -203,17 +215,20 @@ const resetForm = (formEl: FormInstance | undefined) => {
 // $dark_gray: #889aa4;
 // $light_gray: #eee;
 .cusRegist-container {
-  height: 100vh;
-  width: 100%;
+  // height: 100vh;
+  // width: 100%;
   // background-color: #2d3a4b;
+  // box-shadow: var(--el-box-shadow-light);
+
   .cusRegist-form {
-    margin-bottom: 20vh;
-    width: 360px;
+    margin-bottom: auto;
+    width: 600px;
   }
+
   .title-container {
     .title {
       font-size: 22px;
-      margin: 0px auto 25px auto;
+      margin: 300px auto 25px auto;
       text-align: center;
       font-weight: bold;
     }

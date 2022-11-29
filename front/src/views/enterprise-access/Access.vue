@@ -1,6 +1,6 @@
 <!-- 审批文件提交页面 -->
 <template>
-  <div class="app-container">
+  <div class="app-container scroll-y">
       <el-upload ref="uploadRef"
           action="" :auto-upload="false" :on-change="(file)=>changeHandler(file)" :limit="1">
           <template #trigger>
@@ -8,7 +8,7 @@
           </template>
           <!-- 上传到服务器 -->
           <el-button class="ml-3" type="success" size="large" @click="submitUpload">
-              提交审批（上传到服务器）
+              提交审批
           </el-button>
           <template #tip>
               <!-- front-size 设置字体大小 margin-top设置顶部占位 -->

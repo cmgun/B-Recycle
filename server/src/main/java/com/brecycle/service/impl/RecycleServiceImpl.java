@@ -104,7 +104,7 @@ public class RecycleServiceImpl implements RecycleService {
                 transferParam.setId(batteryId);
                 transferParam.setOriginUserName(currentUserName);
                 transferParam.setToUserName(recycleEnt.getUserName());
-                transferParam.setRemark("回收交易");
+                transferParam.setRemark("拆解回收");
                 batteryService.transfer(transferParam, BatteryStatus.RECYCLE.getValue());
             }
             // 保存数据
@@ -284,7 +284,7 @@ public class RecycleServiceImpl implements RecycleService {
             transferParam.setId(batteryId);
             transferParam.setOriginUserName(originUser.getUserName());
             transferParam.setToUserName(buyer.getUserName());
-            transferParam.setRemark("回收交易");
+            transferParam.setRemark("拆解回收");
             batteryService.transfer(transferParam, BatteryStatus.RECYCLE.getValue());
         }
     }
