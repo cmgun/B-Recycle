@@ -1,12 +1,23 @@
 <template >
   <div class="dashboard-container scroll-y">
     <el-row :gutter="40">
+      <el-col class="card-panel__col" >
+        <div class="component-container ">
+        <el-card class="project-card">
+                <el-col class="A" > 欢迎使用B-Recycle电池回收管理平台！当前用户：{{ userStore.username }}</el-col>
+        </el-card>
+    </div>
+      </el-col>
+    </el-row>
+ 
+    <!-- <el-row :gutter="40"> -->
       <!-- 项目介绍 -->
       <el-col :md="24" :lg="24" class="card-panel__col">
         <Project />
       </el-col>
-    </el-row>
+    <!-- </el-row> -->
     <!-- Echarts 图表 -->
+
     <!-- <el-row :gutter="40" style="margin-top: 20px">
       <el-col :sm="24" :lg="12" class="card-panel__col">
         <BarChart id="barChart" height="400px" width="100%" class="chart-container" />
@@ -23,6 +34,7 @@ export default { name: 'Dashboard' };
 <script setup lang="ts">
 import { useUserStore } from '@/store/user'
 import Project from './Project/index.vue';
+// import welcome from './welcome.vue';
 // import GithubCorner from '@/components/GithubCorner/index.vue';
 // import SvgIcon from '@/components/SvgIcon/index.vue';
 // import BarChart from './Chart/BarChart.vue';
@@ -159,8 +171,15 @@ const userStore = useUserStore()
   .chart-container {
     background: #ffffff;
   }
+.A{
+  color: "FF9900";
+}
 
-
+.A{
+    padding-right: 20px;
+    padding-left: 20px;
+    color: #1f5a7b !important; 
+}
 }
 </style>
 
