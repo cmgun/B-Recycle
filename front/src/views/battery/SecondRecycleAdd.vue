@@ -149,11 +149,6 @@ const handleApply = (valid) => {
             })
     } else {
         ElMessage.error('申请信息无法提交，请检查后重新提交。')
-        useCommon()
-            .sleep(700)
-            .then(() => {
-                ToList()
-            })
     }
 }
 

@@ -78,6 +78,15 @@ const change = (params) => {
     console.log(label);
 
 }
+// 路由跳转
+//use the auto import from vite.config.js of AutoImport
+const router = useRouter()
+
+// //返回 
+let ToList = () => {
+    router.push(`/point/myTradeList`)
+}
+
 // handleregister 处理注册的方法：提交数据给后端【可参考登录处理方法】，返回一个弹框：注册信息已提交
 const handleApply = (valid) => {
     //注册信息提交弹窗 
@@ -93,12 +102,22 @@ const handleApply = (valid) => {
         .then(() => {
             console.log("handleApply success")
             ElMessage({message: '录入成功。', type: 'success',})
+            useCommon()
+                    .sleep(700)
+                    .then(() => {
+                        ToList()
+                    })
         })
         .catch((res) => {
             console.log("handleApply error")
         })
     } else {
         ElMessage.error('申请信息无法提交，请检查后重新提交。')
+        useCommon()
+                    .sleep(700)
+                    .then(() => {
+                        ToList()
+                    })
     }
 }
 
