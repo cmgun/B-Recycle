@@ -116,7 +116,7 @@ export const asyncRoutes: RouterTy = [
     component: Layout,
     name: '梯次利用',
     alwaysShow: true,
-    meta: { title: '梯次利用', icon: 'tree', roles: ['productor', 'stored', 'car', 'rent']},
+    meta: { title: '梯次利用', icon: 'tree', roles: ['productor', 'stored', 'recycle', 'car', 'rent']},
     children: [
       {
         path: 'apply',
@@ -128,13 +128,13 @@ export const asyncRoutes: RouterTy = [
         path: 'myTrade',
         name: 'FirstRecycleMyTrade',
         component: () => import('@/views/battery/FirstRecycleMyTrade.vue'),
-        meta: { title: '我的交易', roles: ['productor', 'stored', 'car', 'rent'] }
+        meta: { title: '我的交易', roles: ['productor', 'stored', 'recycle', 'car', 'rent'] }
       },
       {
         path: 'tradeList',
         name: 'FirstRecycleTrade',
         component: () => import('@/views/battery/FirstRecycleTrade.vue'),
-        meta: { title: '交易平台', roles: ['productor', 'stored', 'car', 'rent'] }
+        meta: { title: '交易平台', roles: ['productor', 'stored', 'recycle', 'car', 'rent'] }
       },
     ]
   },
