@@ -25,7 +25,8 @@
                                 <!-- <el-button type="primary" size=""> 下载上传模板 </el-button> -->
                             </el-form-item>
                             <el-form-item>
-                                <el-upload ref="uploadRef" class="upload-demo" :on-change="(file)=>changeHandler(file)" :auto-upload="false">
+                                <el-upload ref="uploadRef" class="upload-demo" :on-change="(file) => changeHandler(file)"
+                                    :auto-upload="false">
                                     <el-button type="primary"> 批量上传电池编号 </el-button>
                                 </el-upload>
                             </el-form-item>
@@ -77,6 +78,15 @@ import type { FormInstance } from 'element-plus'
 import { UploadInstance, valueEquals } from 'element-plus'
 import { useBatteryStore } from '@/store/battery'
 
+// 路由跳转
+//use the auto import from vite.config.js of AutoImport
+const router = useRouter()
+
+// //返回 
+let ToList = () => {
+    router.push(`/firstRecycle/myTrade`)
+}
+
 const uploadRef = ref<UploadInstance>()
 const batteryStore = useBatteryStore()
 let fileParam
@@ -84,21 +94,21 @@ let hasFile = false
 
 const download = () => {
     batteryStore.downloadTemplate()
-    .then((res: any) => {
-      // 文件类型固定为excel
-      console.log(res)
-      let blob = res.data
-      let url = window.URL.createObjectURL(blob); // 创建一个临时的url指向blob对象
-      let a = document.createElement("a");
-      a.href = url;
-      a.download = "批量新增电池模板";
-      a.click();
-      // 释放这个临时的对象url
-      window.URL.revokeObjectURL(url); 
-    })
-    .catch((res) => {
-      console.log("download error")
-    })
+        .then((res: any) => {
+            // 文件类型固定为excel
+            console.log(res)
+            let blob = res.data
+            let url = window.URL.createObjectURL(blob); // 创建一个临时的url指向blob对象
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = "批量新增电池模板";
+            a.click();
+            // 释放这个临时的对象url
+            window.URL.revokeObjectURL(url);
+        })
+        .catch((res) => {
+            console.log("download error")
+        })
 }
 
 const changeHandler = (file) => {
@@ -129,13 +139,19 @@ const handleApply = (valid) => {
         formData.append("expectAmt", ruleForm.ExceptTransactionAmount)
         formData.append("bidDays", ruleForm.BiddingDay)
         batteryStore.firstRecycleApply(formData)
-        .then(() => {
-            console.log("handleApply success")
-            ElMessage({message: '录入成功。', type: 'success',})
-        })
-        .catch((res) => {
-            console.log("handleApply error")
-        })
+            .then(() => {
+                console.log("handleApply success")
+                ElMessage({ message: '录入成功。', type: 'success', })
+                useCommon()
+                    .sleep(700)
+                    .then(() => {
+                        ToList()
+                    })
+            })
+            .catch((res) => {
+                console.log("handleApply error")
+          
+            })
     } else {
         ElMessage.error('申请信息无法提交，请检查后重新提交。')
     }
@@ -148,9 +164,9 @@ const ruleFormRef = ref<FormInstance>()
 // 电池编号 
 const BatteryNumber = (rule: any, value: any, callback: any) => {
     // if (!value) {
-        // return callback(new Error('请输入电池编号'))
+    // return callback(new Error('请输入电池编号'))
     // } else {
-        callback()
+    callback()
     // }
 }
 
@@ -191,7 +207,7 @@ const rules = reactive({
 
 // 提交表单的处理方法，注册信息接口
 const submitForm = (formEl: FormInstance | undefined) => {
-    
+
     if (!formEl) return
     formEl.validate((valid) => {
         if (valid) {
