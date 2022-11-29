@@ -5,99 +5,87 @@
 
 <template>
   <div class="app-container scroll-y">
-    <!--  查询条件   -->
-    <div class="search">
+  <!--  查询条件   -->
+  <el-form ref="tableConfig" inline="true" :model="searchParam" label-width="80px">
+    <el-form-item label="账户名">
+      <el-input v-model="searchParam.userName" clearable />
+    </el-form-item>
+    <el-form-item label="企业名称">
+      <el-input v-model="searchParam.entName" clearable />
+    </el-form-item>
+    <el-form-item label="准入状态">
+      <el-select v-model="searchParam.accessStatus" placeholder="请选择准入状态" >
+        <el-option label="无需准入" value="0" />
+        <el-option label="等待准入申请" value="1" />
+        <el-option label="审批中" value="2" />
+        <el-option label="审批拒绝" value="3" />
+        <el-option label="审批通过" value="4" />
+      </el-select>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="search">查询</el-button>
+    </el-form-item>
+  </el-form>
+  <!-- el-scrollbar是滚动条 -->
+  <el-scrollbar>
+      <!----------------------------- 表单 ------------------------>
+      <div>
+          <el-table ref="tableRef" row-key="date" :data="tableData" style="width: auto">
+              <!-- <el-table-column  prop="name" label="企业名称" width="auto" /> -->
+              <el-table-column prop="userName" label="账户名称" width="auto" />
+              <el-table-column prop="entName" label="企业名称" width="auto" />
+              <!-- <el-table-column prop="accessStatus" label="准入审核状态" :formatter="formatter" width="auto" /> -->
 
-      <el-form ref="tableConfig" inline="true" :model="searchParam" label-width="80px">
-        <el-form-item label="账户名称">
-          <el-input v-model="searchParam.userName" clearable />
-        </el-form-item>
-        <el-form-item label="企业名称">
-          <el-input v-model="searchParam.entName" clearable />
-        </el-form-item>
-        <el-form-item label="准入状态">
-          <el-select v-model="searchParam.accessStatus" placeholder="请选择准入状态">
-            <el-option label="无需准入" value="0" />
-            <el-option label="等待准入申请" value="1" />
-            <el-option label="审批中" value="2" />
-            <el-option label="审批拒绝" value="3" />
-            <el-option label="审批通过" value="4" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" size="" @click="search">查询</el-button>
+              <el-table-column prop="accessStatus" label="准入状态" width="auto" :filters="[
+                  { text: '无需准入', value: '0' },
+                  { text: '等待准入申请', value: '1' },
+                  { text: '审批中', value: '2' },
+                  { text: '审批拒绝', value: '3' },
+                  { text: '审批通过', value: '4' }
+                ]" :filter-method="filterTag" filter-placement="bottom-end">
 
-        </el-form-item>
-      </el-form>
+                    <template #default="scope">
+                        <!-- 实现功能：表格做判断，后端返回数字值，根据数字写三元表达式 教程网址↓ -->
+                        <!-- https://blog.csdn.net/cdd9527/article/details/126501032?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-126501032-blog-125242450.pc_relevant_3mothn_strategy_recovery&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-126501032-blog-125242450.pc_relevant_3mothn_strategy_recovery&utm_relevant_index=1 -->
+                        <!-- 可以用于写是否通过质检的状态返回 -->
+                        <!-- 要实现不同标签，不同颜色 -->
+                        <el-tag
+                            :type="tagType(scope.row.accessStatus)"
+                            disable-transitions>{{ tagText(scope.row.accessStatus) }}</el-tag>
+                        <!-- <el-tag type="type="scope.row.tag === 'home' ? '' : 'success'" disable-transitions>{{ scope.row.tag }}</el-tag> -->
+                    </template>
+              </el-table-column>
 
-
-    </div>
-
-    <!-- el-scrollbar是滚动条 -->
-
-    <!----------------------------- 表单 ------------------------>
-    <!-- <el-scrollbar> -->
-    <el-card>
-      <el-table size="large" ref="tableRef" row-key="date" :data="tableData" style="width: auto">
-        <!-- <el-table-column fixed prop="date" label="Date" width="150" /> -->
-        <el-table-column prop="userName" label="账户名称" width="auto" />
-        <el-table-column prop="entName" label="企业名称" width="auto" />
-        <!-- <el-table-column prop="accessStatus" label="准入审核状态" :formatter="formatter" width="auto" /> -->
-
-        <el-table-column prop="accessStatus" label="准入状态" width="auto" :filters="[
-          { text: '无需准入', value: '0' },
-          { text: '等待准入申请', value: '1' },
-          { text: '审批中', value: '2' },
-          { text: '审批拒绝', value: '3' },
-          { text: '审批通过', value: '4' }
-        ]" :filter-method="filterTag" filter-placement="bottom-end">
-
-          <template #default="scope">
-            <!-- 实现功能：表格做判断，后端返回数字值，根据数字写三元表达式 教程网址↓ -->
-            <!-- https://blog.csdn.net/cdd9527/article/details/126501032?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-126501032-blog-125242450.pc_relevant_3mothn_strategy_recovery&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-126501032-blog-125242450.pc_relevant_3mothn_strategy_recovery&utm_relevant_index=1 -->
-            <!-- 可以用于写是否通过质检的状态返回 -->
-            <!-- 要实现不同标签，不同颜色 -->
-            <el-tag :type="tagType(scope.row.accessStatus)" disable-transitions>{{ tagText(scope.row.accessStatus) }}
-            </el-tag>
-            <!-- <el-tag type="type="scope.row.tag === 'home' ? '' : 'success'" disable-transitions>{{ scope.row.tag }}</el-tag> -->
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="opt" label="操作" width="auto">
-          <template #default="scope">
-            <div style="line-height: 1; font-size: 0;">
-              <el-button v-show="scope.row.accessStatus == '2'" type="success" @click="pass(scope.row.userName)">审批通过
-              </el-button>
-              <el-button v-show="scope.row.accessStatus == '2'" type="danger" @click="reject(scope.row.userName)">审批拒绝
-              </el-button>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-
-    <!----------------------------------------- 分页 pagination --------------------------------------------->
-    <!-- 此处需要用axiosReq请求信息，可以参考errorlog.vue 中分页的用法 -->
-    <!-----关注 Errorlog 中 v-model的使用 ----------------->
-    <div class="columnCC mt2 " position="bottom" :offset="20">
-      <el-pagination :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 30, 40]" :background="true"
-        layout="total, sizes, prev, pager, next, jumper" :total="totalPage" :page-count="pageCount"
-        @size-change="handleSizeChange" @current-change="handleCurrentChange" />
-    </div>
-    <!----------------------------------------- 分页 --------------------------------------------->
-    <!-- </el-scrollbar> -->
+              <el-table-column prop="opt" label="操作" width="auto">
+                <template #default="scope">
+                  <div style="line-height: 1; font-size: 0;">
+                    <el-button v-show="scope.row.accessStatus == '2'" type="success" @click="pass(scope.row.userName)">审批通过</el-button>
+                    <el-button v-show="scope.row.accessStatus == '2'" type="danger" @click="reject(scope.row.userName)">审批拒绝</el-button>
+                  </div>
+                </template>
+              </el-table-column>
+          </el-table>
+      </div>
+  </el-scrollbar>
+  <!----------------------------------------- 分页 --------------------------------------------->
+  <!-- 此处需要用axiosReq请求信息，可以参考errorlog.vue 中分页的用法 -->
+   <!-----关注 Errorlog 中 v-model的使用 ----------------->
+  <el-affix position="bottom" :offset="20">
+      <div class="columnCC mt2 ">
+          <el-pagination :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 30, 40]"
+              :background="true" layout="total, sizes, prev, pager, next, jumper" :total="totalPage" :page-count="pageCount"
+              @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      </div>
+  </el-affix>
+  <!----------------------------------------- 分页 --------------------------------------------->
   </div>
-
 </template>
 
 <script lang="ts" setup>
-// import { Search } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { ElTable } from 'element-plus'
 import { useEntAccessStore } from '@/store/entAccess'
-// import { config } from 'process';
-//全局控制
-const config = "large"
+
 
 // ===================分页=========================
 // 总条数
@@ -198,7 +186,7 @@ const search = () => {
   }
 
   entAccessStore.entList(param)
-    .then((res: any) => {
+  .then((res: any) => {
       console.log("list success")
       // 填充分页插件
       // pageSize.value = res.pageSize
@@ -230,7 +218,7 @@ const pass = (userName) => {
     remark: '审批通过'
   }
   entAccessStore.pass(param)
-    .then((res: any) => {
+  .then((res: any) => {
       // 填充分页插件
       currentPage.value = 1
       search()
@@ -246,7 +234,7 @@ const reject = (userName) => {
     remark: '审批拒绝'
   }
   entAccessStore.reject(param)
-    .then((res: any) => {
+  .then((res: any) => {
       // 填充分页插件
       currentPage.value = 1
       search()
@@ -259,7 +247,7 @@ const reject = (userName) => {
 const download = (userName) => {
   console.log('download' + userName)
   entAccessStore.download(userName)
-    .then((res: any) => {
+  .then((res: any) => {
       console.log(res)
       let blob = res.data
       let url = window.URL.createObjectURL(blob); // 创建一个临时的url指向blob对象
@@ -268,7 +256,7 @@ const download = (userName) => {
       a.download = userName;
       a.click();
       // 释放这个临时的对象url
-      window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url); 
     })
     .catch((res) => {
       console.log("download error")
@@ -284,6 +272,7 @@ const download = (userName) => {
 
 </script>
 <style scoped lang="scss">
+
 .demo-pagination-block+.demo-pagination-block {
   margin-top: 10px;
 }
