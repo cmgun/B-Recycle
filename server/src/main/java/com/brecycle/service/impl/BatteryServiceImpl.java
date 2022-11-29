@@ -155,7 +155,7 @@ public class BatteryServiceImpl implements BatteryService {
         CryptoSuite cryptoSuite = new CryptoSuite(CryptoType.ECDSA_TYPE);
         CryptoKeyPair currentKeyPair = cryptoSuite.getKeyPairFactory().createKeyPair(owner.getPrivateKey());
         BatteryContract contract = BatteryContract.load(battery.getAddress(), client, currentKeyPair);
-        TransactionReceipt result = contract.endLife("电池拆解");
+        TransactionReceipt result = contract.endLife("已拆解");
         log.info("电池拆解执行结果：{}", result);
         if (!StringUtils.equals(result.getStatus(), "0x0")) {
             throw new BusinessException("电池拆解失败");

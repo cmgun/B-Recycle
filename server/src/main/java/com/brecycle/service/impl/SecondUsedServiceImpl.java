@@ -104,7 +104,7 @@ public class SecondUsedServiceImpl implements SecondUsedService {
                 transferParam.setId(batteryId);
                 transferParam.setOriginUserName(currentUserName);
                 transferParam.setToUserName(secondUsedEnt.getUserName());
-                transferParam.setRemark("梯次利用交易");
+                transferParam.setRemark("梯次回收");
                 batteryService.transfer(transferParam, BatteryStatus.SECOND_USED.getValue());
             }
             // 保存数据
@@ -285,7 +285,7 @@ public class SecondUsedServiceImpl implements SecondUsedService {
             transferParam.setId(batteryId);
             transferParam.setOriginUserName(originUser.getUserName());
             transferParam.setToUserName(buyer.getUserName());
-            transferParam.setRemark("梯次利用交易");
+            transferParam.setRemark("梯次回收");
             batteryService.transfer(transferParam, BatteryStatus.SECOND_USED.getValue());
         }
     }
