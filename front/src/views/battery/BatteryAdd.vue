@@ -95,25 +95,33 @@ const handleregister = (valid) => {
     chargeTimes: ruleForm.ExpectedNumber
   }
 
+
   const batteryStore = useBatteryStore()
   batteryStore.add(params)
     .then(() => {
       console.log("batteryAdd success")
       ElMessage({message: '录入成功。', type: 'success',})
+      useCommon()
+        .sleep(700)
+        .then(() => {
+            ToList()
+        })
+ 
     })
     .catch((res) => {
       console.log("batteryAdd error")
       ElMessage.error(res.msg)
+
     })
 }
 
 //use the auto import from vite.config.js of AutoImport
-// const router = useRouter()
+const router = useRouter()
 
 // //返回 
-// let backLogin = () => {
-//     router.push(`/login`)
-// }
+let ToList = () => {
+    router.push(`/battery/list`)
+}
 
 
 // ↓ ↓ ======表单涉及的代码=======
