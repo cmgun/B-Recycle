@@ -18,7 +18,7 @@ project architecture:
 - docs: Sequence diagram or other .puml files
 - front: Vue project 
 - script: SQL script
-- server: SpringBoot based project
+- server: SpringBoot based project 
 
 ## dependency
 - Nodejs
